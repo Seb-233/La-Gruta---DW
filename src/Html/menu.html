@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menú Completo - La Gruta</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../Css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg topbar">
+        <div
+          class="container-fluid align-items-center justify-content-center gap-4 px-4"
+        >
+          <a class="navbar-brand me-3" href="index.html">
+            <img
+              src="../images/logoGruta.png"
+              height="100"
+              alt="Logo La Gruta Nera"
+            />
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#topNav"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div
+            class="collapse navbar-collapse justify-content-center"
+            id="topNav"
+          >
+            <ul class="navbar-nav align-items-center mx-3">
+              <li class="nav-item mx-3">
+                <a class="nav-link text-white" href="menu.html">Menú</a>
+              </li>
+              <li class="nav-item mx-3">
+                <a class="nav-link text-white" href="restaurantes.html">Restaurantes</a>
+              </li>
+            </ul>
+            <div class="search-wrapper mx-3">
+              <form class="d-flex align-items-center">
+                <input
+                  class="search-input"
+                  type="search"
+                  placeholder="Buscar plato..."
+                  aria-label="Buscar"
+                />
+              </form>
+            </div>
+          </div>
+          <div class="d-flex align-items-center icon-group gap-3 ms-3">
+            <div class="circle-icon">
+              <img src="../images/gift.png" height="25" alt="Regalos" />
+            </div>
+            <div class="circle-icon">
+              <img src="../images/shopping-bag.png" height="25" alt="Carrito" />
+            </div>
+            <div class="small-flag ms-2">ES</div>
+          </div>
+        </div>
+      </nav>
+
+      <nav class="navbar navbar-expand-lg bottombar">
+        <div class="container-fluid justify-content-center px-4">
+          <ul class="nav align-items-center">
+            <li class="nav-item mx-3">
+              <a class="nav-link" href="#">Inicia tu orden</a>
+            </li>
+            <li class="nav-item mx-3">
+              <button class="btn btn-domicilio">Domicilio</button>
+            </li>
+            <li class="nav-item mx-3">
+              <a class="nav-link" href="#">Recoger/Consumir</a>
+            </li>
+            <li class="nav-item mx-3">
+              <a class="nav-link" href="#">Ingresa tu ubicación ▾</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="container my-5">
+        <h1 class="text-center mb-5">Menú Completo</h1>
+        <!-- Antipastos -->
+<section id="antipastos" class="mb-5">
+  <h2 class="text-center mb-4">Antipastos</h2>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/Bruschetta.jpg" class="card-img-top" alt="Bruschetta" />
+        <div class="card-body">
+          <h5 class="card-title">Bruschetta</h5>
+          <p class="card-text">Pan artesanal con tomate y albahaca fresca.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/carpaccio-di-manzo.jpg" class="card-img-top" alt="Carpaccio di Manzo" />
+        <div class="card-body">
+          <h5 class="card-title">Carpaccio di Manzo</h5>
+          <p class="card-text">Láminas finas de res con aceite de oliva y parmesano.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/provolone.webp" class="card-img-top" alt="Provolone al Forno" />
+        <div class="card-body">
+          <h5 class="card-title">Provolone al Forno</h5>
+          <p class="card-text">Queso provolone derretido con hierbas italianas.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/aceitunas.jpg" class="card-img-top" alt="Olive Miste" />
+        <div class="card-body">
+          <h5 class="card-title">Olive Miste</h5>
+          <p class="card-text">Mezcla de aceitunas marinadas con especias.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/funghi-trifolati.jpg" class="card-img-top" alt="Funghi Trifolati" />
+        <div class="card-body">
+          <h5 class="card-title">Funghi Trifolati</h5>
+          <p class="card-text">Champiñones salteados con ajo, perejil y vino blanco.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/focatia.jpeg" class="card-img-top" alt="Focaccia" />
+        <div class="card-body">
+          <h5 class="card-title">Focaccia</h5>
+          <p class="card-text">Pan italiano con romero y aceite de oliva extra virgen.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pizzas -->
+<section id="pizzas" class="mb-5">
+  <h2 class="text-center mb-4">Pizzas</h2>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/pizzaNera.webp" class="card-img-top" alt="Pizza Nera" />
+        <div class="card-body">
+          <h5 class="card-title">Pizza Nera</h5>
+          <p class="card-text">Masa con tinta de calamar, mozzarella y prosciutto.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/Pizza Pepperoni.jpg" class="card-img-top" alt="Pizza Pepperoni" />
+        <div class="card-body">
+          <h5 class="card-title">Pizza Pepperoni</h5>
+          <p class="card-text">Masa artesanal con pepperoni y mozzarella.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/Margherita-Pizza-093.webp" class="card-img-top" alt="Pizza Margherita" />
+        <div class="card-body">
+          <h5 class="card-title">Pizza Margherita</h5>
+          <p class="card-text">Tomate, mozzarella fresca y hojas de albahaca.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/quattroformaggi.jpeg" class="card-img-top" alt="Pizza Quattro Formaggi" />
+        <div class="card-body">
+          <h5 class="card-title">Pizza Quattro Formaggi</h5>
+          <p class="card-text">Mozzarella, gorgonzola, parmesano y provolone.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/pizzavegetariana.jpeg" class="card-img-top" alt="Pizza Vegetariana" />
+        <div class="card-body">
+          <h5 class="card-title">Pizza Vegetariana</h5>
+          <p class="card-text">Pimientos, champiñones, calabacín y mozzarella.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/pizzadiavola.webp" class="card-img-top" alt="Pizza Diavola" />
+        <div class="card-body">
+          <h5 class="card-title">Pizza Diavola</h5>
+          <p class="card-text">Salami picante, tomate y mozzarella fresca.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pastas -->
+<section id="pastas" class="mb-5">
+  <h2 class="text-center mb-4">Pastas</h2>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/pasta_carbonara.jpg" class="card-img-top" alt="Pasta Carbonara" />
+        <div class="card-body">
+          <h5 class="card-title">Pasta Carbonara</h5>
+          <p class="card-text">Espaguetis con crema, panceta y queso pecorino.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/PastaBolognesa.jpg" class="card-img-top" alt="Pasta Bolognesa" />
+        <div class="card-body">
+          <h5 class="card-title">Pasta Bolognesa</h5>
+          <p class="card-text">Espaguetis con salsa bolognesa y queso parmesano.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/1504715566-delish-fettuccine-alfredo.jpg" class="card-img-top" alt="Fettuccine Alfredo" />
+        <div class="card-body">
+          <h5 class="card-title">Fettuccine Alfredo</h5>
+          <p class="card-text">Pasta cremosa con mantequilla y queso parmesano.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/raviolis de espinaca.jpeg" class="card-img-top" alt="Ravioli de Espinaca" />
+        <div class="card-body">
+          <h5 class="card-title">Ravioli de Espinaca</h5>
+          <p class="card-text">Relleno de espinaca y ricotta con salsa de tomate.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/pasta pesto.webp" class="card-img-top" alt="Pasta Pesto" />
+        <div class="card-body">
+          <h5 class="card-title">Pasta al Pesto</h5>
+          <p class="card-text">Pasta fresca con salsa de albahaca y piñones.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/lasana-de-carne-y-queso-2977.jpg" class="card-img-top" alt="Lasaña de Carne" />
+        <div class="card-body">
+          <h5 class="card-title">Lasaña de Carne</h5>
+          <p class="card-text">Capas de pasta con carne, salsa de tomate y queso.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Risottos -->
+<section id="risottos" class="mb-5">
+  <h2 class="text-center mb-4">Risottos</h2>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/risotofungui.png" class="card-img-top" alt="Risotto ai Funghi" />
+        <div class="card-body">
+          <h5 class="card-title">Risotto ai Funghi</h5>
+          <p class="card-text">Arroz cremoso con champiñones y queso parmesano.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/risoto limone.jpeg" class="card-img-top" alt="Risotto al Limone" />
+        <div class="card-body">
+          <h5 class="card-title">Risotto al Limone</h5>
+          <p class="card-text">Delicado risotto con limón, mantequilla y albahaca.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/a-photo-of-a-golden-bowl-of-risotto-alla-milanese_-_FRHET7GiQzKK-GCOiiuuRw-TN3e3HqSRTevX3WpZcG0ig1.jpeg" class="card-img-top" alt="Risotto alla Milanese" />
+        <div class="card-body">
+          <h5 class="card-title">Risotto alla Milanese</h5>
+          <p class="card-text">Risotto con azafrán, mantequilla y queso parmesano.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/risoto mar.jpeg" class="card-img-top" alt="Risotto al Mar" />
+        <div class="card-body">
+          <h5 class="card-title">Risotto al Mar</h5>
+          <p class="card-text">Risotto con camarones, calamares y mejillones frescos.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/risoto pesto.jpeg" class="card-img-top" alt="Risotto al Pesto" />
+        <div class="card-body">
+          <h5 class="card-title">Risotto al Pesto</h5>
+          <p class="card-text">Risotto con salsa pesto y piñones tostados.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/risoto calabaza.jpeg" class="card-img-top" alt="Risotto de Calabaza" />
+        <div class="card-body">
+          <h5 class="card-title">Risotto de Calabaza</h5>
+          <p class="card-text">Risotto cremoso con puré de calabaza y salvia.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Postres -->
+<section id="postres" class="mb-5">
+  <h2 class="text-center mb-4">Postres</h2>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/tiramisu.jpg" class="card-img-top" alt="Tiramisú" />
+        <div class="card-body">
+          <h5 class="card-title">Tiramisú</h5>
+          <p class="card-text">Clásico postre italiano con café y mascarpone.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/creamy-vegan-panna-cotta-dairy-free-fresh-and-light-dessert-thumb-12.jpg" class="card-img-top" alt="Panna Cotta" />
+        <div class="card-body">
+          <h5 class="card-title">Panna Cotta</h5>
+          <p class="card-text">Postre cremoso con coulis de frutos rojos.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/Cannoli Siciliani.jpg" class="card-img-top" alt="Cannoli Siciliani" />
+        <div class="card-body">
+          <h5 class="card-title">Cannoli Siciliani</h5>
+          <p class="card-text">Crujientes tubos rellenos de ricotta y frutas confitadas.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/gelato.webp" class="card-img-top" alt="Gelato" />
+        <div class="card-body">
+          <h5 class="card-title">Gelato</h5>
+          <p class="card-text">Helado artesanal italiano en sabores variados.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/torta della nonna.webp" class="card-img-top" alt="Torta della Nonna" />
+        <div class="card-body">
+          <h5 class="card-title">Torta della Nonna</h5>
+          <p class="card-text">Tarta de crema pastelera y piñones tostados.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/profiteroles.webp" class="card-img-top" alt="Profiteroles" />
+        <div class="card-body">
+          <h5 class="card-title">Profiteroles</h5>
+          <p class="card-text">Bolas de masa rellenas de crema y bañadas en chocolate.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bebidas -->
+<section id="bebidas" class="mb-5">
+  <h2 class="text-center mb-4">Bebidas</h2>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/5435_Vino_Tinto_Reservado0.jpg" class="card-img-top" alt="Vino Tinto" />
+        <div class="card-body">
+          <h5 class="card-title">Vino Tinto</h5>
+          <p class="card-text">Selección de vino tinto italiano de la casa.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/vino blanco.webp" class="card-img-top" alt="Vino Blanco" />
+        <div class="card-body">
+          <h5 class="card-title">Vino Blanco</h5>
+          <p class="card-text">Vino blanco afrutado ideal para pescados y mariscos.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/cerveza artesanala.webp" class="card-img-top" alt="Cerveza Artesanal" />
+        <div class="card-body">
+          <h5 class="card-title">Cerveza Artesanal</h5>
+          <p class="card-text">Cerveza de producción local con notas florales.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/agua con gas.jpg" class="card-img-top" alt="Agua con Gas" />
+        <div class="card-body">
+          <h5 class="card-title">Agua con Gas</h5>
+          <p class="card-text">Agua mineral italiana con burbujas finas.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/agua sin gas.webp" class="card-img-top" alt="Agua Sin Gas" />
+        <div class="card-body">
+          <h5 class="card-title">Agua Sin Gas</h5>
+          <p class="card-text">Agua mineral italiana natural sin gas.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card menu-card">
+        <img src="../images/cafe expresso.webp" class="card-img-top" alt="Café Espresso" />
+        <div class="card-body">
+          <h5 class="card-title">Café Espresso</h5>
+          <p class="card-text">Café italiano fuerte y aromático.</p>
+          <button class="btn-agregar">Agregar al domicilio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+        
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+      <div class="container">
+        <p>© 2025 La Gruta Nera - Todos los derechos reservados</p>
+        <p>
+          Dirección: Calle 123, Bogotá, Colombia | Tel: +57 300 123 4567 |
+          Email: contacto@lagrutanea.com
+        </p>
+        <div class="footer-redes">
+          <a
+            href="https://www.facebook.com/"
+            target="_blank"
+            aria-label="Facebook"
+            ><img src="../images/facebook.png" height="20" alt="Facebook"
+          /></a>
+          |
+          <a
+            href="https://www.instagram.com/"
+            target="_blank"
+            aria-label="Instagram"
+            ><img src="../images/instagram.png" height="20" alt="Instagram"
+          /></a>
+          |
+          <a href="https://www.X.com/" target="_blank" aria-label="X"
+            ><img src="../images/x.png" height="20" alt="X"
+          /></a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../Js/script.js"></script>
+  </body>
+</html>

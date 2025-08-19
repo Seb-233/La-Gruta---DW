@@ -1,0 +1,569 @@
+/* ======== RESET GENERAL ======== */
+body {
+    font-family: 'Barlow', sans-serif;
+    background-color: #FCE8C7; 
+    color: #4A3B34; 
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== HEADER GENERAL ===== */
+header {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ===== TOPBAR ===== */
+.topbar {
+    background: linear-gradient(90deg, #4A3B34, #7B5E48);
+    padding: 0.5rem 0;
+    border-bottom: 2px solid #E6A756; 
+}
+
+.topbar .navbar-brand img {
+    max-height: 150px;
+    transition: transform 0.3s ease;
+    margin: -10px;
+    filter: opacity(80%);
+}
+
+.topbar .navbar-brand img:hover {
+    transform: scale(1.05);
+}
+
+.topbar .nav-link {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #FCE8C7 !important;
+    transition: color 0.3s ease;
+}
+
+.topbar .nav-link:hover {
+    color: #E6A756 !important;
+}
+.topbar img {
+    background-color: transparent;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.topbar img:hover {
+    opacity: 1;
+}
+
+
+/* ===== SEARCH BAR ===== */
+.search-wrapper {
+    position: relative;
+}
+
+.search-input {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: #fff;
+    font-size: 14px;
+    width: 200px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(230, 167, 86, 0.6);
+}
+
+/* ===== ICONOS ===== */
+.icon-group .circle-icon {
+    background: #fff;
+    border-radius: 50%;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.icon-group .circle-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.small-flag {
+    background: #E6A756;
+    color: #4A3B34;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* ===== BOTTOMBAR ===== */
+.bottombar {
+    background: #7B5E48;
+    padding: 0.4rem 0;
+}
+
+.bottombar .nav-link {
+    color: #FCE8C7;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.bottombar .nav-link:hover {
+    color: #E6A756;
+}
+
+.btn-domicilio {
+    background-color: #E6A756;
+    color: #4A3B34;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-domicilio:hover {
+    background-color: #D4B483;
+    transform: translateY(-2px);
+}
+
+/* ======== HERO / CAROUSEL ======== */
+.hero {
+    overflow: hidden;
+}
+.hero .carousel-item img {
+    height: 70vh;
+    object-fit: cover;
+    filter: brightness(0.95) contrast(1.05);
+}
+.carousel-caption {
+    background: rgba(74, 59, 52, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-size: 100% 100%;
+    filter: invert(1);
+}
+
+/* ======== MENÚ ======== */
+#menu h1 {
+    color: #E6A756;
+    font-weight: bold;
+}
+.card {
+    background-color: #FFF5E6;
+    border: none;
+    color: #4A3B34;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 10px;
+}
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 15px rgba(230, 167, 86, 0.4);
+}
+.card img {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.card-title {
+    color: #7B5E48;
+    font-weight: bold;
+}
+.card-text {
+    color: #4A3B34;
+}
+
+/* Tarjetas de platos */
+.menu-card {
+    background-color: #FFF5E6;
+    border: 1px solid #E6A756;
+    color: #4A3B34;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.menu-card img {
+    height: 200px;
+    object-fit: cover;
+}
+.menu-card:hover {
+    transform: scale(1.05);
+    background-color: #FCE8C7;
+}
+.menu-card .card-title {
+    color: #7B5E48;
+    font-size: 1.2rem;
+}
+.menu-card .card-text {
+    color: #4A3B34;
+}
+
+/* Botón agregar */
+.btn-agregar {
+    background-color: #E6A756;
+    color: #4A3B34;
+    border: none;
+    padding: 10px 15px;
+    margin-top: 10px;
+    font-weight: bold;
+    border-radius: 5px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+.btn-agregar:hover {
+    background-color: #7B5E48;
+    color: #fff;
+}
+
+/* ======== SECCIÓN EXTRA (INFO NEGOCIO) ======== */
+.info-negocio {
+    background: #D4B483;
+    padding: 40px 20px;
+    text-align: center;
+}
+.info-negocio h2 {
+    color: #4A3B34;
+    margin-bottom: 20px;
+}
+.info-negocio p {
+    max-width: 800px;
+    margin: auto;
+    color: #4A3B34;
+    line-height: 1.6;
+}
+
+/* ======== FOOTER ======== */
+#footer {
+  background-color: #4A3B34;
+  color: #FCE8C7;
+  padding: 50px 20px;
+}
+#footer h5 {
+  color: #E6A756;
+  margin-bottom: 15px;
+}
+#footer a {
+  color: #FCE8C7;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+#footer a:hover {
+  color: #E6A756;
+}
+#footer .footer-redes a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+#footer .footer-redes img {
+  filter: brightness(0) invert(1);
+  filter: none; 
+}
+#footer hr {
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* ======== BUSCADOR ======== */
+.resultados-busqueda {
+    background: white;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    width: 250px;
+    z-index: 1000;
+}
+.resultado-item {
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.resultado-item:hover {
+    background: #FCE8C7;
+    cursor: pointer;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 768px) {
+    .hero .carousel-item img {
+        height: 50vh;
+    }
+    .search-wrapper {
+        margin-top: 10px;
+    }
+    .icon-group {
+        margin-top: 10px;
+    }
+}
+
+/* SOBRE NOSOTROS */
+.sobre-nosotros {
+  background: linear-gradient(to right, #fff5e6, #fce8c7);
+}
+.titulo-seccion {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #4A3B34;
+  margin-bottom: 20px;
+}
+.titulo-seccion span {
+  color: #8B2E2E;
+}
+.descripcion-seccion {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #4A3B34;
+}
+.btn-reserva {
+  background-color: #8B2E2E;
+  color: #fff;
+  padding: 10px 25px;
+  border-radius: 25px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+.btn-reserva:hover {
+  background-color: #E6A756;
+  color: #4A3B34;
+  transform: translateY(-3px);
+}
+/*Restaurantes*/
+.restaurantes-section {
+      padding: 50px 20px;
+    }
+    .rest-card {
+      background-color: #FFF5E6;
+      border: 1px solid #E6A756;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .rest-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+    .rest-card h4 {
+      color: #8B2E2E;
+      font-weight: bold;
+    }
+    .rest-card p {
+      margin: 5px 0;
+    }
+    .btn-ubicacion {
+      background-color: #E6A756;
+      color: #4A3B34;
+      border-radius: 20px;
+      padding: 8px 18px;
+      border: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .btn-ubicacion:hover {
+      background-color: #D4B483;
+      transform: scale(1.05);
+    }
+
+    /* ===== PLATO ESTRELLA ===== */
+.plato-estrella {
+  position: relative;
+  background: url('../images/pizzaNera.webp') center/cover no-repeat;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0;
+  padding: 80px 20px;
+  clip-path: ellipse(120% 100% at 50% 0%); /* curva en la parte inferior */
+}
+
+.plato-estrella .overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+
+.plato-estrella .contenido {
+  position: relative;
+  color: #fff;
+  z-index: 2;
+}
+
+.plato-estrella h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 0 10px #ff4500, 0 0 20px #ff6347;
+  animation: parpadeo 1.5s infinite alternate;
+}
+
+/* Animación tipo fuego/chispa */
+@keyframes parpadeo {
+  0% { text-shadow: 0 0 5px #ff4500, 0 0 10px #ff6347; }
+  100% { text-shadow: 0 0 20px #ff4500, 0 0 40px #ff6347; }
+}
+
+/* Hero Plato Estrella */
+      .hero-plato {
+        position: relative;
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('../images/paisaje-gruta-mitica-interior-harare_1162783-425.jpg') center/cover no-repeat;
+        height: 70vh;
+        color: #fff;
+      }
+      .hero-plato .overlay {
+        position: absolute;
+        top:0; left:0; width:100%; height:100%;
+      }
+      .hero-plato .contenido {
+        position: relative;
+        z-index: 2;
+      }
+      .hero-plato h1 {
+        font-size: 3rem;
+        color: #FFD700;
+        text-shadow: 0 0 10px #ff4500, 0 0 20px #ff6347, 0 0 40px #ff6347;
+        animation: parpadeo 1.5s infinite alternate;
+      }
+      .hero-plato p {
+        font-size: 1.3rem;
+        color: #f8f9fa;
+      }
+
+      /* Imagen principal */
+      .img-plato {
+        width: 100%;
+        max-width: 450px;
+        height: 350px;
+        object-fit: cover;
+      }
+
+      
+      .gallery-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      }
+      .img-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+
+      /* Chispas animadas */
+      .spark::after {
+        content: "";
+        position: absolute;
+        top: -10px; left: -10px; right: -10px; bottom: -10px;
+        border-radius: 20px;
+        background: radial-gradient(circle, rgba(255,140,0,0.7) 0%, transparent 70%);
+        opacity: 0.6;
+        animation: spark 2s infinite ease-in-out alternate;
+        z-index: -1;
+      }
+
+      @keyframes spark {
+        0% { box-shadow: 0 0 10px #ff4500, 0 0 20px #ff6347; opacity: 0.5; }
+        100% { box-shadow: 0 0 30px #ff4500, 0 0 60px #ff6347; opacity: 0.9; }
+      }
+
+      @keyframes parpadeo {
+        0% { text-shadow: 0 0 10px #ff4500, 0 0 20px #ff6347; }
+        100% { text-shadow: 0 0 20px #ff4500, 0 0 40px #ff6347; }
+      }
+/* Fondo general SOLO para esta página */
+#plato-estrella {
+  background: url('../images/paisaje-gruta-mitica-interior-harare_1162783-425.jpg') 
+              center center / cover no-repeat fixed;
+  background-attachment: fixed;
+  color: #fff;
+}
+
+/* Hero */
+.hero-plato {
+  position: relative;
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+              url('../images/paisaje-gruta-mitica-interior-harare_1162783-425.jpg') center/cover no-repeat;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.hero-plato::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+}
+.hero-plato h1 {
+  font-size: 3rem;
+  color: #FFD700;
+  text-shadow: 0 0 10px #ff4500, 0 0 20px #ff6347, 0 0 40px #ff6347;
+  animation: parpadeo 1.5s infinite alternate;
+  position: relative;
+  z-index: 2;
+}
+.hero-plato p {
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  font-size: 1.4rem;
+  color: #f1f1f1;
+  text-shadow: 0 0 8px rgba(0,0,0,0.8);
+  position: relative;
+  z-index: 2;
+}
+
+/* Tarjeta Plato Estrella */
+.card-plato {
+  background: rgba(0,0,0,0.55);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(255,69,0,0.5);
+}
+.card-plato h2 {
+  font-size: 2.2rem;
+  color: #FFD700;
+  text-align: center;
+  text-shadow: 0 0 10px #ff4500, 0 0 20px #ff6347;
+  animation: parpadeo 1.5s infinite alternate;
+}
+.card-plato p, 
+.card-plato li {
+  color: #fff !important;
+}
+
+/* Imagenes con efecto hover */
+.gallery-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.gallery-img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(255,69,0,0.8);
+}
+
+/* Animación tipo fuego/chispa */
+@keyframes parpadeo {
+  0% { text-shadow: 0 0 10px #ff4500, 0 0 20px #ff6347; }
+  100% { text-shadow: 0 0 20px #ff4500, 0 0 40px #ff6347; }
+}
+
+
