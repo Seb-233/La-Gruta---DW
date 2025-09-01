@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adicionales</title>
+  <link rel="stylesheet" th:href="@{/css/adicionales.css}">
+</head>
+<body>
+  <header class="site">
+    <div class="container">
+      <div class="brand">La Gruta</div>
+      <nav>
+        <a th:href="@{/menu}">Menú</a>
+        <a th:href="@{/restaurantes}">Restaurantes</a>
+        <a th:href="@{/}">Inicio</a>
+        <a th:href="@{/contacto}">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Adicionales</h1>
+
+    <div th:if="${adicionales != null and !#lists.isEmpty(adicionales)}" class="grid">
+      <div class="card" th:each="a : ${adicionales}">
+        <h3 th:text="${a.nombre}">Nombre adicional</h3>
+        <div class="price">$ 
+          <span th:text="${#numbers.formatDecimal(a.precio,1,'COMMA',2,'POINT')}">0.00</span>
+        </div>
+        <button class="btn btn-primary"
+                th:attr="data-id=${a.id}, data-nombre=${a.nombre}, data-precio=${a.precio}"
+                data-add="adicional">Agregar</button>
+      </div>
+    </div>
+
+    <div th:if="${adicionales == null or #lists.isEmpty(adicionales)}" class="empty">
+      <h3>No hay adicionales disponibles.</h3>
+      <p>Aún no hay adicionales configurados.</p>
+    </div>
+  </main>
+
+  
+
+  <script th:src="@{/js/cart.js}"></script>
+  <script>
+    document.addEventListener('click',(e)=>{
+      const btn = e.target.closest('[data-add="adicional"]');
+      if(!btn) return;
+      addItem({
+        id: btn.getAttribute('data-id'),
+        nombre: btn.getAttribute('data-nombre'),
+        precio: btn.getAttribute('data-precio'),
+        tipo: 'adicional',
+        cantidad: 1
+      });
+      btn.textContent='Agregado ✓'; btn.disabled=true;
+      setTimeout(()=>{btn.textContent='Agregar'; btn.disabled=false;},800);
+    });
+  </script>
+</body>
+</html>
