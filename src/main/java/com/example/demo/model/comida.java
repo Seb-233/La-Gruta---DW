@@ -52,6 +52,11 @@ public class comida {
     @Column
     private String ingredientes; // Lista de ingredientes principales
     
+    // Relación con User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id") // columna en la tabla comidas
+    private User user;
+
     // Constructor personalizado
     public comida(String nombre, String descripcion, Double precio, String imagen) {
         this.nombre = nombre;
