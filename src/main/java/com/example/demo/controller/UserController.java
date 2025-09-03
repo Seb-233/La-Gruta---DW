@@ -20,7 +20,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ModelAndView login(@RequestParam String username,
-                              @RequestParam String password) {
+            @RequestParam String password) {
         ModelAndView mv = new ModelAndView();
 
         // Usar el método findByUsername para buscar en DB
@@ -30,7 +30,7 @@ public class UserController {
             mv.setViewName("redirect:/la_gruta/index");
             mv.addObject("message", "Login exitoso");
         } else {
-            mv.setViewName("login"); 
+            mv.setViewName("login");
             mv.addObject("error", "Usuario o contraseña incorrectos");
         }
         return mv;
@@ -49,13 +49,13 @@ public class UserController {
 
     @GetMapping("/register")
     public String showRegisterForm() {
-        return "register"; 
+        return "register";
     }
 
     @PostMapping("/register")
     public String registerUser(@RequestParam String username,
-                               @RequestParam String password,
-                               @RequestParam String role) {
+            @RequestParam String password,
+            @RequestParam String role) {
         User user = new User(username, password);
         user.setRole(role);
         userService.add(user);
@@ -92,5 +92,3 @@ public class UserController {
         return "redirect:/users";
     }
 }
-
-

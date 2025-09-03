@@ -19,42 +19,41 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class comida {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String nombre;
-    
+
     @Column(length = 1000)
     private String descripcion;
-    
+
     @Column(nullable = false)
     private Double precio;
-    
-    @Column
-    private String imagen; // URL o path de la imagen del plato
-    
+
+    @Column(nullable = true, length = 500)
+    private String imagen;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id")
+    @JoinColumn(name = "categoria_id", nullable = true) // ⚡ lo dejo opcional
     private Categoria categoria;
-    
+
     @Column
-    private Boolean disponible = true; // Para activar/desactivar platos
-    
+    private Boolean disponible = true;
+
     @Column
-    private Integer tiempoPreparacion; // Tiempo en minutos
-    
+    private Integer tiempoPreparacion;
+
     @Column
-    private Boolean esEspecialidad = false; // Para marcar platos especiales
-    
+    private Boolean esEspecialidad = false;
+
     @Column
-    private String ingredientes; // Lista de ingredientes principales
-    
-    // Relación con User
+    private String ingredientes;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id") // columna en la tabla comidas
+    @JoinColumn(name = "user_id", nullable = true) // ⚡ también lo dejo opcional
     private User user;
 
     // Constructor personalizado

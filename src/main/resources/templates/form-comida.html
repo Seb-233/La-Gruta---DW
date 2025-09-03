@@ -85,14 +85,24 @@
               />
             </div>
 
+            <!-- CAMBIO: usar categoria.id -->
             <div class="mb-3">
               <label class="form-label">Categoría</label>
-              <input
-                type="text"
-                class="form-control"
-                th:field="*{categoria}"
-                required
-              />
+              <select class="form-select" th:field="*{categoria.id}" required>
+                <option
+                  value=""
+                  disabled
+                  th:selected="${comida.categoria == null}"
+                >
+                  -- Seleccione una categoría --
+                </option>
+                <option
+                  th:each="cat : ${categorias}"
+                  th:value="${cat.id}"
+                  th:text="${cat.nombre}"
+                  th:selected="${comida.categoria != null and comida.categoria.id == cat.id}"
+                ></option>
+              </select>
             </div>
 
             <div class="mb-3">

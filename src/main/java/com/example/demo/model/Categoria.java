@@ -16,29 +16,29 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Categoria {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String nombre;
-    
+
     @Column(unique = true, nullable = false)
     private String slug; // Para URLs amigables (ej: "antipastos", "pizzas")
-    
+
     @Column(length = 500)
     private String descripcion;
-    
+
     @Column
     private String imagen; // URL o path de la imagen de la categoría
-    
+
     @Column
     private Integer orden; // Para ordenar las categorías en el menú
-    
+
     @Column
     private Boolean activa = true; // Para activar/desactivar categorías
-    
+
     // Constructor personalizado
     public Categoria(String nombre, String slug) {
         this.nombre = nombre;

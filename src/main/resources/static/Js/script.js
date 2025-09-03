@@ -36,59 +36,207 @@ function revealOnScroll() {
 }
 
 
-// ----- Carrito (localStorage) -----
-const CART_KEY = 'carrito';
+// Obtener carrito desde localStorage o inicializar vacío
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-function getCart() {
-  try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
-  catch { return []; }
+// Guardar carrito en localStorage
+function saveCart() {
+  localStorage.setItem('cart', JSON.stringify(cart));
 }
-function saveCart(items) {
-  localStorage.setItem(CART_KEY, JSON.stringify(items));
-  updateCartBadge();
-}
-function addItem({ id, nombre, precio, tipo }) {
-  const items = getCart();
-  const idx = items.findIndex(it => it.id === String(id) && it.tipo === tipo);
-  if (idx >= 0) {
-    items[idx].cantidad += 1;
+
+// Actualizar contador y contenido del carrito
+function updateCartSidebar() {
+  const cartCount = document.querySelector('.cart-count');
+  const cartContent = document.getElementById('cartContent');
+  const cartFooter = document.getElementById('cartFooter');
+  const cartTotal = document.getElementById('cartTotal');
+
+  if (!cartCount || !cartContent || !cartFooter || !cartTotal) return;
+
+  cartCount.textContent = `${cart.length} ${cart.length === 1 ? 'producto' : 'productos'}`;
+
+  if (cart.length === 0) {
+    cartContent.innerHTML = `<div class="empty-cart">
+        <img src="../images/shopping-bag.png" alt="Carrito vacío" width="64" height="64">
+        <p>Tu carrito está vacío</p>
+        <small>Agrega productos para comenzar tu pedido</small>
+      </div>`;
+    cartFooter.style.display = 'none';
   } else {
-    items.push({ id: String(id), nombre, precio: Number((precio+'').replace(/[^0-9.]/g,'')), tipo, cantidad: 1 });
+    let html = '';
+    let total = 0;
+    cart.forEach(item => {
+      total += item.precio * item.cantidad;
+      html += `<div class="cart-item d-flex justify-content-between align-items-center mb-2">
+        <span>${item.nombre} x${item.cantidad}</span>
+        <span>$${(item.precio * item.cantidad).toFixed(2)}</span>
+      </div>`;
+    });
+    cartContent.innerHTML = html;
+    cartTotal.textContent = total.toFixed(2);
+    cartFooter.style.display = 'block';
   }
-  saveCart(items);
-}
-function countItems() {
-  return getCart().reduce((acc, it) => acc + (it.cantidad || 1), 0);
-}
-function updateCartBadge() {
-  const badge = document.getElementById('cartCount');
-  if (!badge) return;
-  const n = countItems();
-  if (n > 0) { badge.style.display = 'inline-block'; badge.textContent = String(n); }
-  else { badge.style.display = 'none'; }
 }
 
-// Delegación: botones "Agregar" en modal/menu
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-add]');
-  if (!btn) return;
-  const tipo = btn.getAttribute('data-add'); // 'comida' | 'adicional'
-  const id = btn.getAttribute('data-id');
-  const nombre = btn.getAttribute('data-nombre');
-  const precio = btn.getAttribute('data-precio') || '0';
+// Inicializar botones y cantidades
+function initProductCards() {
+  document.querySelectorAll('.card').forEach(card => {
+    const minusBtn = card.querySelector('.minus');
+    const plusBtn = card.querySelector('.plus');
+    const quantitySpan = card.querySelector('.quantity');
+    const addBtn = card.querySelector('.add-to-order');
 
-  addItem({ id, nombre, precio, tipo });
+    // Botón -
+    minusBtn?.addEventListener('click', () => {
+      let qty = parseInt(quantitySpan.textContent) || 1;
+      if (qty > 1) {
+        qty--;
+        quantitySpan.textContent = qty;
+      }
+    });
 
-  // feedback rápido
-  const old = btn.textContent;
-  btn.textContent = 'Agregado ✓';
-  btn.disabled = true;
-  setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 900);
+    // Botón +
+    plusBtn?.addEventListener('click', () => {
+      let qty = parseInt(quantitySpan.textContent) || 1;
+      qty++;
+      quantitySpan.textContent = qty;
+    });
+
+    // Botón agregar
+    addBtn?.addEventListener('click', () => {
+      const id = card.dataset.id;
+      const nombre = card.dataset.nombre;
+      const precio = parseFloat(card.dataset.precio.replace(',', '.')) || 0; // por si hay coma
+      const cantidad = parseInt(quantitySpan.textContent) || 1;
+
+      if (!id || !nombre || precio <= 0) return;
+
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.cantidad += cantidad;
+      } else {
+        cart.push({ id, nombre, precio, cantidad });
+      }
+
+      saveCart();
+      updateCartSidebar();
+      showOrderModal();
+
+      quantitySpan.textContent = '1'; // reset
+    });
+  });
+}
+
+
+// Modal único
+function showOrderModal() {
+  const orderModalEl = document.getElementById('orderModal');
+  if (!orderModalEl) return;
+
+  const orderModal = new bootstrap.Modal(orderModalEl);
+  orderModal.show();
+}
+
+// Inicializar todo
+document.addEventListener('DOMContentLoaded', () => {
+  initProductCards();
+  updateCartSidebar();
+
+  // Botón "ir a pagar" del modal
+  document.getElementById('goToPayBtn')?.addEventListener('click', () => {
+    window.location.href = '/la_gruta/iniciar-orden';
+  });
+
+  // Botón "continuar agregando" del modal
+  document.getElementById('continueOrderBtn')?.addEventListener('click', () => {
+    const modalEl = document.getElementById('orderModal');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal?.hide();
+  });
 });
 
-// Init
-document.addEventListener('DOMContentLoaded', updateCartBadge);
 
+// --- SECCIÓN CHECKOUT EN INICIAR-ORDEN.HTML ---
 
-window.addEventListener("scroll", revealOnScroll);
+// Renderiza los productos en la sección de checkout con imagen y todo
+function renderCheckoutProductsWithImages() {
+  const container = document.getElementById('checkoutProducts');
+  if (!container) return;
+
+  if (cart.length === 0) {
+    container.innerHTML = '<p>Tu carrito está vacío.</p>';
+    return;
+  }
+
+  let html = '<div class="row g-3">';
+  let total = 0;
+  cart.forEach(item => {
+    total += item.precio * item.cantidad;
+    html += `
+      <div class="col-12">
+        <div class="card d-flex flex-row align-items-center p-2">
+          <img src="${item.imagen || '../images/shopping-bag.png'}" class="card-img-top" alt="${item.nombre}" style="width:80px; height:80px; object-fit:cover; margin-right:10px;">
+          <div class="card-body p-2 d-flex flex-column">
+            <h6 class="card-title mb-1">${item.nombre}</h6>
+            <span>Cantidad: ${item.cantidad}</span>
+            <span>Precio: $${(item.precio * item.cantidad).toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  html += `</div>
+           <div class="mt-2"><strong>Total: $${total.toFixed(2)}</strong></div>`;
+
+  container.innerHTML = html;
+}
+
+// Mostrar sección checkout en iniciar-orden.html
+function showCheckoutSection() {
+  const checkoutSection = document.getElementById('checkoutSection');
+  if (!checkoutSection) return;
+
+  checkoutSection.style.display = 'block';
+  renderCheckoutProductsWithImages();
+
+  // Scroll suave hasta la sección
+  checkoutSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Botón "Continuar pedido" en sidebar
+document.getElementById('goToPayBtnSidebar')?.addEventListener('click', () => {
+  showCheckoutSection();
+});
+
+// Botón "Ir a pagar" del modal
+document.getElementById('goToPayBtn')?.addEventListener('click', () => {
+  const modalEl = document.getElementById('orderModal');
+  const modal = bootstrap.Modal.getInstance(modalEl);
+  modal?.hide();
+
+  showCheckoutSection();
+});
+
+// Manejo del formulario de checkout
+document.getElementById('checkoutForm')?.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const nombre = document.getElementById('nombreCliente').value.trim();
+  const direccion = document.getElementById('direccion').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+
+  if (!nombre || !telefono) {
+    alert('Por favor completa los campos obligatorios.');
+    return;
+  }
+
+  alert(`Pedido confirmado!\nNombre: ${nombre}\nTeléfono: ${telefono}\nDirección: ${direccion || 'N/A'}`);
+
+  // Limpiar carrito y formulario
+  cart = [];
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCheckoutProductsWithImages();
+  this.reset();
+});
+
 

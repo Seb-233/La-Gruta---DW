@@ -1,23 +1,25 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.comida;
 import com.example.demo.repository.comidaRepository;
+import com.example.demo.repository.CategoriaRepository;
 
 @Controller
 @RequestMapping("/comidas")
 public class comidaController {
 
-    @Autowired
-    private comidaRepository comidaRepo;
+    private final comidaRepository comidaRepo;
+    private final CategoriaRepository categoriaRepo;
+
+    // Constructor Injection (recomendado)
+    public comidaController(comidaRepository comidaRepo, CategoriaRepository categoriaRepo) {
+        this.comidaRepo = comidaRepo;
+        this.categoriaRepo = categoriaRepo;
+    }
 
     // Listar todas las comidas en comidaadmin.html
     @GetMapping
@@ -30,6 +32,7 @@ public class comidaController {
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
         model.addAttribute("comida", new comida());
+        model.addAttribute("categorias", categoriaRepo.findAll());
         return "form-comida"; // templates/form-comida.html
     }
 
@@ -43,19 +46,25 @@ public class comidaController {
     // Editar comida (cargar formulario con datos existentes)
     @GetMapping("/editar/{id}")
     public String editarComida(@PathVariable Long id, Model model) {
-        comida comidaExistente = comidaRepo.findById(id).orElse(null);
-        model.addAttribute("comida", comidaExistente);
-        return "form-comida";
+        return comidaRepo.findById(id)
+                .map(comidaExistente -> {
+                    model.addAttribute("comida", comidaExistente);
+                    model.addAttribute("categorias", categoriaRepo.findAll());
+                    return "form-comida";
+                })
+                .orElse("redirect:/comidas"); // si no existe redirige
     }
 
     // Eliminar comida
     @GetMapping("/eliminar/{id}")
     public String eliminarComida(@PathVariable Long id) {
-        comidaRepo.deleteById(id);
+        if (comidaRepo.existsById(id)) {
+            comidaRepo.deleteById(id);
+        }
         return "redirect:/comidas";
     }
 
-     @GetMapping("/index")
+    @GetMapping("/index")
     public String index() {
         return "index"; // nombre del template index.html en templates/
     }
