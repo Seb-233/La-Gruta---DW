@@ -61,9 +61,9 @@ public class UserController {
         userService.add(user);
 
         if ("ADMIN".equals(role)) {
-            return "redirect:/home";
+            return "redirect:home";
         } else {
-            return "redirect:/login";
+            return "redirect:la_gruta/login";
         }
     }
 

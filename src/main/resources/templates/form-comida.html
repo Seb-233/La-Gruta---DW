@@ -23,40 +23,9 @@
   </head>
   <body>
     <!-- Header -->
-    <header class="header-transparent">
-      <nav
-        class="container-fluid d-flex justify-content-between align-items-center position-relative"
-      >
-        <ul class="navbar-nav flex-row gap-4 left-menu">
-          <li class="nav-item"><a class="nav-link" href="/menu">Menú</a></li>
-          <li class="nav-item">
-            <a class="nav-link" href="/restaurantes">Restaurantes</a>
-          </li>
-        </ul>
-        <a
-          class="navbar-brand logo-central position-absolute top-50 start-50 translate-middle"
-          href="/index"
-        >
-          <img src="/images/logoGruta.png" alt="Logo La Gruta Nera" />
-        </a>
-        <ul class="navbar-nav flex-row gap-4 right-menu align-items-center">
-          <li class="nav-item">
-            <a class="nav-link" href="#sobre-nosotros">Nosotros</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#contacto">Contacto</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-reserva-header" href="/login">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-reserva-header" href="#reservas"
-              >Reserva Aquí</a
-            >
-          </li>
-        </ul>
-      </nav>
-    </header>
+  <header>
+    <div th:replace="fragments :: solid-header"></div>
+  </header>
 
     <!-- Contenido principal -->
     <main class="container my-5">

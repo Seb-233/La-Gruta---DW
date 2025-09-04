@@ -52,6 +52,10 @@ public class Comida {
     @Column
     private String ingredientes;
 
+    /*@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comida_id")
+    private Comida comida;*/
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = true) // ⚡ también lo dejo opcional
     private User user;
