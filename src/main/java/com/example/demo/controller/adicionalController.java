@@ -16,19 +16,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.model.Adicional;
 import com.example.demo.model.Categoria;
-import com.example.demo.model.comida;
+import com.example.demo.model.Comida;
 import com.example.demo.repository.CategoriaRepository;
-import com.example.demo.repository.adicionalRepository;
-import com.example.demo.repository.comidaRepository;
+import com.example.demo.repository.AdicionalRepository;
+import com.example.demo.repository.ComidaRepository;
 
 @Controller
-public class adicionalController {
+public class AdicionalController {
 
     @Autowired
-    private comidaRepository comidaRepository;
+    private ComidaRepository comidaRepository;
 
     @Autowired
-    private adicionalRepository adicionalRepository;
+    private AdicionalRepository adicionalRepository;
 
     @Autowired
     private CategoriaRepository categoriaRepository;
@@ -39,14 +39,14 @@ public class adicionalController {
      */
     @GetMapping("/adicionales/comida/{id}")
     public String adicionalesPorComida(@PathVariable Long id, Model model) {
-        Optional<comida> maybe = comidaRepository.findById(id);
+        Optional<Comida> maybe = comidaRepository.findById(id);
         if (maybe.isEmpty()) {
             // si la comida no existe, muestro vista general
             model.addAttribute("adicionales", adicionalRepository.findAll());
             return "adicionales";
         }
 
-        comida c = maybe.get();
+        Comida c = maybe.get();
         List<Adicional> lista = Collections.emptyList();
 
         if (c.getCategoria() != null) {
@@ -72,7 +72,7 @@ public String verAdicionales(Model model) {
     @GetMapping("/adicionales/api/comida/{id}")
     @ResponseBody
     public List<Map<String, Object>> apiAdicionalesPorComida(@PathVariable Long id) {
-        comida c = comidaRepository.findById(id).orElse(null);
+        Comida c = comidaRepository.findById(id).orElse(null);
         if (c == null || c.getCategoria() == null) return List.of();
 
         List<Adicional> lista = adicionalRepository.findByCategoriaId(c.getCategoria().getId());

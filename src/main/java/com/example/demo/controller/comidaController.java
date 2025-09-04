@@ -4,19 +4,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.model.comida;
-import com.example.demo.repository.comidaRepository;
+import com.example.demo.model.Comida;
+import com.example.demo.repository.ComidaRepository;
 import com.example.demo.repository.CategoriaRepository;
 
 @Controller
 @RequestMapping("/comidas")
-public class comidaController {
+public class ComidaController {
 
-    private final comidaRepository comidaRepo;
+    private final ComidaRepository comidaRepo;
     private final CategoriaRepository categoriaRepo;
 
     // Constructor Injection (recomendado)
-    public comidaController(comidaRepository comidaRepo, CategoriaRepository categoriaRepo) {
+    public ComidaController(ComidaRepository comidaRepo, CategoriaRepository categoriaRepo) {
         this.comidaRepo = comidaRepo;
         this.categoriaRepo = categoriaRepo;
     }
@@ -31,14 +31,14 @@ public class comidaController {
     // Mostrar formulario para nueva comida
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
-        model.addAttribute("comida", new comida());
+        model.addAttribute("comida", new Comida());
         model.addAttribute("categorias", categoriaRepo.findAll());
         return "form-comida"; // templates/form-comida.html
     }
 
     // Guardar comida nueva o editada
     @PostMapping("/guardar")
-    public String guardarComida(@ModelAttribute comida comida) {
+    public String guardarComida(@ModelAttribute Comida comida) {
         comidaRepo.save(comida);
         return "redirect:/comidas";
     }

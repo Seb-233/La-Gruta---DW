@@ -7,23 +7,23 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.model.comida;
+import com.example.demo.model.Comida;
 
 @Repository
-public interface comidaRepository extends JpaRepository<comida, Long> {
+public interface ComidaRepository extends JpaRepository<Comida, Long> {
 
     // Buscar comidas por categoría
-    List<comida> findByCategoriaId(Long categoriaId);
+    List<Comida> findByCategoriaId(Long categoriaId);
 
     // Buscar comidas disponibles por categoría
-    @Query("SELECT c FROM comida c WHERE c.categoria.id = :categoriaId AND c.disponible = true")
-    List<comida> findDisponiblesByCategoriaId(@Param("categoriaId") Long categoriaId);
+    @Query("SELECT c FROM Comida c WHERE c.categoria.id = :categoriaId AND c.disponible = true")
+    List<Comida> findDisponiblesByCategoriaId(@Param("categoriaId") Long categoriaId);
 
     // Buscar comidas por nombre (búsqueda)
-    @Query("SELECT c FROM comida c WHERE LOWER(c.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')) AND c.disponible = true")
-    List<comida> findByNombreContainingIgnoreCase(@Param("nombre") String nombre);
+    @Query("SELECT c FROM Comida c WHERE LOWER(c.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')) AND c.disponible = true")
+    List<Comida> findByNombreContainingIgnoreCase(@Param("nombre") String nombre);
 
     // Buscar especialidades
-    @Query("SELECT c FROM comida c WHERE c.esEspecialidad = true AND c.disponible = true")
-    List<comida> findEspecialidades();
+    @Query("SELECT c FROM Comida c WHERE c.esEspecialidad = true AND c.disponible = true")
+    List<Comida> findEspecialidades();
 }

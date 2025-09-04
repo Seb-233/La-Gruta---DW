@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class comida {
+public class Comida {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,7 +57,7 @@ public class comida {
     private User user;
 
     // Constructor personalizado
-    public comida(String nombre, String descripcion, Double precio, String imagen) {
+    public Comida(String nombre, String descripcion, Double precio, String imagen) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;

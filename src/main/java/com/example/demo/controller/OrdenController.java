@@ -17,20 +17,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.model.Adicional;
 import com.example.demo.model.Categoria;
-import com.example.demo.model.comida;
+import com.example.demo.model.Comida;
 import com.example.demo.repository.CategoriaRepository;
-import com.example.demo.repository.adicionalRepository;
-import com.example.demo.repository.comidaRepository;
+import com.example.demo.repository.AdicionalRepository;
+import com.example.demo.repository.ComidaRepository;
 
 @Controller
 @RequestMapping("/orden")
 public class OrdenController {
 
     @Autowired
-    private comidaRepository comidaRepository;
+    private ComidaRepository comidaRepository;
 
     @Autowired
-    private adicionalRepository adicionalRepository;
+    private AdicionalRepository adicionalRepository;
 
     @Autowired
     private CategoriaRepository categoriaRepository;
@@ -60,10 +60,10 @@ public class OrdenController {
             Map<String, List<Map<String, Object>>> menuPorCategoria = new HashMap<>();
             
             for (Categoria categoria : categorias) {
-                List<comida> comidas = comidaRepository.findByCategoriaId(categoria.getId());
+                List<Comida> comidas = comidaRepository.findByCategoriaId(categoria.getId());
                 List<Map<String, Object>> comidasData = new ArrayList<>();
                 
-                for (comida c : comidas) {
+                for (Comida c : comidas) {
                     Map<String, Object> comidaData = new HashMap<>();
                     comidaData.put("id", c.getId());
                     comidaData.put("name", c.getNombre());
@@ -102,10 +102,10 @@ public class OrdenController {
             }
             
             Categoria categoria = categoriaOpt.get();
-            List<comida> comidas = comidaRepository.findByCategoriaId(categoria.getId());
+            List<Comida> comidas = comidaRepository.findByCategoriaId(categoria.getId());
             List<Map<String, Object>> response = new ArrayList<>();
             
-            for (comida c : comidas) {
+            for (Comida c : comidas) {
                 Map<String, Object> comidaData = new HashMap<>();
                 comidaData.put("id", c.getId());
                 comidaData.put("name", c.getNombre());
@@ -161,12 +161,12 @@ public class OrdenController {
     @ResponseBody
     public ResponseEntity<List<Map<String, Object>>> getAdicionalesPorComida(@PathVariable Long comidaId) {
         try {
-            Optional<comida> comidaOpt = comidaRepository.findById(comidaId);
+            Optional<Comida> comidaOpt = comidaRepository.findById(comidaId);
             if (comidaOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
             
-            comida c = comidaOpt.get();
+            Comida c = comidaOpt.get();
             if (c.getCategoria() == null) {
                 return ResponseEntity.ok(new ArrayList<>());
             }
@@ -197,12 +197,12 @@ public class OrdenController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getComidaDetalle(@PathVariable Long comidaId) {
         try {
-            Optional<comida> comidaOpt = comidaRepository.findById(comidaId);
+            Optional<Comida> comidaOpt = comidaRepository.findById(comidaId);
             if (comidaOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
             
-            comida c = comidaOpt.get();
+            Comida c = comidaOpt.get();
             Map<String, Object> response = new HashMap<>();
             response.put("id", c.getId());
             response.put("name", c.getNombre());

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.repository.CategoriaRepository;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.repository.adicionalRepository;
-import com.example.demo.repository.comidaRepository;
+import com.example.demo.repository.AdicionalRepository;
+import com.example.demo.repository.ComidaRepository;
 
 @Component
 public class DatabaseInit implements CommandLineRunner {
@@ -19,10 +19,10 @@ public class DatabaseInit implements CommandLineRunner {
     private CategoriaRepository categoriaRepository;
     
     @Autowired
-    private comidaRepository comidaRepository;
+    private ComidaRepository comidaRepository;
     
     @Autowired
-    private adicionalRepository adicionalRepository;
+    private AdicionalRepository adicionalRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -99,7 +99,7 @@ public class DatabaseInit implements CommandLineRunner {
                                    Categoria risottos, Categoria postres, Categoria bebidas) {
         
         // ANTIPASTOS
-        comida bruschetta = new comida();
+        Comida bruschetta = new Comida();
         bruschetta.setNombre("Bruschetta Italiana");
         bruschetta.setDescripcion("Pan tostado con tomate fresco, albahaca, ajo y aceite de oliva extra virgen");
         bruschetta.setPrecio(15900.0);
@@ -109,7 +109,7 @@ public class DatabaseInit implements CommandLineRunner {
         bruschetta.setIngredientes("Pan, tomate, albahaca, ajo, aceite de oliva");
         comidaRepository.save(bruschetta);
         
-        comida carpaccio = new comida();
+        Comida carpaccio = new Comida();
         carpaccio.setNombre("Carpaccio di Manzo");
         carpaccio.setDescripcion("Finas láminas de carne de res con rúcula, parmesano y aceite de oliva");
         carpaccio.setPrecio(28900.0);
@@ -120,7 +120,7 @@ public class DatabaseInit implements CommandLineRunner {
         comidaRepository.save(carpaccio);
         
         // PIZZAS
-        comida margherita = new comida();
+        Comida margherita = new Comida();
         margherita.setNombre("Pizza Margherita");
         margherita.setDescripcion("Salsa de tomate, mozzarella fresca, albahaca y aceite de oliva");
         margherita.setPrecio(24900.0);
@@ -129,7 +129,7 @@ public class DatabaseInit implements CommandLineRunner {
         margherita.setTiempoPreparacion(20);
         comidaRepository.save(margherita);
         
-        comida pizzaNera = new comida();
+        Comida pizzaNera = new Comida();
         pizzaNera.setNombre("Pizza Nera");
         pizzaNera.setDescripcion("Masa negra con calamares, gamberi y salsa especial");
         pizzaNera.setPrecio(35900.0);
@@ -139,7 +139,7 @@ public class DatabaseInit implements CommandLineRunner {
         pizzaNera.setEsEspecialidad(true);
         comidaRepository.save(pizzaNera);
         
-        comida pepperoni = new comida();
+        Comida pepperoni = new Comida();
         pepperoni.setNombre("Pizza Pepperoni");
         pepperoni.setDescripcion("Salsa de tomate, mozzarella y pepperoni italiano");
         pepperoni.setPrecio(27900.0);
@@ -149,7 +149,7 @@ public class DatabaseInit implements CommandLineRunner {
         comidaRepository.save(pepperoni);
         
         // PASTAS
-        comida carbonara = new comida();
+        Comida carbonara = new Comida();
         carbonara.setNombre("Pasta Carbonara");
         carbonara.setDescripcion("Espaguetis con panceta, huevo, parmesano y pimienta negra");
         carbonara.setPrecio(26900.0);
@@ -158,7 +158,7 @@ public class DatabaseInit implements CommandLineRunner {
         carbonara.setTiempoPreparacion(18);
         comidaRepository.save(carbonara);
         
-        comida bolognesa = new comida();
+        Comida bolognesa = new Comida();
         bolognesa.setNombre("Pasta Bolognesa");
         bolognesa.setDescripcion("Tagliatelle con salsa bolognesa tradicional de carne");
         bolognesa.setPrecio(24900.0);
@@ -167,7 +167,7 @@ public class DatabaseInit implements CommandLineRunner {
         bolognesa.setTiempoPreparacion(22);
         comidaRepository.save(bolognesa);
         
-        comida alfredo = new comida();
+        Comida alfredo = new Comida();
         alfredo.setNombre("Fettuccine Alfredo");
         alfredo.setDescripcion("Fettuccine con salsa cremosa de mantequilla y parmesano");
         alfredo.setPrecio(23900.0);
@@ -177,7 +177,7 @@ public class DatabaseInit implements CommandLineRunner {
         comidaRepository.save(alfredo);
         
         // RISOTTOS
-        comida risottoTartufo = new comida();
+        Comida risottoTartufo = new Comida();
         risottoTartufo.setNombre("Risotto al Tartufo");
         risottoTartufo.setDescripcion("Risotto cremoso con trufa negra y parmesano");
         risottoTartufo.setPrecio(38900.0);
@@ -187,7 +187,7 @@ public class DatabaseInit implements CommandLineRunner {
         risottoTartufo.setEsEspecialidad(true);
         comidaRepository.save(risottoTartufo);
         
-        comida risottoFunghi = new comida();
+        Comida risottoFunghi = new Comida();
         risottoFunghi.setNombre("Risotto ai Funghi");
         risottoFunghi.setDescripcion("Risotto con mezcla de hongos porcini y champignones");
         risottoFunghi.setPrecio(29900.0);
@@ -197,7 +197,7 @@ public class DatabaseInit implements CommandLineRunner {
         comidaRepository.save(risottoFunghi);
         
         // POSTRES
-        comida tiramisu = new comida();
+        Comida tiramisu = new Comida();
         tiramisu.setNombre("Tiramisu");
         tiramisu.setDescripcion("Postre tradicional italiano con café, mascarpone y cacao");
         tiramisu.setPrecio(16900.0);
@@ -206,7 +206,7 @@ public class DatabaseInit implements CommandLineRunner {
         tiramisu.setTiempoPreparacion(5);
         comidaRepository.save(tiramisu);
         
-        comida cannoli = new comida();
+        Comida cannoli = new Comida();
         cannoli.setNombre("Cannoli Siciliani");
         cannoli.setDescripcion("Tubitos crujientes rellenos de ricotta y pistachos");
         cannoli.setPrecio(14900.0);
@@ -216,7 +216,7 @@ public class DatabaseInit implements CommandLineRunner {
         comidaRepository.save(cannoli);
         
         // BEBIDAS
-        comida vinoTinto = new comida();
+        Comida vinoTinto = new Comida();
         vinoTinto.setNombre("Vino Tinto Reservado");
         vinoTinto.setDescripcion("Vino tinto italiano de la casa");
         vinoTinto.setPrecio(45900.0);
@@ -225,7 +225,7 @@ public class DatabaseInit implements CommandLineRunner {
         vinoTinto.setTiempoPreparacion(2);
         comidaRepository.save(vinoTinto);
         
-        comida aguaGas = new comida();
+        Comida aguaGas = new Comida();
         aguaGas.setNombre("Agua con Gas");
         aguaGas.setDescripcion("Agua mineral con gas San Pellegrino");
         aguaGas.setPrecio(6900.0);

@@ -9,7 +9,7 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 
 @Service
-public class validationService {
+public class ValidationService {
 
     @Autowired
     private UserRepository userRepository;

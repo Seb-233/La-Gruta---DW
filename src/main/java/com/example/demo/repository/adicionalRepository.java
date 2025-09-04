@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.demo.model.Adicional;
 
-public interface adicionalRepository extends JpaRepository<Adicional, Long> {
+public interface AdicionalRepository extends JpaRepository<Adicional, Long> {
 
     // Lista por ID de categoría (JOIN por la propiedad "categoria")
     List<Adicional> findByCategoriaId(Long categoriaId);

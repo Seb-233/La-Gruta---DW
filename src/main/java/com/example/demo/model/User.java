@@ -22,7 +22,7 @@ public class User {
     private Long id;
 
     @OneToMany(mappedBy = "user")
-    private List<comida> comidas = new ArrayList<>();
+    private List<Comida> comidas = new ArrayList<>();
 
     public User(Long id, String username, String password){
         this.id = id;
@@ -67,11 +67,11 @@ public class User {
         this.password = password;
     }
 
-    public List<comida> getComidas() {
+    public List<Comida> getComidas() {
         return comidas;
     }
 
-    public void setComidas(List<comida> comidas) {
+    public void setComidas(List<Comida> comidas) {
         this.comidas = comidas;
     }
 

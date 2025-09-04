@@ -5,22 +5,22 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.model.comida;
-import com.example.demo.repository.comidaRepository;
+import com.example.demo.model.Comida;
+import com.example.demo.repository.ComidaRepository;
 
 @Service
-public class comidaServiceImpl implements comidaService {
+public class ComidaServiceImpl implements ComidaService {
 
     @Autowired
-    comidaRepository repo;
+    ComidaRepository repo;
 
     @Override
-    public comida SearchById(Long id) {
+    public Comida searchById(Long id) {
         return repo.findById(id).get();
     }
 
     @Override
-    public Collection<comida> SearchAll() {
+    public Collection<Comida> searchAll() {
         return repo.findAll();
     }
 
@@ -30,12 +30,12 @@ public class comidaServiceImpl implements comidaService {
     }
 
     @Override
-    public void update(comida comida) {
+    public void update(Comida comida) {
         repo.save(comida);
     }
 
     @Override
-    public void add(comida comida) {
+    public void add(Comida comida) {
         repo.save(comida);
     }
 }

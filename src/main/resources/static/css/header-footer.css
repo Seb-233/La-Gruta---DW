@@ -203,3 +203,62 @@ body {
     font-size: 0.9rem;
   }
 }
+
+/* HEADER sólido (no flotante) */
+.header-solid {
+  position: relative; /* ya no es absolute ni fixed */
+  width: 100%;
+  background-color: #4A3B34; /* mismo tono del footer */
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  z-index: 1000;
+}
+
+/* Links del header sólido */
+.header-solid .nav-link {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+  color: #FCE8C7 !important;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+.header-solid .nav-link:hover {
+  color: #FFD700 !important;
+  transform: translateY(-2px);
+}
+
+/* Logo centrado en el header sólido */
+.header-solid .logo-central img {
+  height: 95px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+}
+
+.btn-menu {
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #8B0000;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #8B0000;
+  transition: all 0.3s ease;
+  text-decoration: none;
+
+  margin-bottom: 1rem; /* 👈 separa el botón del borde blanco */
+}
+
+
+.btn-menu:hover {
+  background-color: #8B0000;
+  color: #fff;
+}
+
+.plato-estrella {
+  padding-bottom: 3rem; /* 👈 añade espacio al fondo de la sección */
+}
+
+.plato-estrella h2 {
+  font-family: 'Playfair Display', serif; /* fuente elegante */
+  font-size: 2.5rem; /* tamaño grande */
+  margin-top: 2rem; /* más espacio arriba */
+  margin-bottom: 1.5rem; /* espacio hacia el botón */
+}

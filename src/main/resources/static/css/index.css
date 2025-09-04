@@ -191,3 +191,22 @@
   background: #b22222;
   color: #fff;
 }
+
+.carousel-caption.custom-caption {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.carousel-caption h1, 
+.carousel-caption h2 {
+  color: white;
+  font-weight: bold;
+}
+
+.carousel-caption p {
+  color: white;
+  font-size: 1.2rem;
+}

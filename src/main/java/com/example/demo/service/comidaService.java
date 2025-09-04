@@ -1,18 +1,18 @@
 package com.example.demo.service;
 
-import com.example.demo.model.comida;
+import com.example.demo.model.Comida;
 
 import java.util.Collection;
 
-public interface comidaService {
+public interface ComidaService {
 
-    public comida SearchById(Long id);
+    public Comida searchById(Long id);
 
-    public Collection<comida> SearchAll();
+    public Collection<Comida> searchAll();
 
     public void deleteById(Long id);
 
-    public void update(comida comida);
+    public void update(Comida comida);
 
-    public void add(comida comida);
+    public void add(Comida comida);
 }

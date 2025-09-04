@@ -6,15 +6,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.example.demo.service.comidaService;
+import com.example.demo.service.ComidaService;
 
 @Controller
 @RequestMapping("/la_gruta")
 //http://localhost:8080/la_gruta/index
-public class indexController {
+public class IndexController {
 
     @Autowired
-    private comidaService comidaService;
+    private ComidaService comidaService;
 
     @GetMapping("/index")
     public String index() {
@@ -23,7 +23,7 @@ public class indexController {
 
     @GetMapping("/menu")
     public String menu(Model model) {
-        model.addAttribute("comidas", comidaService.SearchAll());
+        model.addAttribute("comidas", comidaService.searchAll());
         return "menu";
     }
 
@@ -44,7 +44,7 @@ public class indexController {
 
     @GetMapping("/tabla_comidas")
     public String tablaComidas(Model model) {
-        model.addAttribute("comidas", comidaService.SearchAll());
+        model.addAttribute("comidas", comidaService.searchAll());
         return "tabla-comidas";
     }
 

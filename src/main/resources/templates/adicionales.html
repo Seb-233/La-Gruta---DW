@@ -7,16 +7,9 @@
   <link rel="stylesheet" th:href="@{/css/adicionales.css}">
 </head>
 <body>
-  <header class="site">
-    <div class="container">
-      <div class="brand">La Gruta</div>
-      <nav>
-        <a th:href="@{/menu}">Menú</a>
-        <a th:href="@{/restaurantes}">Restaurantes</a>
-        <a th:href="@{/}">Inicio</a>
-        <a th:href="@{/contacto}">Contacto</a>
-      </nav>
-    </div>
+  <!-- Header -->
+  <header>
+    <div th:replace="fragments :: solid-header"></div>
   </header>
 
   <main class="container">
@@ -40,7 +33,10 @@
     </div>
   </main>
 
-  
+  <!-- Footer -->
+  <footer id="contacto">
+    <div th:replace="fragments :: footer"></div>
+  </footer>
 
   <script th:src="@{/js/cart.js}"></script>
   <script>
