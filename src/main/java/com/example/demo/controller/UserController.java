@@ -56,6 +56,7 @@ public class UserController {
         userService.add(user);
 
         if ("ADMIN".equals(role)) {
+
             return "redirect:users";
         } else {
             return "redirect:la_gruta/login";
