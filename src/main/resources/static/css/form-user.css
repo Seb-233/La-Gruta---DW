@@ -1,0 +1,79 @@
+/* ===== FORMULARIO CLIENTE ===== */
+.form-cliente-container {
+  max-width: 600px;
+  margin: 60px auto;
+  background: #fff;
+  border: 2px solid #FFD700; /* borde dorado */
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.form-cliente-container h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #b22222;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.form-cliente-container label {
+  font-weight: bold;
+  color: #4a3b34;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.form-cliente-container input,
+.form-cliente-container select {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.form-cliente-container input:focus,
+.form-cliente-container select:focus {
+  border-color: #FFD700;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+  outline: none;
+}
+
+.form-cliente-container button {
+  background: #b22222;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 30px;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.form-cliente-container button:hover {
+  background: #8b1a1a;
+  transform: translateY(-3px);
+}
+
+/* ===== MENSAJES ===== */
+.form-message {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.form-message.success {
+  color: #228B22;
+}
+
+.form-message.error {
+  color: #b22222;
+}
