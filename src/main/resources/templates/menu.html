@@ -33,7 +33,8 @@
               <div class="mt-auto d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <span class="fw-bold" th:text="${comida.precio}"></span>
-                  <a class="btn btn-order" th:href="@{/adicionales/comida/{id}(id=${comida.id})}">Ver Adicionales</a>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+
                 </div>
                 <div class="quantity-controls mb-2">
                   <button class="btn btn-sm btn-secondary minus">-</button>
@@ -64,7 +65,8 @@
               <div class="mt-auto d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <span class="fw-bold" th:text="${comida.precio}"></span>
-                  <a class="btn btn-order" th:href="@{/adicionales/comida/{id}(id=${comida.id})}">Ver Adicionales</a>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+
                 </div>
                 <div class="quantity-controls mb-2">
                   <button class="btn btn-sm btn-secondary minus">-</button>
@@ -95,7 +97,8 @@
               <div class="mt-auto d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <span class="fw-bold" th:text="${comida.precio}"></span>
-                  <a class="btn btn-order" th:href="@{/adicionales/comida/{id}(id=${comida.id})}">Ver Adicionales</a>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+
                 </div>
                 <div class="quantity-controls mb-2">
                   <button class="btn btn-sm btn-secondary minus">-</button>
@@ -126,7 +129,8 @@
               <div class="mt-auto d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <span class="fw-bold" th:text="${comida.precio}"></span>
-                  <a class="btn btn-order" th:href="@{/adicionales/comida/{id}(id=${comida.id})}">Ver Adicionales</a>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+
                 </div>
                 <div class="quantity-controls mb-2">
                   <button class="btn btn-sm btn-secondary minus">-</button>
@@ -157,7 +161,8 @@
               <div class="mt-auto d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <span class="fw-bold" th:text="${comida.precio}"></span>
-                  <a class="btn btn-order" th:href="@{/adicionales/comida/{id}(id=${comida.id})}">Ver Adicionales</a>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+
                 </div>
                 <div class="quantity-controls mb-2">
                   <button class="btn btn-sm btn-secondary minus">-</button>
@@ -188,7 +193,8 @@
               <div class="mt-auto d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <span class="fw-bold" th:text="${comida.precio}"></span>
-                  <a class="btn btn-order" th:href="@{/adicionales/comida/{id}(id=${comida.id})}">Ver Adicionales</a>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+
                 </div>
                 <div class="quantity-controls mb-2">
                   <button class="btn btn-sm btn-secondary minus">-</button>
@@ -222,9 +228,25 @@
       </div>
     </div>
   </div>
+<!-- Modal de Adicionales -->
+<div class="modal fade" id="adicionalesModal" tabindex="-1" aria-labelledby="adicionalesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="adicionalesModalLabel">Adicionales</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="adicionalesContent">
+        Cargando...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </main>
-
-
 
   <!-- Footer -->
   <footer id="contacto">

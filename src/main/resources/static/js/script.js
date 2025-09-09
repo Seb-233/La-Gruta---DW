@@ -239,4 +239,80 @@ document.getElementById('checkoutForm')?.addEventListener('submit', function(e) 
   this.reset();
 });
 
+// Botones "Ver Adicionales"
+document.querySelectorAll('.btn-order').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    e.preventDefault();
 
+    const comidaCard = btn.closest('.card');
+    const comidaNombre = comidaCard.querySelector('.card-title').textContent;
+
+    const modalContent = document.getElementById('adicionalesContent');
+    modalContent.innerHTML = 'Cargando...';
+
+    try {
+      const res = await fetch('/la_gruta/adicionales/todos');
+      if (!res.ok) throw new Error('Error al cargar adicionales');
+      const adicionales = await res.json();
+
+      if (adicionales.length === 0) {
+        modalContent.innerHTML = '<p>No hay adicionales disponibles.</p>';
+      } else {
+        let html = `<h6>Adicionales disponibles para ${comidaNombre}:</h6>`;
+        html += `<table class="table table-striped mt-2">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Descripción</th>
+                      <th>Precio</th>
+                    </tr>
+                  </thead>
+                  <tbody>`;
+        adicionales.forEach(a => {
+          html += `<tr>
+                    <td>${a.nombre}</td>
+                    <td>${a.descripcion || '-'}</td>
+                    <td>$${a.precio.toFixed(2)}</td>
+                    <td>
+                      <button class="btn btn-sm btn-success btn-add-adicional" data-adicional-id="${a.id}" data-comida-id="${comidaCard.dataset.id}">
+                        Agregar
+                      </button>
+                    </td>
+                  </tr>`;
+        });
+        html += `</tbody></table>`;
+        modalContent.innerHTML = html;
+      }
+
+      const modalEl = document.getElementById('adicionalesModal');
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+
+    } catch (err) {
+      modalContent.innerHTML = '<p>No se pudieron cargar los adicionales.</p>';
+      console.error(err);
+    }
+  });
+});
+
+document.getElementById('adicionalesContent').addEventListener('click', async (e) => {
+  if (e.target.classList.contains('btn-add-adicional')) {
+    const idComida = e.target.dataset.comidaId;
+    const idAdicional = e.target.dataset.adicionalId;
+
+    try {
+      const res = await fetch('/la_gruta/adicionales/asociar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idComida, idAdicional })
+      });
+
+      if (!res.ok) throw new Error('Error al asociar adicional');
+
+      alert('Adicional agregado correctamente a la comida');
+    } catch (err) {
+      console.error(err);
+      alert('No se pudo asociar el adicional');
+    }
+  }
+});

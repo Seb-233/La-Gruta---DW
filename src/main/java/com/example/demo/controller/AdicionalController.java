@@ -1,12 +1,18 @@
 package com.example.demo.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.Adicional;
+import com.example.demo.model.Comida;
 import com.example.demo.repository.AdicionalRepository;
 import com.example.demo.repository.CategoriaRepository;
+import com.example.demo.repository.ComidaRepository;
 
 @Controller
 @RequestMapping("/la_gruta/adicionales")
@@ -14,10 +20,12 @@ public class AdicionalController {
 
     private final AdicionalRepository adicionalRepo;
     private final CategoriaRepository categoriaRepo;
+    private final ComidaRepository comidaRepo;
 
-    public AdicionalController(AdicionalRepository adicionalRepo, CategoriaRepository categoriaRepo) {
+    public AdicionalController(AdicionalRepository adicionalRepo, CategoriaRepository categoriaRepo, ComidaRepository comidaRepo) {
         this.adicionalRepo = adicionalRepo;
         this.categoriaRepo = categoriaRepo;
+        this.comidaRepo = comidaRepo;
     }
 
     @GetMapping
@@ -57,4 +65,51 @@ public class AdicionalController {
         }
         return "redirect:/la_gruta/adicionales";
     }
+
+    @GetMapping("/todos")
+    @ResponseBody
+    public List<Map<String, Object>> listarTodosAdicionales() {
+        return adicionalRepo.findAll().stream()
+                .map(a -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", a.getId());
+                    map.put("nombre", a.getNombre());
+                    map.put("descripcion", a.getDescripcion());
+                    map.put("precio", a.getPrecio());
+                    map.put("imagen", a.getImagen());
+                    return map;
+                })
+                .toList();
+    }
+
+    @PostMapping("/asociar")
+@ResponseBody
+public Map<String, String> asociarAdicional(@RequestBody Map<String, Long> payload) {
+    Long idComida = payload.get("idComida");
+    Long idAdicional = payload.get("idAdicional");
+
+    Map<String, String> response = new HashMap<>();
+
+    try {
+        // Obtener la comida y el adicional
+        Comida comida = comidaRepo.findById(idComida)
+                .orElseThrow(() -> new RuntimeException("Comida no encontrada"));
+        Adicional adicional = adicionalRepo.findById(idAdicional)
+                .orElseThrow(() -> new RuntimeException("Adicional no encontrado"));
+
+        // Asociar adicional a la comida
+        comida.getAdicionales().add(adicional); // suponiendo que Comida tiene Set<Adicional> adicionales
+        comidaRepo.save(comida);
+
+        response.put("status", "ok");
+        response.put("message", "Adicional agregado correctamente");
+    } catch (Exception e) {
+        response.put("status", "error");
+        response.put("message", e.getMessage());
+    }
+
+    return response;
+}
+
+
 }
