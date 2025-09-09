@@ -10,6 +10,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,12 +29,16 @@ public class Adicional {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre es obligatorio")
     @Column(nullable = false)
     private String nombre;
 
+    @Size(max = 500, message = "La descripción no puede exceder 500 caracteres")
     @Column(length = 500)
     private String descripcion;
 
+    @NotNull(message = "El precio es obligatorio")
+    @Positive(message = "El precio debe ser mayor a 0")
     @Column(nullable = false)
     private Double precio;
 
@@ -39,6 +47,7 @@ public class Adicional {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id")
+    @NotNull(message = "Seleccione una categoría")
     private Categoria categoria;
 
     /*@OneToMany(fetch = FetchType.LAZY)

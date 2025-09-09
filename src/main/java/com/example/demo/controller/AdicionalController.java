@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.demo.model.Adicional;
 import com.example.demo.repository.AdicionalRepository;
 import com.example.demo.repository.CategoriaRepository;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/adicionales")
@@ -41,7 +43,13 @@ public class AdicionalController {
 
     // Guardar adicional
     @PostMapping("/guardar")
-    public String guardarAdicional(@ModelAttribute Adicional adicional) {
+    public String guardarAdicional(@Valid @ModelAttribute("adicional") Adicional adicional,
+                                   BindingResult result,
+                                   Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("categorias", categoriaRepo.findAll());
+            return "form-adicional";
+        }
         adicionalRepo.save(adicional);
         return "redirect:/adicionales";
     }
