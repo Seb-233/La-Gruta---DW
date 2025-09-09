@@ -1,144 +1,80 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="${adicional.id != null} ? 'Editar Adicional' : 'Nuevo Adicional'">
-      Formulario Adicional
-    </title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${adicional.id != null} ? 'Editar Adicional' : 'Nuevo Adicional'">Formulario Adicional</title>
 
-    <!-- Bootstrap -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;500;700&family=Playfair+Display:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    
-    <link rel="stylesheet" href="/css/header-footer.css" />
-    <link rel="stylesheet" href="/css/form-adicional.css" />
-  </head>
-  <body>
-    <!-- Header -->
-<header th:fragment="solid-header" class="header-solid">
-        <nav class="container-fluid d-flex justify-content-between align-items-center position-relative">
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
 
-            <!-- Menú izquierdo -->
-            <ul class="navbar-nav flex-row gap-4 left-menu">
-                <li class="nav-item"><a class="nav-link" href="menu">Menú</a></li>
-                <li class="nav-item"><a class="nav-link" href="restaurantes">Restaurantes</a></li>
-                <li class="nav-item"><a class="nav-link" href="index#sobre-nosotros">Nosotros</a></li>
-            </ul>
+  <link rel="stylesheet" href="/css/header-footer.css" />
+  <link rel="stylesheet" href="/css/form-adicional.css" />
+</head>
+<body>
 
-            <!-- Logo centrado -->
-            <a class="navbar-brand logo-central position-absolute top-50 start-50 translate-middle" href="index">
-                <img src="../static/images/logoGruta.png" alt="Logo La Gruta Nera">
-            </a>
+<!-- Header -->
+<header>
+  <div th:replace="fragments :: no-login-header"></div>
+</header>
 
-            <!-- Menú derecho -->
-            <ul class="navbar-nav flex-row gap-4 right-menu align-items-center">
-                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-                <li class="nav-item"><a class="nav-link btn btn-reserva-header" href="login">Login</a></li>
-                <li class="nav-item"><a class="nav-link btn btn-reserva-header" href="#reservas">Reserva Aquí</a></li>
-            </ul>
+<main class="container my-5">
+  <h2 class="text-center mb-4" th:text="${adicional.id != null} ? 'Editar Adicional' : 'Nuevo Adicional'"></h2>
 
-        </nav>
-    </header>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form th:action="@{/la_gruta/adicionales/guardar}" th:object="${adicional}" method="post" class="p-4 border rounded shadow-sm bg-light">
+        <input type="hidden" th:field="*{id}" />
 
-    <!-- Contenido principal -->
-    <main class="container my-5">
-      <h2
-        class="text-center mb-4"
-        th:text="${adicional.id != null} ? 'Editar Adicional' : 'Nuevo Adicional'"
-      ></h2>
-
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <form
-            th:action="@{/adicionales/guardar}"
-            th:object="${adicional}"
-            method="post"
-            class="p-4 border rounded shadow-sm bg-light"
-          >
-            <input type="hidden" th:field="*{id}" />
-
-            <div class="mb-3">
-              <label class="form-label">Nombre</label>
-              <input
-                type="text"
-                class="form-control"
-                th:field="*{nombre}"
-                required
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Descripción</label>
-              <textarea
-                class="form-control"
-                th:field="*{descripcion}"
-                rows="3"
-              ></textarea>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Precio</label>
-              <input
-                type="number"
-                step="0.01"
-                class="form-control"
-                th:field="*{precio}"
-                required
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Categoría</label>
-              <select class="form-select" th:field="*{categoria.id}" required>
-                <option
-                  value=""
-                  disabled
-                  th:selected="${adicional.categoria == null}"
-                >
-                  -- Seleccione una categoría --
-                </option>
-                <option
-                  th:each="cat : ${categorias}"
-                  th:value="${cat.id}"
-                  th:text="${cat.nombre}"
-                  th:selected="${adicional.categoria != null and adicional.categoria.id == cat.id}"
-                ></option>
-              </select>
-            </div>
-
-            <div class="mb-3 form-check">
-              <input
-                type="checkbox"
-                class="form-check-input"
-                th:field="*{disponible}"
-              />
-              <label class="form-check-label">Disponible</label>
-            </div>
-
-            <div class="d-flex justify-content-between">
-              <a th:href="@{/adicionales}" class="btn btn-secondary">Cancelar</a>
-              <button type="submit" class="btn btn-danger">Guardar</button>
-            </div>
-          </form>
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" th:field="*{nombre}" required />
         </div>
-      </div>
-    </main>
 
-    <!-- Footer -->
-    <footer id="contacto">
-      <div th:replace="fragments :: footer"></div>
-    </footer>
+        <div class="mb-3">
+          <label class="form-label">Descripción</label>
+          <textarea class="form-control" th:field="*{descripcion}" rows="3"></textarea>
+        </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/script.js"></script>
-  </body>
+        <div class="mb-3">
+          <label class="form-label">Precio</label>
+          <input type="number" step="0.01" class="form-control" th:field="*{precio}" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Categoría</label>
+          <select class="form-select" th:field="*{categoria.id}" required>
+            <option value="" disabled th:selected="${adicional.categoria == null}">-- Seleccione una categoría --</option>
+            <option th:each="cat : ${categorias}" 
+                    th:value="${cat.id}" 
+                    th:text="${cat.nombre}" 
+                    th:selected="${adicional.categoria != null and adicional.categoria.id == cat.id}"></option>
+          </select>
+        </div>
+
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" th:field="*{disponible}" />
+          <label class="form-check-label">Disponible</label>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <a th:href="@{/la_gruta/adicionales}" class="btn btn-secondary">Cancelar</a>
+          <button type="submit" class="btn btn-danger">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer id="contacto">
+  <div th:replace="fragments :: footer"></div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/script.js"></script>
+</body>
 </html>
