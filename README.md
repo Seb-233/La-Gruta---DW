@@ -46,6 +46,13 @@ Nuestra visión no solo se sostiene en la cocina, sino también en un sistema qu
 
 La tecnología es nuestro aliado silencioso: ayuda a que todo funcione con fluidez para que el foco esté donde debe estar, en **el sabor y la experiencia de nuestros clientes**.  
 
+## Paleta de colores
+- Marrón piedra oscura #4A3B34 — Títulos y enfasis.
+- Marrón medio #7B5E48 — Subtítulos, líneas, detalles.
+- Beige cálido #D4B483 — Fondos suaves / detalles.
+- Ocre luminoso #E6A756 — Acentos discretos.
+- Luz cálida #FCE8C7 — Fondo de portada / bloques.
+
 ---
 
 ## 📞 Contacto  
