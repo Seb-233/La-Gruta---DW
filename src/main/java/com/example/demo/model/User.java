@@ -15,7 +15,9 @@ public class User {
     
     private String username;
     private String password;
-    private String role; 
+    private String role;
+    private String direccion;
+    private String telefono; 
 
     @Id
     @GeneratedValue
@@ -78,6 +80,22 @@ public class User {
     public void setRole(String role) { 
         this.role = role; 
     }
+
+    public String getDireccion() {
+    return direccion;
+}
+
+public void setDireccion(String direccion) {
+    this.direccion = direccion;
+}
+
+public String getTelefono() {
+    return telefono;
+}
+
+public void setTelefono(String telefono) {
+    this.telefono = telefono;
+}
 
     
 }

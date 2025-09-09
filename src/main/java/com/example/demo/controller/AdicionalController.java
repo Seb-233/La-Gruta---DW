@@ -1,99 +1,70 @@
 package com.example.demo.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.model.Adicional;
-import com.example.demo.model.Categoria;
-import com.example.demo.model.Comida;
-import com.example.demo.repository.CategoriaRepository;
 import com.example.demo.repository.AdicionalRepository;
-import com.example.demo.repository.ComidaRepository;
+import com.example.demo.repository.CategoriaRepository;
 
 @Controller
-@RequestMapping("/la_gruta")
+@RequestMapping("/adicionales")
 public class AdicionalController {
 
-    @Autowired
-    private ComidaRepository comidaRepository;
+    private final AdicionalRepository adicionalRepo;
+    private final CategoriaRepository categoriaRepo;
 
-    @Autowired
-    private AdicionalRepository adicionalRepository;
-
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-
-    /** 
-     * Vista: adicionales para una comida específica.
-     * Toma la CATEGORÍA de la comida y lista sus adicionales.
-     */
-    @GetMapping("/adicionales/comida/{id}")
-    public String adicionalesPorComida(@PathVariable Long id, Model model) {
-        Optional<Comida> maybe = comidaRepository.findById(id);
-        if (maybe.isEmpty()) {
-            // si la comida no existe, muestro vista general
-            model.addAttribute("adicionales", adicionalRepository.findAll());
-            return "adicionales";
-        }
-
-        Comida c = maybe.get();
-        List<Adicional> lista = Collections.emptyList();
-
-        if (c.getCategoria() != null) {
-            // usa el método por categoriaId (ajústalo si tu repo expone otro nombre)
-            lista = adicionalRepository.findByCategoriaId(c.getCategoria().getId());
-        }
-
-        model.addAttribute("comida", c);
-        model.addAttribute("adicionales", lista);
-        return "adicionales";
+    public AdicionalController(AdicionalRepository adicionalRepo, CategoriaRepository categoriaRepo) {
+        this.adicionalRepo = adicionalRepo;
+        this.categoriaRepo = categoriaRepo;
     }
 
-
-   @GetMapping("/adicionales/view")
-public String verAdicionales(Model model) {
-    model.addAttribute("adicionales", adicionalRepository.findAll());
-    return "adicionales"; // -> templates/adicionales.html
-}
-
-
-
-   
-    @GetMapping("/adicionales/api/comida/{id}")
-    @ResponseBody
-    public List<Map<String, Object>> apiAdicionalesPorComida(@PathVariable Long id) {
-        Comida c = comidaRepository.findById(id).orElse(null);
-        if (c == null || c.getCategoria() == null) return List.of();
-
-        List<Adicional> lista = adicionalRepository.findByCategoriaId(c.getCategoria().getId());
-        List<Map<String, Object>> out = new ArrayList<>();
-        for (Adicional a : lista) {
-            Map<String, Object> m = new HashMap<>();
-            m.put("id", a.getId());
-            m.put("nombre", a.getNombre());
-            m.put("precio", a.getPrecio());
-            out.add(m);
-        }
-        return out;
+    // Listar todos los adicionales
+    @GetMapping
+    public String listarAdicionales(Model model) {
+        model.addAttribute("adicionales", adicionalRepo.findAll());
+        return "tabla_adicionales"; // templates/tabla_adicionales.html
     }
 
-    @GetMapping("/adicionales/categoria/{slug}")
-    public String verPorCategoria(@PathVariable String slug, Model model) {
-        Categoria cat = categoriaRepository.findBySlug(slug).orElse(null);
-        List<Adicional> lista = (cat == null) ? List.of() : adicionalRepository.findByCategoriaId(cat.getId());
-        model.addAttribute("adicionales", lista);
-        return "adicionales";
+    // Mostrar formulario para nuevo adicional
+    @GetMapping("/nuevo")
+    public String mostrarFormulario(Model model) {
+        model.addAttribute("adicional", new Adicional());
+        model.addAttribute("categorias", categoriaRepo.findAll());
+        return "form-adicional"; // templates/form-adicional.html
+    }
+
+    // Guardar adicional
+    @PostMapping("/guardar")
+    public String guardarAdicional(@ModelAttribute Adicional adicional) {
+        adicionalRepo.save(adicional);
+        return "redirect:/adicionales";
+    }
+
+    // Editar adicional
+    @GetMapping("/editar/{id}")
+    public String editarAdicional(@PathVariable Long id, Model model) {
+        return adicionalRepo.findById(id)
+                .map(adicional -> {
+                    model.addAttribute("adicional", adicional);
+                    model.addAttribute("categorias", categoriaRepo.findAll());
+                    return "form-adicional";
+                })
+                .orElse("redirect:/adicionales");
+    }
+
+    // Eliminar adicional
+    @GetMapping("/eliminar/{id}")
+    public String eliminarAdicional(@PathVariable Long id) {
+        if (adicionalRepo.existsById(id)) {
+            adicionalRepo.deleteById(id);
+        }
+        return "redirect:/adicionales";
     }
 }
+

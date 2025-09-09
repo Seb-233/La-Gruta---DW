@@ -17,56 +17,93 @@
 </head>
 <body>
 
-    <!-- HEADER -->
-    <header th:fragment="transparent-header" class="header-transparent">
-        <nav class="container-fluid d-flex justify-content-between align-items-center position-relative">
+<!-- HEADER -->
+<header th:fragment="transparent-header" class="header-transparent">
+    <nav class="container-fluid d-flex justify-content-between align-items-center position-relative">
 
-            <!-- Menú izquierdo -->
-            <ul class="navbar-nav flex-row gap-4 left-menu">
-                <li class="nav-item"><a class="nav-link" href="menu">Menú</a></li>
-                <li class="nav-item"><a class="nav-link" href="restaurantes">Restaurantes</a></li>
-            </ul>
+        <!-- Menú izquierdo -->
+        <ul class="navbar-nav flex-row gap-4 left-menu">
+            <li class="nav-item"><a class="nav-link" href="menu">Menú</a></li>
+            <li class="nav-item"><a class="nav-link" href="restaurantes">Restaurantes</a></li>
+        </ul>
 
-            <!-- Logo centrado -->
-            <a class="navbar-brand logo-central position-absolute top-50 start-50 translate-middle" href="index">
+        <!-- Logo centrado -->
+        <a class="navbar-brand logo-central position-absolute top-50 start-50 translate-middle" href="index">
             <img src="../images/logoGruta.png" alt="Logo La Gruta Nera">
-            </a>
+        </a>
 
-            <!-- Menú derecho -->
-            <ul class="navbar-nav flex-row gap-4 right-menu align-items-center">
-                <li class="nav-item"><a class="nav-link" href="#sobre-nosotros">Nosotros</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-                <li class="nav-item"><a class="nav-link btn btn-reserva-header" href="login">Login</a></li>
-            </ul>
+        <!-- Menú derecho -->
+        <ul class="navbar-nav flex-row gap-4 right-menu align-items-center">
+            <li class="nav-item"><a class="nav-link" href="#sobre-nosotros">Nosotros</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
 
-        </nav>
-    </header>
+            <!-- Login o Perfil -->
+            <li th:if="${session.username == null}" class="nav-item">
+                <a class="nav-link btn btn-reserva-header" href="login">Login</a>
+            </li>
 
-    <!-- HEADER (no flotante) -->
-    <header th:fragment="solid-header" class="header-solid">
-        <nav class="container-fluid d-flex justify-content-between align-items-center position-relative">
+            <li th:if="${session.username != null}" class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" 
+                   id="profileDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="@{/images/perfil.png}" alt="Perfil" class="rounded-circle" style="width:40px; height:40px;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="profileDropdown1">
+                    <li class="dropdown-item-text fw-bold" th:text="${session.username}"></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" th:href="@{'/profile/edit/' + ${session.userId}}">Editar Perfil</a></li>
 
-            <!-- Menú izquierdo -->
-            <ul class="navbar-nav flex-row gap-4 left-menu">
-                <li class="nav-item"><a class="nav-link" href="menu">Menú</a></li>
-                <li class="nav-item"><a class="nav-link" href="restaurantes">Restaurantes</a></li>
-                <li class="nav-item"><a class="nav-link" href="index#sobre-nosotros">Nosotros</a></li>
-            </ul>
+                </ul>
+            </li>
+        </ul>
 
-            <!-- Logo centrado -->
-            <a class="navbar-brand logo-central position-absolute top-50 start-50 translate-middle" href="index">
-                <img src="../images/logoGruta.png" alt="Logo La Gruta Nera">
-            </a>
+    </nav>
+</header>
 
-            <!-- Menú derecho -->
-            <ul class="navbar-nav flex-row gap-4 right-menu align-items-center">
-                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-                <li class="nav-item"><a class="nav-link btn btn-reserva-header" href="login">Login</a></li>
-                <li class="nav-item"><a class="nav-link btn btn-reserva-header" href="#reservas">Reserva Aquí</a></li>
-            </ul>
 
-        </nav>
-    </header>
+<!-- HEADER (no flotante) -->
+<header th:fragment="solid-header" class="header-solid">
+    <nav class="container-fluid d-flex justify-content-between align-items-center position-relative">
+
+        <!-- Menú izquierdo -->
+        <ul class="navbar-nav flex-row gap-4 left-menu">
+            <li class="nav-item"><a class="nav-link" href="menu">Menú</a></li>
+            <li class="nav-item"><a class="nav-link" href="restaurantes">Restaurantes</a></li>
+            <li class="nav-item"><a class="nav-link" href="index#sobre-nosotros">Nosotros</a></li>
+        </ul>
+
+        <!-- Logo centrado -->
+        <a class="navbar-brand logo-central position-absolute top-50 start-50 translate-middle" href="index">
+            <img src="../static/images/logoGruta.png" alt="Logo La Gruta Nera">
+        </a>
+
+        <!-- Menú derecho -->
+        <ul class="navbar-nav flex-row gap-4 right-menu align-items-center">
+            <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+            <li class="nav-item"><a class="nav-link btn btn-reserva-header" href="#reservas">Reserva Aquí</a></li>
+
+            <!-- Login o Perfil -->
+            <li th:if="${session.username == null}" class="nav-item">
+                <a class="nav-link btn btn-reserva-header" href="login">Login</a>
+            </li>
+
+            <li th:if="${session.username != null}" class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" 
+                   id="profileDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="../images/perfil.png" alt="Perfil" class="rounded-circle" style="width:40px; height:40px;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="profileDropdown2">
+                    <li class="dropdown-item-text fw-bold" th:text="${session.username}"></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" th:href="@{'/profile/edit/' + ${session.userId}}">Editar Perfil</a></li>
+
+                </ul>
+            </li>
+        </ul>
+
+    </nav>
+</header>
+
+
 
         <!-- HEADER (sin boton login)-->
          <header th:fragment="no-login-header" class="header-solid">
@@ -134,3 +171,4 @@
 
 </body>
 </html>
+
