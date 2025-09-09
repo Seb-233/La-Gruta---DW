@@ -299,4 +299,3 @@ public class DatabaseInit implements CommandLineRunner {
         adicionalRepository.save(rucula);
     }
 }
-

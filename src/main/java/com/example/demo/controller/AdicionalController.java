@@ -12,6 +12,7 @@ import com.example.demo.model.Adicional;
 import com.example.demo.model.Comida;
 import com.example.demo.repository.AdicionalRepository;
 import com.example.demo.repository.CategoriaRepository;
+import com.example.demo.repository.ComidaAdicionalRepository;
 import com.example.demo.repository.ComidaRepository;
 
 @Controller
@@ -21,11 +22,13 @@ public class AdicionalController {
     private final AdicionalRepository adicionalRepo;
     private final CategoriaRepository categoriaRepo;
     private final ComidaRepository comidaRepo;
+    private final ComidaAdicionalRepository comidaAdicionalRepo;
 
-    public AdicionalController(AdicionalRepository adicionalRepo, CategoriaRepository categoriaRepo, ComidaRepository comidaRepo) {
+    public AdicionalController(AdicionalRepository adicionalRepo, CategoriaRepository categoriaRepo, ComidaRepository comidaRepo, ComidaAdicionalRepository comidaAdicionalRepo) {
         this.adicionalRepo = adicionalRepo;
         this.categoriaRepo = categoriaRepo;
         this.comidaRepo = comidaRepo;
+        this.comidaAdicionalRepo = comidaAdicionalRepo;
     }
 
     @GetMapping
@@ -60,11 +63,17 @@ public class AdicionalController {
 
     @GetMapping("/eliminar/{id}")
     public String eliminarAdicional(@PathVariable Long id) {
-        if (adicionalRepo.existsById(id)) {
-            adicionalRepo.deleteById(id);
-        }
+    
+        // Primero borrar las relaciones en la tabla intermedia
+        comidaAdicionalRepo.deleteByAdicionalId(id);
+    
+        // Luego borrar el adicional
+        adicionalRepo.deleteById(id);
+    
         return "redirect:/la_gruta/adicionales";
     }
+    
+       
 
     @GetMapping("/todos")
     @ResponseBody
