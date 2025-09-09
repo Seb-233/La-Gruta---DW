@@ -1,5 +1,8 @@
 package com.example.demo.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -7,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -52,13 +57,17 @@ public class Comida {
     @Column
     private String ingredientes;
 
-    /*@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comida_id")
-    private Comida comida;*/
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = true) // ⚡ también lo dejo opcional
     private User user;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "comida_adicional", // nombre de la tabla intermedia
+        joinColumns = @JoinColumn(name = "comida_id"),
+        inverseJoinColumns = @JoinColumn(name = "adicional_id")
+    )
+    private Set<Adicional> adicionales = new HashSet<>();
 
     // Constructor personalizado
     public Comida(String nombre, String descripcion, Double precio, String imagen) {
