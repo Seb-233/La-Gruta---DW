@@ -34,8 +34,10 @@ Cada plato busca capturar la esencia de Italia y transmitirla a nuestros cliente
 
 Nuestra visión no solo se sostiene en la cocina, sino también en un sistema que **organiza, potencia y da vida a la experiencia completa**:  
 <div align="center">
-  <img height="650" alt="DiagramaLaGruta" src="https://github.com/user-attachments/assets/7f5fc625-c4da-45ad-a99f-d60f4e94a56d" />  
+  <img height="650" alt="DiagramaLaGruta" src="https://github.com/user-attachments/assets/7f5fc625-c4da-45ad-a99f-d60f4e94a56d" />
+  <img width="1365" height="771" alt="Image" src="https://github.com/user-attachments/assets/bf607de4-939d-4010-9fbc-16bb40513643" />
 </div>
+
 
 - **Usuarios** → clientes y administradores, cada uno con un rol clave en la experiencia.  
 - **Comidas y Adicionales** → reflejan nuestro menú flexible, permitiendo personalización al gusto del cliente.  
