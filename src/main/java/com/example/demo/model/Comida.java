@@ -3,6 +3,8 @@ package com.example.demo.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,8 +43,8 @@ public class Comida {
     @Column(nullable = true, length = 500)
     private String imagen;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id", nullable = true) // ⚡ lo dejo opcional
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
     @Column
@@ -61,12 +63,14 @@ public class Comida {
     @JoinColumn(name = "user_id", nullable = true) // ⚡ también lo dejo opcional
     private User user;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    // Relación con Adicional
+    @ManyToMany
     @JoinTable(
-        name = "comida_adicional", // nombre de la tabla intermedia
+        name = "comida_adicional",
         joinColumns = @JoinColumn(name = "comida_id"),
         inverseJoinColumns = @JoinColumn(name = "adicional_id")
     )
+    @JsonIgnore   // 👈 evita loops
     private Set<Adicional> adicionales = new HashSet<>();
 
     // Constructor personalizado

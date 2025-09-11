@@ -246,14 +246,16 @@ document.querySelectorAll('.btn-order').forEach(btn => {
 
     const comidaCard = btn.closest('.card');
     const comidaNombre = comidaCard.querySelector('.card-title').textContent;
+    const idCategoria = comidaCard.getAttribute("data-categoria-id"); // ✅ solo aquí
 
     const modalContent = document.getElementById('adicionalesContent');
     modalContent.innerHTML = 'Cargando...';
 
     try {
-      const res = await fetch('/la_gruta/adicionales/todos');
+      const res = await fetch(`/la_gruta/adicionales/por-categoria/${idCategoria}`);
       if (!res.ok) throw new Error('Error al cargar adicionales');
       const adicionales = await res.json();
+
 
       if (adicionales.length === 0) {
         modalContent.innerHTML = '<p>No hay adicionales disponibles.</p>';

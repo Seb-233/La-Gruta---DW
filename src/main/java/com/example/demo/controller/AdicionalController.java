@@ -1,12 +1,20 @@
 package com.example.demo.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.model.Adicional;
 import com.example.demo.model.Comida;
@@ -45,10 +53,21 @@ public class AdicionalController {
     }
 
     @PostMapping("/guardar")
-    public String guardarAdicional(@ModelAttribute Adicional adicional) {
-        adicionalRepo.save(adicional);
-        return "redirect:/la_gruta/adicionales";
+public String guardarAdicional(
+        @ModelAttribute("adicional") Adicional adicional,
+        @RequestParam(value = "categoriasIds", required = false) List<Long> categoriasIds) {
+
+    if (categoriasIds != null) {
+        adicional.setCategorias(new HashSet<>(categoriaRepo.findAllById(categoriasIds)));
+    } else {
+        adicional.setCategorias(new HashSet<>());
     }
+
+    adicionalRepo.save(adicional);
+    return "redirect:/la_gruta/adicionales";
+}
+
+
 
     @GetMapping("/editar/{id}")
     public String editarAdicional(@PathVariable Long id, Model model) {
@@ -90,6 +109,23 @@ public class AdicionalController {
                 })
                 .toList();
     }
+
+  @GetMapping("/por-categoria/{id}")
+@ResponseBody
+public List<Map<String, Object>> obtenerPorCategoria(@PathVariable Long id) {
+    return adicionalRepo.findByCategoriaId(id)
+            .stream()
+            .map(a -> Map.<String, Object>of(
+                "id", a.getId(),
+                "nombre", a.getNombre(),
+                "descripcion", a.getDescripcion(),
+                "precio", a.getPrecio()
+            ))
+            .toList();
+}
+
+
+
 
     @PostMapping("/asociar")
 @ResponseBody

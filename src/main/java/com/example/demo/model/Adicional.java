@@ -3,15 +3,17 @@ package com.example.demo.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,19 +41,30 @@ public class Adicional {
 
     @Column
     private String imagen; 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
-
+    
     @Column
     private Boolean disponible = true; 
 
     @Column
     private String tipo; 
 
-    @ManyToMany(mappedBy = "adicionales", fetch = FetchType.LAZY)
+     // Relación con Categoria
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(
+        name = "adicional_categoria",
+        joinColumns = @JoinColumn(name = "adicional_id"),
+        inverseJoinColumns = @JoinColumn(name = "categoria_id")
+    )
+    @JsonIgnore   // 👈 evita loops
+    private Set<Categoria> categorias = new HashSet<>();
+
+    // Relación con Comida
+    @ManyToMany(mappedBy = "adicionales")
+    @JsonIgnore   // 👈 evita loops
     private Set<Comida> comidas = new HashSet<>();
+
+
+    
 
     // Constructor personalizado
     public Adicional(String nombre, String descripcion, Double precio, String imagen) {
