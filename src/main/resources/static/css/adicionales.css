@@ -1,0 +1,120 @@
+:root{
+  --bg:#f5ebdf;
+  --panel:#fff;
+  --ink:#2c2c2c;
+  --muted:#666;
+  --brand:#c19a6b;
+  --brand-ink:#3a2a1a;
+  --dark:#2b211b;
+  --dark-2:#1f1f1f;
+  --line:rgba(0,0,0,.12);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui, Segoe UI, Roboto, Inter, sans-serif;
+  margin:0;
+}
+
+/* Header */
+header.site{
+  background:var(--dark);
+  color:#fff;
+}
+header.site .container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  font-weight:800; font-size:1.15rem;
+}
+.brand-logo{height:28px}
+
+/* Nav */
+header.site nav a{
+  color:#ffe8c9; text-decoration:none; margin-left:18px; font-weight:600;
+}
+header.site nav a:hover{ color:#fff }
+
+/* Layout */
+.container{ max-width:1100px; margin:0 auto; padding:24px 20px; }
+.page-title{ font-size:2rem; font-weight:800; margin:10px 0 16px }
+
+.tops{ display:flex; gap:14px; margin-top:6px; margin-bottom:6px }
+.back-link{
+  color:var(--brand-ink); text-decoration:none; background:#efe4d6;
+  padding:6px 10px; border-radius:10px; border:1px solid var(--line);
+}
+.back-link:hover{ filter:brightness(.96) }
+
+/* Grid */
+.grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:18px;
+}
+.card{
+  background:var(--panel);
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  display:flex; flex-direction:column; gap:8px;
+}
+.card h3{ margin:0; font-size:1.1rem }
+.price{ font-weight:700; margin-top:auto }
+
+/* Botones */
+.btn{
+  border:0; border-radius:10px; padding:10px 14px; cursor:pointer; font-weight:600;
+}
+.btn-primary{ background:var(--brand); color:#fff }
+.btn-primary:hover{ filter:brightness(.92) }
+
+.btn-outline{
+  background:transparent; color:var(--brand-ink); border:1px solid var(--brand);
+}
+.btn-outline:hover{ background:#f1e4d4 }
+
+/* Empty state */
+.empty{
+  background:var(--panel);
+  border-radius:14px;
+  padding:24px;
+  color:var(--muted);
+  text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+.empty-actions{ margin-top:12px; display:flex; gap:10px; justify-content:center }
+
+/* Footer sitio (igual al resto) */
+.site-footer{
+  background:var(--dark);
+  color:#eee;
+  margin-top:32px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.site-footer .container{ max-width:1100px; margin:0 auto; padding:28px 20px }
+.footer-grid{
+  display:grid; grid-template-columns:2fr 1fr 1fr; gap:24px; align-items:start;
+  border-bottom:1px solid rgba(255,255,255,.1); padding-bottom:22px;
+}
+.f-logo{ height:44px; margin-bottom:10px }
+.f-brand p{ margin:0; color:#ddd }
+
+.f-contact h4, .f-social h4{ margin:0 0 10px; color:#f2c089; font-weight:800 }
+.f-contact p{ margin:6px 0; color:#ddd }
+
+.f-social ul{ margin:0; padding:0; list-style:none }
+.f-social li{ margin:6px 0 }
+.f-social a{ color:#ffe8c9; text-decoration:none }
+.f-social a:hover{ color:#fff }
+
+.legal{
+  text-align:center; color:#ddd; padding-top:14px; font-size:.95rem;
+}

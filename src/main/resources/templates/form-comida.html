@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${comida.id != null} ? 'Editar Comida' : 'Nueva Comida'">Formulario Comida</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/header-footer.css" />
+  <link rel="stylesheet" href="/css/form-comida.css" />
+</head>
+<body>
+<!-- Header -->
+<header>
+  <div th:replace="fragments :: no-login-header"></div>
+</header>
+
+<main class="container my-5">
+  <h2 class="text-center mb-4" th:text="${comida.id != null} ? 'Editar Comida' : 'Nueva Comida'"></h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form th:action="@{/la_gruta/comidas/guardar}" th:object="${comida}" method="post" class="p-4 border rounded shadow-sm bg-light">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" th:field="*{nombre}" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Categoría</label>
+          <select class="form-select" th:field="*{categoria.id}" required>
+            <option value="" disabled th:selected="${comida.categoria == null}">-- Seleccione una categoría --</option>
+            <option th:each="cat : ${categorias}" 
+                    th:value="${cat.id}" 
+                    th:text="${cat.nombre}" 
+                    th:selected="${comida.categoria != null and comida.categoria.id == cat.id}"></option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Descripción</label>
+          <textarea class="form-control" th:field="*{descripcion}" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Precio</label>
+          <input type="number" step="0.01" class="form-control" th:field="*{precio}" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Imagen (URL)</label>
+          <input type="text" class="form-control" th:field="*{imagen}" />
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <a th:href="@{/la_gruta/comidas}" class="btn btn-secondary">Cancelar</a>
+          <button type="submit" class="btn btn-danger">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer id="contacto">
+  <div th:replace="fragments :: footer"></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

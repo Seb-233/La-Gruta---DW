@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Perfil - La Gruta Nera</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/header-footer.css">
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="stylesheet" href="/css/login-styles.css">
+</head>
+<body>
+  
+  <!-- Header -->
+  <header>
+    <div th:replace="fragments :: solid-header"></div>
+  </header>
+
+  <!-- Sección Editar Perfil -->
+  <section class="login-section">
+    <div class="login-overlay"></div>
+    <div class="login-box">
+      <h2>Editar Perfil</h2>
+
+      <!-- Formulario de edición de perfil -->
+      <form th:action="@{/la_gruta/profile/save}" th:object="${user}" method="post" class="mt-3">
+        <!-- Campo oculto para el ID del usuario -->
+        <input type="hidden" th:field="*{id}">
+
+        <div class="mb-3">
+          <label class="form-label">Usuario</label>
+          <input type="text" th:field="*{username}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Contraseña</label>
+          <input type="password" th:field="*{password}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Dirección</label>
+          <input type="text" th:field="*{direccion}" class="form-control">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Teléfono</label>
+          <input type="text" th:field="*{telefono}" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-login w-100">Guardar Cambios</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contacto">
+    <div th:replace="fragments :: footer"></div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

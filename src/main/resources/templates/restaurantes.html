@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurantes - La Gruta Nera</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/header-footer.css">
+  <link rel="stylesheet" href="/css/restaurantes.css">
+  
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div th:replace="fragments :: solid-header"></div>
+  </header>
+
+  <!-- SECCIÓN RESTAURANTES -->
+  <section class="restaurants-section container my-5">
+    <h2 class="section-title text-center mb-5">Nuestras Sedes en Bogotá</h2>
+    <div class="row g-4">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="restaurant-card">
+          <h4>La Gruta Nera - Chapinero</h4>
+          <p><strong>Dirección:</strong> Calle 60 #10-25</p>
+          <p><strong>Teléfono:</strong> +57 300 192 8374</p>
+          <a href="https://www.google.com/maps/place/Cl.+60+%2310,+Chapinero,+Bogot%C3%A1/@4.6465892,-74.0661768,878m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e3f9a3875e95555:0x471f4d2e72bf5985!8m2!3d4.6465892!4d-74.0636019!16s%2Fg%2F11frt6dlfs?entry=ttu&g_ep=EgoyMDI1MDgxOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="btn-location">Ver ubicación</a>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="restaurant-card">
+          <h4>La Gruta Nera - Usaquén</h4>
+          <p><strong>Dirección:</strong> Carrera 7 #116-30</p>
+          <p><strong>Teléfono:</strong> +57 300 987 6543</p>
+          <a href="https://www.google.com/maps/place/Ak+7+%23116-30,+Bogot%C3%A1/@4.6940139,-74.0357411,877m/data=!3m2!1e3!4b1!4m5!3m4!1s0x8e3f9aa64db53081:0xd499aa0ad2cb2702!8m2!3d4.6940139!4d-74.0331662?entry=ttu&g_ep=EgoyMDI1MDgxOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="btn-location">Ver ubicación</a>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="restaurant-card">
+          <h4>La Gruta Nera - Chicó norte</h4>
+          <p><strong>Dirección:</strong> Calle 123 #12-34</p>
+          <p><strong>Teléfono:</strong> +57 300 123 4567</p>
+          <a href="https://www.google.com/maps/place/Cl.+140+%2312-50,+Bogot%C3%A1/@4.7201782,-74.0406165,877m/data=!3m2!1e3!4b1!4m5!3m4!1s0x8e3f855b9ac3c8b1:0xc41e0642b12b7cf7!8m2!3d4.7201782!4d-74.0380416?entry=ttu&g_ep=EgoyMDI1MDgxOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="btn-location">Ver ubicación</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contacto">
+    <div th:replace="fragments :: footer"></div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
