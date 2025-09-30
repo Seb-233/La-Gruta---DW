@@ -1,6 +1,8 @@
 package com.example.demo.model;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,27 +14,34 @@ import com.example.demo.repository.CategoriaRepository;
 import com.example.demo.repository.ComidaRepository;
 import com.example.demo.repository.DomiciliarioRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.OperadorRepository;
+import com.example.demo.repository.PedidoRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor
 public class DatabaseInit implements CommandLineRunner {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private CategoriaRepository categoriaRepository;
-    
+
     @Autowired
     private ComidaRepository comidaRepository;
-    
+
     @Autowired
     private AdicionalRepository adicionalRepository;
 
     @Autowired
     private DomiciliarioRepository domiciliarioRepository;
+
+    @Autowired
+    private OperadorRepository operadorRepository;
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
     @Override
     @Transactional
@@ -43,24 +52,26 @@ public class DatabaseInit implements CommandLineRunner {
             admin.setRole("ADMIN");
             userRepository.save(admin);
 
-            User admin1 = new User("Juan","12345");
+            User admin1 = new User("Juan", "12345");
             admin1.setRole("ADMIN");
             userRepository.save(admin1);
 
-            
             User user = new User("usuario", "user123");
             user.setRole("USER");
             userRepository.save(user);
         }
         // Crear domiciliarios de ejemplo
         if (domiciliarioRepository.count() == 0) {
-            Domiciliario dom1 = new Domiciliario(null, "Carlos Pérez", "carlos@domicilio.com", "3001234567", "Moto", "ABC123", true, "Bogotá");
-            Domiciliario dom2 = new Domiciliario(null, "Laura Gómez", "laura@domicilio.com", "3109876543", "Bicicleta", null, true, "Chapinero");
-            Domiciliario dom3 = new Domiciliario(null, "Juan Rodríguez", "juan@domicilio.com", "3205558888", "Carro", "XYZ789", false, "Usaquén");
+            Domiciliario dom1 = new Domiciliario(null, "Carlos Pérez", "carlos@domicilio.com", "3001234567", "Moto",
+                    "ABC123", true, "Bogotá");
+            Domiciliario dom2 = new Domiciliario(null, "Laura Gómez", "laura@domicilio.com", "3109876543", "Bicicleta",
+                    null, true, "Chapinero");
+            Domiciliario dom3 = new Domiciliario(null, "Juan Rodríguez", "juan@domicilio.com", "3205558888", "Carro",
+                    "XYZ789", false, "Usaquén");
 
             domiciliarioRepository.saveAll(Arrays.asList(dom1, dom2, dom3));
         }
-        
+
         // Crear categorías
         if (categoriaRepository.count() == 0) {
             Categoria antipastos = new Categoria();
@@ -70,7 +81,7 @@ public class DatabaseInit implements CommandLineRunner {
             antipastos.setImagen("/images/bruschetta.jpg");
             antipastos.setOrden(1);
             categoriaRepository.save(antipastos);
-            
+
             Categoria pizzas = new Categoria();
             pizzas.setNombre("Pizzas");
             pizzas.setSlug("pizzas");
@@ -78,7 +89,7 @@ public class DatabaseInit implements CommandLineRunner {
             pizzas.setImagen("/images/pizzaNera.webp");
             pizzas.setOrden(2);
             categoriaRepository.save(pizzas);
-            
+
             Categoria pastas = new Categoria();
             pastas.setNombre("Pastas");
             pastas.setSlug("pastas");
@@ -86,7 +97,7 @@ public class DatabaseInit implements CommandLineRunner {
             pastas.setImagen("/images/pasta_carbonara.jpg");
             pastas.setOrden(3);
             categoriaRepository.save(pastas);
-            
+
             Categoria risottos = new Categoria();
             risottos.setNombre("Risottos");
             risottos.setSlug("risottos");
@@ -94,7 +105,7 @@ public class DatabaseInit implements CommandLineRunner {
             risottos.setImagen("/images/risotoAlTartufo.avif");
             risottos.setOrden(4);
             categoriaRepository.save(risottos);
-            
+
             Categoria postres = new Categoria();
             postres.setNombre("Postres");
             postres.setSlug("postres");
@@ -102,7 +113,7 @@ public class DatabaseInit implements CommandLineRunner {
             postres.setImagen("/images/tiramisu.jpg");
             postres.setOrden(5);
             categoriaRepository.save(postres);
-            
+
             Categoria bebidas = new Categoria();
             bebidas.setNombre("Bebidas");
             bebidas.setSlug("bebidas");
@@ -110,19 +121,52 @@ public class DatabaseInit implements CommandLineRunner {
             bebidas.setImagen("/images/Bebidas.png");
             bebidas.setOrden(6);
             categoriaRepository.save(bebidas);
-            
+
             // Crear comidas de ejemplo
             crearComidasEjemplo(antipastos, pizzas, pastas, risottos, postres, bebidas);
-            
+
             // Crear adicionales de ejemplo
             crearAdicionalesEjemplo(antipastos, pizzas, pastas, risottos);
         }
-    }
-    
-    private void crearComidasEjemplo(Categoria antipastos, Categoria pizzas, Categoria pastas, 
-                                   Categoria risottos, Categoria postres, Categoria bebidas) {
-        
-       // ANTIPASTOS
+        // Crear operadores de ejemplo
+        if (operadorRepository.count() == 0) {
+            System.out.println("Cargando 10 operadores de prueba...");
+            for (int i = 1; i <= 10; i++) {
+                Operador op = new Operador();
+                op.setNombre("Operador Nro " + i);
+                op.setUsuario("operador" + i);
+                op.setPassword("pass123");
+                operadorRepository.save(op);
+            }
+
+        }
+        // --- INICIO: Cargar 10 Pedidos (Nuevo) ---
+        if (pedidoRepository.count() == 0) {
+            System.out.println("Cargando 10 pedidos de prueba...");
+            List<Comida> comidasDisponibles = comidaRepository.findAll();
+
+            if (!comidasDisponibles.isEmpty()) {
+                for (int i = 1; i <= 10; i++) {
+                    Pedido pedido = new Pedido();
+                    pedido.setEstado("recibido");
+                    pedido.setFechaCreacion(LocalDateTime.now());
+
+                    // Asigna la primera comida de la lista a todos los pedidos
+                    pedido.setComidas(List.of(comidasDisponibles.get(0)));
+
+                    pedidoRepository.save(pedido);
+                }
+            } else {
+                System.out.println("No hay comidas disponibles para asignar a los pedidos.");
+            }
+        }
+
+    } // <--- Mueve este cierre de clase aquí
+
+    private void crearComidasEjemplo(Categoria antipastos, Categoria pizzas, Categoria pastas,
+            Categoria risottos, Categoria postres, Categoria bebidas) {
+
+        // ANTIPASTOS
         Comida bruschetta = new Comida();
         bruschetta.setNombre("Bruschetta Italiana");
         bruschetta.setDescripcion("Pan tostado con tomate fresco, albahaca, ajo y aceite de oliva extra virgen");
@@ -145,7 +189,6 @@ public class DatabaseInit implements CommandLineRunner {
         carpaccio.setEsEspecialidad(true);
         comidaRepository.save(carpaccio);
 
-        
         // PIZZAS
         Comida margherita = new Comida();
         margherita.setNombre("Pizza Margherita");
@@ -173,13 +216,13 @@ public class DatabaseInit implements CommandLineRunner {
         pepperoni.setNombre("Pizza Pepperoni");
         pepperoni.setDescripcion("Salsa de tomate, mozzarella y pepperoni italiano");
         pepperoni.setPrecio(27900.0);
-        // ⚡ Ojo: asegúrate de que en /static/images/ exista exactamente este archivo (sin espacios)
+        // ⚡ Ojo: asegúrate de que en /static/images/ exista exactamente este archivo
+        // (sin espacios)
         pepperoni.setImagen("http://localhost:8080/images/PizzaPepperoni.jpg");
         pepperoni.setCategoria(pizzas);
         pepperoni.setTiempoPreparacion(20);
         comidaRepository.save(pepperoni);
 
-        
         // PASTAS
         Comida carbonara = new Comida();
         carbonara.setNombre("Pasta Carbonara");
@@ -211,7 +254,6 @@ public class DatabaseInit implements CommandLineRunner {
         alfredo.setTiempoPreparacion(16);
         comidaRepository.save(alfredo);
 
-        
         // RISOTTOS
         Comida risottoTartufo = new Comida();
         risottoTartufo.setNombre("Risotto al Tartufo");
@@ -251,8 +293,7 @@ public class DatabaseInit implements CommandLineRunner {
         cannoli.setTiempoPreparacion(8);
         comidaRepository.save(cannoli);
 
-        
-       // BEBIDAS
+        // BEBIDAS
         Comida vinoTinto = new Comida();
         vinoTinto.setNombre("Vino Tinto Reservado");
         vinoTinto.setDescripcion("Vino tinto italiano de la casa");
@@ -272,211 +313,209 @@ public class DatabaseInit implements CommandLineRunner {
         comidaRepository.save(aguaGas);
 
     }
-    
-    private void crearAdicionalesEjemplo(Categoria antipastos, Categoria pizzas, 
-    Categoria pastas, Categoria risottos) {
-// 1. Queso Parmesano Extra
-Adicional parmesano = new Adicional();
-parmesano.setNombre("Queso Parmesano Extra");
-parmesano.setDescripcion("Parmesano reggiano rallado fresco");
-parmesano.setPrecio(3500.0);
-parmesano.setImagen("/images/provolone.webp");
-parmesano.setTipo("queso");
-parmesano.getCategorias().add(pastas); // 👈 relación
-adicionalRepository.save(parmesano);
 
-// 2. Aceitunas Negras
-Adicional aceitunas = new Adicional();
-aceitunas.setNombre("Aceitunas Negras");
-aceitunas.setDescripcion("Aceitunas kalamata marinadas");
-aceitunas.setPrecio(2500.0);
-aceitunas.setImagen("/images/aceitunas.jpg");
-aceitunas.setTipo("acompañamiento");
-aceitunas.getCategorias().add(pastas);
-adicionalRepository.save(aceitunas);
+    private void crearAdicionalesEjemplo(Categoria antipastos, Categoria pizzas,
+            Categoria pastas, Categoria risottos) {
+        // 1. Queso Parmesano Extra
+        Adicional parmesano = new Adicional();
+        parmesano.setNombre("Queso Parmesano Extra");
+        parmesano.setDescripcion("Parmesano reggiano rallado fresco");
+        parmesano.setPrecio(3500.0);
+        parmesano.setImagen("/images/provolone.webp");
+        parmesano.setTipo("queso");
+        parmesano.getCategorias().add(pastas); // 👈 relación
+        adicionalRepository.save(parmesano);
 
-// 3. Pan de Ajo
-Adicional panAjo = new Adicional();
-panAjo.setNombre("Pan de Ajo");
-panAjo.setDescripcion("Pan focaccia con ajo y hierbas");
-panAjo.setPrecio(4500.0);
-panAjo.setImagen("/images/focaccia.jpeg");
-panAjo.setTipo("acompañamiento");
-panAjo.getCategorias().add(pastas);
-adicionalRepository.save(panAjo);
+        // 2. Aceitunas Negras
+        Adicional aceitunas = new Adicional();
+        aceitunas.setNombre("Aceitunas Negras");
+        aceitunas.setDescripcion("Aceitunas kalamata marinadas");
+        aceitunas.setPrecio(2500.0);
+        aceitunas.setImagen("/images/aceitunas.jpg");
+        aceitunas.setTipo("acompañamiento");
+        aceitunas.getCategorias().add(pastas);
+        adicionalRepository.save(aceitunas);
 
-// 4. Hongos Trifolati
-Adicional hongos = new Adicional();
-hongos.setNombre("Hongos Trifolati");
-hongos.setDescripcion("Hongos salteados con ajo y perejil");
-hongos.setPrecio(5500.0);
-hongos.setImagen("/images/funghi-trifolati.jpg");
-hongos.setTipo("acompañamiento");
-hongos.getCategorias().add(risottos);
-adicionalRepository.save(hongos);
+        // 3. Pan de Ajo
+        Adicional panAjo = new Adicional();
+        panAjo.setNombre("Pan de Ajo");
+        panAjo.setDescripcion("Pan focaccia con ajo y hierbas");
+        panAjo.setPrecio(4500.0);
+        panAjo.setImagen("/images/focaccia.jpeg");
+        panAjo.setTipo("acompañamiento");
+        panAjo.getCategorias().add(pastas);
+        adicionalRepository.save(panAjo);
 
-// 5. Queso Mozzarella Extra
-Adicional quesoExtra = new Adicional();
-quesoExtra.setNombre("Queso Mozzarella Extra");
-quesoExtra.setDescripcion("Mozzarella di bufala adicional");
-quesoExtra.setPrecio(4000.0);
-quesoExtra.setImagen("/images/provolone.webp");
-quesoExtra.setTipo("queso");
-quesoExtra.getCategorias().add(pizzas);
-adicionalRepository.save(quesoExtra);
+        // 4. Hongos Trifolati
+        Adicional hongos = new Adicional();
+        hongos.setNombre("Hongos Trifolati");
+        hongos.setDescripcion("Hongos salteados con ajo y perejil");
+        hongos.setPrecio(5500.0);
+        hongos.setImagen("/images/funghi-trifolati.jpg");
+        hongos.setTipo("acompañamiento");
+        hongos.getCategorias().add(risottos);
+        adicionalRepository.save(hongos);
 
-// 6. Rúcula Fresca
-Adicional rucula = new Adicional();
-rucula.setNombre("Rúcula Fresca");
-rucula.setDescripcion("Hojas de rúcula fresca");
-rucula.setPrecio(2000.0);
-rucula.setImagen("/images/aceitunas.jpg");
-rucula.setTipo("vegetal");
-rucula.getCategorias().add(antipastos);
-adicionalRepository.save(rucula);
+        // 5. Queso Mozzarella Extra
+        Adicional quesoExtra = new Adicional();
+        quesoExtra.setNombre("Queso Mozzarella Extra");
+        quesoExtra.setDescripcion("Mozzarella di bufala adicional");
+        quesoExtra.setPrecio(4000.0);
+        quesoExtra.setImagen("/images/provolone.webp");
+        quesoExtra.setTipo("queso");
+        quesoExtra.getCategorias().add(pizzas);
+        adicionalRepository.save(quesoExtra);
 
-// 7. Tomate Cherry
-Adicional tomateCherry = new Adicional();
-tomateCherry.setNombre("Tomate Cherry");
-tomateCherry.setDescripcion("Tomates cherry frescos");
-tomateCherry.setPrecio(2000.0);
-tomateCherry.setImagen("/images/tomate_cherry.jpg");
-tomateCherry.setTipo("vegetal");
-tomateCherry.getCategorias().add(pizzas);
-adicionalRepository.save(tomateCherry);
+        // 6. Rúcula Fresca
+        Adicional rucula = new Adicional();
+        rucula.setNombre("Rúcula Fresca");
+        rucula.setDescripcion("Hojas de rúcula fresca");
+        rucula.setPrecio(2000.0);
+        rucula.setImagen("/images/aceitunas.jpg");
+        rucula.setTipo("vegetal");
+        rucula.getCategorias().add(antipastos);
+        adicionalRepository.save(rucula);
 
-// 8. Jamón Serrano
-Adicional jamon = new Adicional();
-jamon.setNombre("Jamón Serrano");
-jamon.setDescripcion("Lonjas finas de jamón serrano");
-jamon.setPrecio(6000.0);
-jamon.setImagen("/images/jamon.jpg");
-jamon.setTipo("proteina");
-jamon.getCategorias().add(pizzas);
-adicionalRepository.save(jamon);
+        // 7. Tomate Cherry
+        Adicional tomateCherry = new Adicional();
+        tomateCherry.setNombre("Tomate Cherry");
+        tomateCherry.setDescripcion("Tomates cherry frescos");
+        tomateCherry.setPrecio(2000.0);
+        tomateCherry.setImagen("/images/tomate_cherry.jpg");
+        tomateCherry.setTipo("vegetal");
+        tomateCherry.getCategorias().add(pizzas);
+        adicionalRepository.save(tomateCherry);
 
-// 9. Albahaca Fresca
-Adicional albahaca = new Adicional();
-albahaca.setNombre("Albahaca Fresca");
-albahaca.setDescripcion("Hojas de albahaca fresca");
-albahaca.setPrecio(1500.0);
-albahaca.setImagen("/images/albahaca.jpg");
-albahaca.setTipo("vegetal");
-albahaca.getCategorias().add(pizzas);
-adicionalRepository.save(albahaca);
+        // 8. Jamón Serrano
+        Adicional jamon = new Adicional();
+        jamon.setNombre("Jamón Serrano");
+        jamon.setDescripcion("Lonjas finas de jamón serrano");
+        jamon.setPrecio(6000.0);
+        jamon.setImagen("/images/jamon.jpg");
+        jamon.setTipo("proteina");
+        jamon.getCategorias().add(pizzas);
+        adicionalRepository.save(jamon);
 
-// 10. Salsa Pesto
-Adicional pesto = new Adicional();
-pesto.setNombre("Salsa Pesto");
-pesto.setDescripcion("Salsa de albahaca y piñones");
-pesto.setPrecio(3000.0);
-pesto.setImagen("/images/pesto.jpg");
-pesto.setTipo("salsa");
-pesto.getCategorias().add(pastas);
-adicionalRepository.save(pesto);
+        // 9. Albahaca Fresca
+        Adicional albahaca = new Adicional();
+        albahaca.setNombre("Albahaca Fresca");
+        albahaca.setDescripcion("Hojas de albahaca fresca");
+        albahaca.setPrecio(1500.0);
+        albahaca.setImagen("/images/albahaca.jpg");
+        albahaca.setTipo("vegetal");
+        albahaca.getCategorias().add(pizzas);
+        adicionalRepository.save(albahaca);
 
-// 11. Salsa Alfredo
-Adicional alfredo = new Adicional();
-alfredo.setNombre("Salsa Alfredo");
-alfredo.setDescripcion("Crema con queso parmesano");
-alfredo.setPrecio(3500.0);
-alfredo.setImagen("/images/alfredo.jpg");
-alfredo.setTipo("salsa");
-alfredo.getCategorias().add(pastas);
-adicionalRepository.save(alfredo);
+        // 10. Salsa Pesto
+        Adicional pesto = new Adicional();
+        pesto.setNombre("Salsa Pesto");
+        pesto.setDescripcion("Salsa de albahaca y piñones");
+        pesto.setPrecio(3000.0);
+        pesto.setImagen("/images/pesto.jpg");
+        pesto.setTipo("salsa");
+        pesto.getCategorias().add(pastas);
+        adicionalRepository.save(pesto);
 
-// 12. Chorizo
-Adicional chorizo = new Adicional();
-chorizo.setNombre("Chorizo Picante");
-chorizo.setDescripcion("Chorizo curado en rodajas");
-chorizo.setPrecio(5000.0);
-chorizo.setImagen("/images/chorizo.jpg");
-chorizo.setTipo("proteina");
-chorizo.getCategorias().add(pizzas);
-adicionalRepository.save(chorizo);
+        // 11. Salsa Alfredo
+        Adicional alfredo = new Adicional();
+        alfredo.setNombre("Salsa Alfredo");
+        alfredo.setDescripcion("Crema con queso parmesano");
+        alfredo.setPrecio(3500.0);
+        alfredo.setImagen("/images/alfredo.jpg");
+        alfredo.setTipo("salsa");
+        alfredo.getCategorias().add(pastas);
+        adicionalRepository.save(alfredo);
 
-// 13. Pollo
-Adicional pollo = new Adicional();
-pollo.setNombre("Pollo Grillado");
-pollo.setDescripcion("Tiras de pollo a la plancha");
-pollo.setPrecio(5500.0);
-pollo.setImagen("/images/pollo.jpg");
-pollo.setTipo("proteina");
-pollo.getCategorias().add(pastas);
-adicionalRepository.save(pollo);
+        // 12. Chorizo
+        Adicional chorizo = new Adicional();
+        chorizo.setNombre("Chorizo Picante");
+        chorizo.setDescripcion("Chorizo curado en rodajas");
+        chorizo.setPrecio(5000.0);
+        chorizo.setImagen("/images/chorizo.jpg");
+        chorizo.setTipo("proteina");
+        chorizo.getCategorias().add(pizzas);
+        adicionalRepository.save(chorizo);
 
-// 14. Espinaca
-Adicional espinaca = new Adicional();
-espinaca.setNombre("Espinaca Fresca");
-espinaca.setDescripcion("Hojas frescas de espinaca");
-espinaca.setPrecio(1800.0);
-espinaca.setImagen("/images/espinaca.jpg");
-espinaca.setTipo("vegetal");
-espinaca.getCategorias().add(risottos);
-adicionalRepository.save(espinaca);
+        // 13. Pollo
+        Adicional pollo = new Adicional();
+        pollo.setNombre("Pollo Grillado");
+        pollo.setDescripcion("Tiras de pollo a la plancha");
+        pollo.setPrecio(5500.0);
+        pollo.setImagen("/images/pollo.jpg");
+        pollo.setTipo("proteina");
+        pollo.getCategorias().add(pastas);
+        adicionalRepository.save(pollo);
 
-// 15. Pimientos Asados
-Adicional pimientos = new Adicional();
-pimientos.setNombre("Pimientos Asados");
-pimientos.setDescripcion("Tiras de pimientos asados");
-pimientos.setPrecio(2200.0);
-pimientos.setImagen("/images/pimientos.jpg");
-pimientos.setTipo("vegetal");
-pimientos.getCategorias().add(pizzas);
-adicionalRepository.save(pimientos);
+        // 14. Espinaca
+        Adicional espinaca = new Adicional();
+        espinaca.setNombre("Espinaca Fresca");
+        espinaca.setDescripcion("Hojas frescas de espinaca");
+        espinaca.setPrecio(1800.0);
+        espinaca.setImagen("/images/espinaca.jpg");
+        espinaca.setTipo("vegetal");
+        espinaca.getCategorias().add(risottos);
+        adicionalRepository.save(espinaca);
 
-// 16. Tocino
-Adicional tocino = new Adicional();
-tocino.setNombre("Tocino Crujiente");
-tocino.setDescripcion("Tiras de tocino dorado");
-tocino.setPrecio(5000.0);
-tocino.setImagen("/images/tocino.jpg");
-tocino.setTipo("proteina");
-tocino.getCategorias().add(pizzas);
-adicionalRepository.save(tocino);
+        // 15. Pimientos Asados
+        Adicional pimientos = new Adicional();
+        pimientos.setNombre("Pimientos Asados");
+        pimientos.setDescripcion("Tiras de pimientos asados");
+        pimientos.setPrecio(2200.0);
+        pimientos.setImagen("/images/pimientos.jpg");
+        pimientos.setTipo("vegetal");
+        pimientos.getCategorias().add(pizzas);
+        adicionalRepository.save(pimientos);
 
-// 17. Maíz Dulce
-Adicional maiz = new Adicional();
-maiz.setNombre("Maíz Dulce");
-maiz.setDescripcion("Granos de maíz dulce");
-maiz.setPrecio(1500.0);
-maiz.setImagen("/images/maiz.jpg");
-maiz.setTipo("vegetal");
-maiz.getCategorias().add(pizzas);
-adicionalRepository.save(maiz);
+        // 16. Tocino
+        Adicional tocino = new Adicional();
+        tocino.setNombre("Tocino Crujiente");
+        tocino.setDescripcion("Tiras de tocino dorado");
+        tocino.setPrecio(5000.0);
+        tocino.setImagen("/images/tocino.jpg");
+        tocino.setTipo("proteina");
+        tocino.getCategorias().add(pizzas);
+        adicionalRepository.save(tocino);
 
-// 18. Champiñones
-Adicional champinones = new Adicional();
-champinones.setNombre("Champiñones Frescos");
-champinones.setDescripcion("Champiñones laminados frescos");
-champinones.setPrecio(3000.0);
-champinones.setImagen("/images/champinones.jpg");
-champinones.setTipo("acompañamiento");
-champinones.getCategorias().add(pastas);
-adicionalRepository.save(champinones);
+        // 17. Maíz Dulce
+        Adicional maiz = new Adicional();
+        maiz.setNombre("Maíz Dulce");
+        maiz.setDescripcion("Granos de maíz dulce");
+        maiz.setPrecio(1500.0);
+        maiz.setImagen("/images/maiz.jpg");
+        maiz.setTipo("vegetal");
+        maiz.getCategorias().add(pizzas);
+        adicionalRepository.save(maiz);
 
-// 19. Tomate Seco
-Adicional tomateSeco = new Adicional();
-tomateSeco.setNombre("Tomate Seco");
-tomateSeco.setDescripcion("Tomates secos al sol");
-tomateSeco.setPrecio(2800.0);
-tomateSeco.setImagen("/images/tomate_seco.jpg");
-tomateSeco.setTipo("acompañamiento");
-tomateSeco.getCategorias().add(risottos);
-adicionalRepository.save(tomateSeco);
+        // 18. Champiñones
+        Adicional champinones = new Adicional();
+        champinones.setNombre("Champiñones Frescos");
+        champinones.setDescripcion("Champiñones laminados frescos");
+        champinones.setPrecio(3000.0);
+        champinones.setImagen("/images/champinones.jpg");
+        champinones.setTipo("acompañamiento");
+        champinones.getCategorias().add(pastas);
+        adicionalRepository.save(champinones);
 
-// 20. Aceite de Trufa
-Adicional trufa = new Adicional();
-trufa.setNombre("Aceite de Trufa");
-trufa.setDescripcion("Aceite aromático de trufa");
-trufa.setPrecio(8000.0);
-trufa.setImagen("/images/trufa.jpg");
-trufa.setTipo("condimento");
-trufa.getCategorias().add(pastas);
-adicionalRepository.save(trufa);
+        // 19. Tomate Seco
+        Adicional tomateSeco = new Adicional();
+        tomateSeco.setNombre("Tomate Seco");
+        tomateSeco.setDescripcion("Tomates secos al sol");
+        tomateSeco.setPrecio(2800.0);
+        tomateSeco.setImagen("/images/tomate_seco.jpg");
+        tomateSeco.setTipo("acompañamiento");
+        tomateSeco.getCategorias().add(risottos);
+        adicionalRepository.save(tomateSeco);
 
+        // 20. Aceite de Trufa
+        Adicional trufa = new Adicional();
+        trufa.setNombre("Aceite de Trufa");
+        trufa.setDescripcion("Aceite aromático de trufa");
+        trufa.setPrecio(8000.0);
+        trufa.setImagen("/images/trufa.jpg");
+        trufa.setTipo("condimento");
+        trufa.getCategorias().add(pastas);
+        adicionalRepository.save(trufa);
 
-
-}
+    }
 
 }
