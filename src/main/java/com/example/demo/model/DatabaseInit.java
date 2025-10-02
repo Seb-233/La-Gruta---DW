@@ -16,6 +16,7 @@ import com.example.demo.repository.DomiciliarioRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.OperadorRepository;
 import com.example.demo.repository.PedidoRepository;
+import com.example.demo.repository.PedidoComidaRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,6 +43,9 @@ public class DatabaseInit implements CommandLineRunner {
 
     @Autowired
     private PedidoRepository pedidoRepository;
+
+    @Autowired
+    private PedidoComidaRepository pedidoComidaRepository;
 
     @Override
     @Transactional
@@ -140,28 +144,80 @@ public class DatabaseInit implements CommandLineRunner {
             }
 
         }
-        // --- INICIO: Cargar 10 Pedidos (Nuevo) ---
         if (pedidoRepository.count() == 0) {
-            System.out.println("Cargando 10 pedidos de prueba...");
-            List<Comida> comidasDisponibles = comidaRepository.findAll();
 
-            if (!comidasDisponibles.isEmpty()) {
-                for (int i = 1; i <= 10; i++) {
-                    Pedido pedido = new Pedido();
-                    pedido.setEstado("recibido");
-                    pedido.setFechaCreacion(LocalDateTime.now());
+            // Obtenemos los datos que necesitaremos de la base de datos.
+            List<User> clientes = userRepository.findAll();
+            List<Comida> comidas = comidaRepository.findAll();
+            List<Adicional> adicionales = adicionalRepository.findAll();
 
-                    // Asigna la primera comida de la lista a todos los pedidos
-                    pedido.setComidas(List.of(comidasDisponibles.get(0)));
-
-                    pedidoRepository.save(pedido);
-                }
-            } else {
-                System.out.println("No hay comidas disponibles para asignar a los pedidos.");
+            if (clientes.isEmpty() || comidas.isEmpty() || adicionales.isEmpty()) {
+                System.out
+                        .println("ERROR: Faltan datos base (clientes, comidas o adicionales) para crear los pedidos.");
+                return;
             }
-        }
 
-    } // <--- Mueve este cierre de clase aquí
+            // --- INICIO: Creación del Pedido Complejo de Ejemplo (el que ya tienes) ---
+            System.out.println("Creando pedido complejo de ejemplo...");
+
+            Pedido pedidoComplejo = new Pedido();
+            pedidoComplejo.setCliente(clientes.get(0)); // Asignamos el primer cliente
+            pedidoComplejo.setEstado("recibido");
+            pedidoComplejo.setFechaCreacion(LocalDateTime.now());
+
+            // Línea 1: 1 Bruschetta CON adicional
+            PedidoComida lineaConAdicional = new PedidoComida();
+            lineaConAdicional.setComida(comidas.get(0)); // Asumiendo que la primera comida es Bruschetta
+            lineaConAdicional.setCantidad(1);
+            lineaConAdicional.setAdicionales(List.of(adicionales.get(0))); // Asumiendo que el primer adicional es
+                                                                           // Parmesano
+
+            // Línea 2: 2 Bruschettas SIN adicional
+            PedidoComida lineaSinAdicional = new PedidoComida();
+            lineaSinAdicional.setComida(comidas.get(0)); // La misma Bruschetta
+            lineaSinAdicional.setCantidad(2);
+            lineaSinAdicional.setAdicionales(List.of()); // Lista vacía
+
+            // Calculamos el total
+            double total = 0;
+            total += (lineaConAdicional.getCantidad() * lineaConAdicional.getComida().getPrecio())
+                    + lineaConAdicional.getAdicionales().get(0).getPrecio();
+            total += (lineaSinAdicional.getCantidad() * lineaSinAdicional.getComida().getPrecio());
+            pedidoComplejo.setTotal(total);
+
+            // Guardamos el pedido y sus líneas
+            lineaConAdicional.setPedido(pedidoComplejo);
+            lineaSinAdicional.setPedido(pedidoComplejo);
+            pedidoComplejo.setItems(List.of(lineaConAdicional, lineaSinAdicional));
+            pedidoRepository.save(pedidoComplejo);
+
+            // --- FIN: Creación del Pedido Complejo ---
+
+            // --- INICIO: Creación de 9 Pedidos Adicionales Simples ---
+            System.out.println("Cargando 9 pedidos de prueba adicionales...");
+            for (int i = 0; i < 9; i++) {
+                Pedido pedidoSimple = new Pedido();
+                pedidoSimple.setEstado("recibido");
+                pedidoSimple.setFechaCreacion(LocalDateTime.now());
+                pedidoSimple.setCliente(clientes.get(i % clientes.size())); // Rotamos entre los clientes
+
+                // Creamos una sola línea de pedido
+                PedidoComida lineaSimple = new PedidoComida();
+                lineaSimple.setPedido(pedidoSimple);
+                Comida comidaDeTurno = comidas.get(i % comidas.size()); // Rotamos entre las comidas
+                lineaSimple.setComida(comidaDeTurno);
+                lineaSimple.setCantidad(1); // Cantidad fija de 1 para estos pedidos
+
+                // Calculamos y asignamos el total
+                pedidoSimple.setTotal(comidaDeTurno.getPrecio());
+
+                // Conectamos y guardamos
+                pedidoSimple.setItems(List.of(lineaSimple));
+                pedidoRepository.save(pedidoSimple);
+            }
+            // --- FIN: Creación de 9 Pedidos Adicionales ---
+        }
+    }
 
     private void crearComidasEjemplo(Categoria antipastos, Categoria pizzas, Categoria pastas,
             Categoria risottos, Categoria postres, Categoria bebidas) {

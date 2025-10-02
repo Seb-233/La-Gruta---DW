@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import java.util.HashSet;
+import java.util.List; // <-- Importa java.util.List
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany; // <-- Importa OneToMany
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -60,18 +62,20 @@ public class Comida {
     private String ingredientes;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = true) // ⚡ también lo dejo opcional
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
-    // Relación con Adicional
     @ManyToMany
-    @JoinTable(
-        name = "comida_adicional",
-        joinColumns = @JoinColumn(name = "comida_id"),
-        inverseJoinColumns = @JoinColumn(name = "adicional_id")
-    )
-    @JsonIgnore   // 👈 evita loops
+    @JoinTable(name = "comida_adicional", joinColumns = @JoinColumn(name = "comida_id"), inverseJoinColumns = @JoinColumn(name = "adicional_id"))
+    @JsonIgnore
     private Set<Adicional> adicionales = new HashSet<>();
+
+    // --- CÓDIGO AÑADIDO ---
+    // Relación inversa con la tabla intermedia PedidoComida
+    @OneToMany(mappedBy = "comida")
+    @JsonIgnore // MUY IMPORTANTE para evitar bucles infinitos al convertir a JSON
+    private List<PedidoComida> pedidosDondeAparece;
+    // --- FIN DEL CÓDIGO AÑADIDO ---
 
     // Constructor personalizado
     public Comida(String nombre, String descripcion, Double precio, String imagen) {

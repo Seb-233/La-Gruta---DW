@@ -1,15 +1,20 @@
-// En la carpeta .../model/
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 public class Pedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private User cliente;
 
     private String estado;
     private LocalDateTime fechaCreacion;
@@ -18,16 +23,29 @@ public class Pedido {
     @ManyToOne
     private Domiciliario domiciliarioAsignado;
 
-    @ManyToMany
-    private List<Comida> comidas;
+    // --- CAMPO 'total' AÑADIDO ---
+    private Double total;
 
-    // --- Getters y Setters ---
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<PedidoComida> items;
+
+    // --- GETTERS Y SETTERS ---
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(User cliente) {
+        this.cliente = cliente;
     }
 
     public String getEstado() {
@@ -62,11 +80,20 @@ public class Pedido {
         this.domiciliarioAsignado = domiciliarioAsignado;
     }
 
-    public List<Comida> getComidas() {
-        return comidas;
+    public List<PedidoComida> getItems() {
+        return items;
     }
 
-    public void setComidas(List<Comida> comidas) {
-        this.comidas = comidas;
+    public void setItems(List<PedidoComida> items) {
+        this.items = items;
+    }
+
+    // --- NUEVOS GETTER Y SETTER PARA 'total' ---
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
     }
 }
