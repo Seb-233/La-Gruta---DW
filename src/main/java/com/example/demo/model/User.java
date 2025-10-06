@@ -1,101 +1,69 @@
+
 package com.example.demo.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "USERS_TABLE")
 public class User {
-    
-    private String username;
-    private String password;
-    private String role;
-    private String direccion;
-    private String telefono; 
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "user")
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String role; // ← obligatorio
+
+    private String direccion;
+    private String telefono;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comida> comidas = new ArrayList<>();
 
-    public User(Long id, String username, String password){
+    // ----- Constructores -----
+    public User() {}
+
+    public User(Long id, String username, String password, String role) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
-    public User(){
-
-    }
-
-    public User(String username, String password){
+    public User(String username, String password, String role) {
         this.username = username;
         this.password = password;
-    }
-    
-    public Long getId() {
-        return id;
+        this.role = role;
     }
 
-    public String getUsername() {
-        return username;
-    }
+    // ----- Getters y Setters -----
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public String getRole() { 
-        return role; 
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 
-    public List<Comida> getComidas() {
-        return comidas;
-    }
-
-    public void setComidas(List<Comida> comidas) {
-        this.comidas = comidas;
-    }
-
-    public void setRole(String role) { 
-        this.role = role; 
-    }
-
-    public String getDireccion() {
-    return direccion;
-}
-
-public void setDireccion(String direccion) {
-    this.direccion = direccion;
-}
-
-public String getTelefono() {
-    return telefono;
-}
-
-public void setTelefono(String telefono) {
-    this.telefono = telefono;
-}
-
-    
+    public List<Comida> getComidas() { return comidas; }
+    public void setComidas(List<Comida> comidas) { this.comidas = comidas; }
 }

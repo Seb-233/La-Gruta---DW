@@ -52,17 +52,21 @@ public class DatabaseInit implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Crear usuarios de ejemplo
         if (userRepository.count() == 0) {
-            User admin = new User("admin", "admin123");
-            admin.setRole("ADMIN");
-            userRepository.save(admin);
-
-            User admin1 = new User("Juan", "12345");
+            User admin1 = new User("Juan", "12345", null);
             admin1.setRole("ADMIN");
             userRepository.save(admin1);
 
-            User user = new User("usuario", "user123");
-            user.setRole("USER");
-            userRepository.save(user);
+            User admin2 = new User("Andres", "12345", null);
+            admin2.setRole("ADMIN");
+            userRepository.save(admin2);
+
+            User admin3 = new User("Miguel", "12345", null);
+            admin3.setRole("ADMIN");
+            userRepository.save(admin3);
+
+            User admin4 = new User("Sebastian", "12345", null);
+            admin4.setRole("ADMIN");
+            userRepository.save(admin4);
         }
         // Crear domiciliarios de ejemplo
         if (domiciliarioRepository.count() == 0) {
