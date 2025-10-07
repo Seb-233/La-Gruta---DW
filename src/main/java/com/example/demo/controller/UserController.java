@@ -1,14 +1,24 @@
 
 package com.example.demo.controller;
-
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.LoginResponse;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+
 
 @CrossOrigin(origins = "http://localhost:4200") // Permite conexión con Angular
 @RestController
@@ -23,6 +33,28 @@ public class UserController {
     public Collection<User> getAllUsers() {
         return userService.SearchAll();
     }
+    
+    @PostMapping("/login")
+public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    // Validar campos
+    if (request.getUsername() == null || request.getPassword() == null) {
+        return ResponseEntity.badRequest().body("Debe enviar username y password");
+    }
+
+    // Buscar usuario por nombre y contraseña
+    User user = userService.findByUsernameAndPassword(request.getUsername(), request.getPassword());
+
+    if (user == null) {
+        return ResponseEntity.status(401).body("Credenciales inválidas");
+    }
+
+    // Retornar respuesta con datos seguros
+    LoginResponse response = new LoginResponse(user.getId(), user.getUsername(), user.getRole());
+    return ResponseEntity.ok(response);
+}
+
+
+
 
     // Obtener usuario por ID
     @GetMapping("/{id}")

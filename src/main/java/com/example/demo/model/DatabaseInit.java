@@ -13,12 +13,10 @@ import com.example.demo.repository.AdicionalRepository;
 import com.example.demo.repository.CategoriaRepository;
 import com.example.demo.repository.ComidaRepository;
 import com.example.demo.repository.DomiciliarioRepository;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.OperadorRepository;
-import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.PedidoComidaRepository;
-
-import lombok.RequiredArgsConstructor;
+import com.example.demo.repository.PedidoRepository;
+import com.example.demo.repository.UserRepository;
 
 @Component
 public class DatabaseInit implements CommandLineRunner {
@@ -383,7 +381,7 @@ public class DatabaseInit implements CommandLineRunner {
         parmesano.setPrecio(3500.0);
         parmesano.setImagen("/images/provolone.webp");
         parmesano.setTipo("queso");
-        parmesano.getCategorias().add(pastas); // 👈 relación
+        parmesano.getCategorias().add(pastas);
         adicionalRepository.save(parmesano);
 
         // 2. Aceitunas Negras

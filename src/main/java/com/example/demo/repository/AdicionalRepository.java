@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.example.demo.model.Adicional;
+import com.example.demo.model.Categoria;
 
 public interface AdicionalRepository extends JpaRepository<Adicional, Long> {
 
@@ -19,6 +20,8 @@ public interface AdicionalRepository extends JpaRepository<Adicional, Long> {
     List<Adicional> findByCategoriaSlug(@Param("slug") String slug);
 
     Optional<Adicional> findByNombre(String nombre);
+
+    List<Adicional> findByCategoriasContaining(Categoria categoria);
 
 
     

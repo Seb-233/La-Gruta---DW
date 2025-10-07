@@ -49,12 +49,12 @@ public class Categoria {
 
     // Relación inversa con Comida
     @OneToMany(mappedBy = "categoria")
-    @JsonIgnore   // 👈 evita loops
+    @JsonIgnore   // evita loops
     private Set<Comida> comidas = new HashSet<>();
 
     // Relación inversa con Adicional
     @ManyToMany(mappedBy = "categorias")
-    @JsonIgnore   // 👈 evita loops
+    @JsonIgnore   // evita loops
     private Set<Adicional> adicionales = new HashSet<>();
 
     
