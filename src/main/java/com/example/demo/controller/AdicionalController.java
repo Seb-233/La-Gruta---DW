@@ -1,70 +1,60 @@
 package com.example.demo.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.example.demo.model.Adicional;
 import com.example.demo.repository.AdicionalRepository;
-import com.example.demo.repository.CategoriaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/adicionales")
+import java.util.List;
+
+//@CrossOrigin(origins = "[http://localhost:4200](http://localhost:4200)")
+//@RestController
+//@RequestMapping("/api/adicionales")
 public class AdicionalController {
 
-    private final AdicionalRepository adicionalRepo;
-    private final CategoriaRepository categoriaRepo;
+    @Autowired
+    private AdicionalRepository adicionalRepository;
 
-    public AdicionalController(AdicionalRepository adicionalRepo, CategoriaRepository categoriaRepo) {
-        this.adicionalRepo = adicionalRepo;
-        this.categoriaRepo = categoriaRepo;
-    }
-
-    // Listar todos los adicionales
     @GetMapping
-    public String listarAdicionales(Model model) {
-        model.addAttribute("adicionales", adicionalRepo.findAll());
-        return "tabla_adicionales"; // templates/tabla_adicionales.html
+    public List<Adicional> getAll() {
+        return adicionalRepository.findAll();
     }
 
-    // Mostrar formulario para nuevo adicional
-    @GetMapping("/nuevo")
-    public String mostrarFormulario(Model model) {
-        model.addAttribute("adicional", new Adicional());
-        model.addAttribute("categorias", categoriaRepo.findAll());
-        return "form-adicional"; // templates/form-adicional.html
+    @GetMapping("/{id}")
+    public ResponseEntity<Adicional> getById(@PathVariable Long id) {
+        return adicionalRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Guardar adicional
-    @PostMapping("/guardar")
-    public String guardarAdicional(@ModelAttribute Adicional adicional) {
-        adicionalRepo.save(adicional);
-        return "redirect:/adicionales";
+    @PostMapping
+    public Adicional create(@RequestBody Adicional adicional) {
+        return adicionalRepository.save(adicional);
     }
 
-    // Editar adicional
-    @GetMapping("/editar/{id}")
-    public String editarAdicional(@PathVariable Long id, Model model) {
-        return adicionalRepo.findById(id)
+    @PutMapping("/{id}")
+    public ResponseEntity<Adicional> update(@PathVariable Long id, @RequestBody Adicional adicionalDetails) {
+        return adicionalRepository.findById(id)
                 .map(adicional -> {
-                    model.addAttribute("adicional", adicional);
-                    model.addAttribute("categorias", categoriaRepo.findAll());
-                    return "form-adicional";
+                    adicional.setNombre(adicionalDetails.getNombre());
+                    adicional.setDescripcion(adicionalDetails.getDescripcion());
+                    adicional.setPrecio(adicionalDetails.getPrecio());
+                    adicional.setCategorias(adicionalDetails.getCategorias());
+                    Adicional updated = adicionalRepository.save(adicional);
+                    return ResponseEntity.ok(updated);
                 })
-                .orElse("redirect:/adicionales");
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Eliminar adicional
-    @GetMapping("/eliminar/{id}")
-    public String eliminarAdicional(@PathVariable Long id) {
-        if (adicionalRepo.existsById(id)) {
-            adicionalRepo.deleteById(id);
-        }
-        return "redirect:/adicionales";
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return adicionalRepository.findById(id)
+                .map(adicional -> {
+                    adicionalRepository.delete(adicional);
+                    return ResponseEntity.noContent().<Void>build();
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
+
 }
-

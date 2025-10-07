@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/header-footer.css">
   <link rel="stylesheet" href="/css/index.css">
-  <link rel="stylesheet" href="/css/login-styles.css"> <!-- Puedes crear edit-profile.css si prefieres -->
+  <link rel="stylesheet" href="/css/login-styles.css">
 </head>
 <body>
   
@@ -17,12 +17,15 @@
     <div th:replace="fragments :: solid-header"></div>
   </header>
 
+  <!-- Sección Editar Perfil -->
   <section class="login-section">
     <div class="login-overlay"></div>
     <div class="login-box">
       <h2>Editar Perfil</h2>
 
-      <form th:action="@{/profile/save}" th:object="${user}" method="post" class="mt-3">
+      <!-- Formulario de edición de perfil -->
+      <form th:action="@{/la_gruta/profile/save}" th:object="${user}" method="post" class="mt-3">
+        <!-- Campo oculto para el ID del usuario -->
         <input type="hidden" th:field="*{id}">
 
         <div class="mb-3">

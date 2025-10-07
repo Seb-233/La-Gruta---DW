@@ -1,5 +1,11 @@
 package com.example.demo.model;
 
+import java.util.HashSet;
+import java.util.List; // <-- Importa java.util.List
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -7,7 +13,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany; // <-- Importa OneToMany
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,8 +45,8 @@ public class Comida {
     @Column(nullable = true, length = 500)
     private String imagen;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id", nullable = true) // ⚡ lo dejo opcional
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
     @Column
@@ -52,13 +61,21 @@ public class Comida {
     @Column
     private String ingredientes;
 
-    /*@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comida_id")
-    private Comida comida;*/
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = true) // ⚡ también lo dejo opcional
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
+
+    @ManyToMany
+    @JoinTable(name = "comida_adicional", joinColumns = @JoinColumn(name = "comida_id"), inverseJoinColumns = @JoinColumn(name = "adicional_id"))
+    @JsonIgnore
+    private Set<Adicional> adicionales = new HashSet<>();
+
+    // --- CÓDIGO AÑADIDO ---
+    // Relación inversa con la tabla intermedia PedidoComida
+    @OneToMany(mappedBy = "comida")
+    @JsonIgnore // MUY IMPORTANTE para evitar bucles infinitos al convertir a JSON
+    private List<PedidoComida> pedidosDondeAparece;
+    // --- FIN DEL CÓDIGO AÑADIDO ---
 
     // Constructor personalizado
     public Comida(String nombre, String descripcion, Double precio, String imagen) {

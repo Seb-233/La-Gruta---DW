@@ -1,6 +1,8 @@
+
 package com.example.demo.service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,17 +10,16 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 
-
-
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserRepository repo;
+    private UserRepository repo;
 
     @Override
     public User SearchById(Long id) {
-        return repo.findById(id).get();
+        Optional<User> userOpt = repo.findById(id);
+        return userOpt.orElse(null);
     }
 
     @Override
@@ -43,8 +44,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-    return repo.findByUsername(username);
+        return repo.findByUsername(username);
     }
-
-
 }
+

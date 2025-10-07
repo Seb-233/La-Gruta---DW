@@ -14,6 +14,8 @@
     />
     <link rel="stylesheet" href="/css/header-footer.css" />
     <link rel="stylesheet" href="/css/tabla-comidas.css" />
+    <link rel="stylesheet" href="/css/sidebar.css">
+
   </head>
   <body>
     <!-- Header -->
@@ -32,17 +34,17 @@
             <h4 class="px-3">Panel</h4>
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link text-white" th:href="@{/users}">
-                  Clientes
+                <a class="nav-link text-white" th:href="@{/la_gruta/users}">
+                  Usuarios
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" th:href="@{/comidas}">
+                <a class="nav-link text-white" th:href="@{/la_gruta/comidas/admin}">
                   Comidas
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active text-white" th:href="@{/adicionales}">
+                <a class="nav-link active text-white" th:href="@{/la_gruta/adicionales}">
                   Adicionales
                 </a>
               </li>
@@ -54,7 +56,7 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 my-4">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-center">Lista de Adicionales</h2>
-            <a class="btn btn-success" th:href="@{/adicionales/nuevo}">
+            <a class="btn btn-success" th:href="@{/la_gruta/adicionales/nuevo}">
               Nuevo Adicional
             </a>
           </div>
@@ -81,12 +83,12 @@
                   <td>
                     <a
                       class="btn btn-warning btn-sm"
-                      th:href="@{/adicionales/editar/{id}(id=${adicional.id})}"
+                      th:href="@{/la_gruta/adicionales/editar/{id}(id=${adicional.id})}"
                       >Editar</a
                     >
                     <a
                       class="btn btn-danger btn-sm"
-                      th:href="@{/adicionales/eliminar/{id}(id=${adicional.id})}"
+                      th:href="@{/la_gruta/adicionales/eliminar/{id}(id=${adicional.id})}"
                       onclick="return confirm('¿Eliminar este adicional?');"
                       >Eliminar</a
                     >
@@ -97,7 +99,7 @@
           </div>
 
           <div class="text-center mt-4">
-            <a th:href="@{/home}" class="btn btn-secondary">Volver</a>
+            <a th:href="@{/la_gruta/index}" class="btn btn-secondary">Volver</a>
           </div>
         </main>
       </div>

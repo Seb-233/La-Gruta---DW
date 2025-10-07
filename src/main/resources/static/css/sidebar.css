@@ -1,0 +1,72 @@
+/* =========================
+   Sidebar Profesional
+========================= */
+.sidebar {
+  background-color: #1f2937; /* Gris oscuro elegante */
+  min-height: 100vh;
+  padding-top: 2rem;
+  font-family: 'Barlow', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.sidebar h4 {
+  color: #f9fafb;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  font-size: 1.3rem;
+}
+
+.sidebar .nav-link {
+  color: #d1d5db;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin: 0.25rem 0;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar .nav-link i {
+  margin-right: 0.5rem;
+}
+
+/* Hover y activo */
+.sidebar .nav-link:hover {
+  background-color: #3b82f6; /* Azul moderno */
+  color: #fff;
+  transform: translateX(5px);
+}
+
+.sidebar .nav-link.active {
+  background-color: #2563eb; /* Azul más oscuro para el activo */
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Separadores */
+.sidebar .nav-item + .nav-item {
+  margin-top: 0.5rem;
+}
+
+/* Mejor scroll si hay muchos items */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #3b82f6;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background-color: #1f2937;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .sidebar {
+    min-height: auto;
+  }
+}

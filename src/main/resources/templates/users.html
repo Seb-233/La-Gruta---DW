@@ -2,13 +2,13 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <title>Usuarios - La Gruta</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Usuarios - La Gruta Nera</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/header-footer.css" />
     <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/tabla-comidas.css" />
+    <link rel="stylesheet" href="/css/sidebar.css" />
   </head>
   <body>
     <!-- Header -->
@@ -19,27 +19,18 @@
     <div class="container-fluid">
       <div class="row">
         <!-- Sidebar -->
-        <nav
-          id="sidebarMenu"
-          class="col-md-3 col-lg-2 d-md-block bg-dark text-white sidebar collapse"
-        >
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark text-white sidebar collapse">
           <div class="position-sticky pt-3">
             <h4 class="px-3">Panel</h4>
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active text-white" th:href="@{/users}">
-                  Clientes
-                </a>
+                <a class="nav-link active text-white" th:href="@{/la_gruta/users}">Usuarios</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" th:href="@{/comidas}">
-                  Comidas
-                </a>
+                <a class="nav-link text-white" th:href="@{/la_gruta/comidas/admin}">Comidas</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" th:href="@{/adicionales}">
-                  Adicionales
-                </a>
+                <a class="nav-link text-white" th:href="@{/la_gruta/adicionales}">Adicionales</a>
               </li>
             </ul>
           </div>
@@ -47,41 +38,36 @@
 
         <!-- MAIN -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 my-4">
-          <h2 class="mb-4 text-center">Lista de Usuarios</h2>
-
-          <table class="table table-striped table-bordered shadow">
-            <thead class="table-dark text-center">
-              <tr>
-                <th>ID</th>
-                <th>Usuario</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="user : ${users}">
-                <td th:text="${user.id}"></td>
-                <td th:text="${user.username}"></td>
-                <td>
-                  <a
-                    th:href="@{'/users/edit/' + ${user.id}}"
-                    class="btn btn-sm btn-warning"
-                    >Editar</a
-                  >
-                  <a
-                    th:href="@{'/users/delete/' + ${user.id}}"
-                    class="btn btn-sm btn-danger"
-                    onclick="return confirm('¿Estás seguro de eliminar este usuario?');"
-                    >Eliminar</a
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="text-center mt-4">
-            <a th:href="@{/users/new}" class="btn btn-success">Nuevo Usuario</a>
-            <a th:href="@{/home}" class="btn btn-secondary">Volver</a>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-center">Lista de usuarios</h2>
+            <a th:href="@{/la_gruta/users/new}" class="btn btn-success">Nuevo Usuario</a>
           </div>
+
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered shadow text-center">
+              <thead class="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Usuario</th>
+                  <th>Role</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="user : ${users}">
+                  <td th:text="${user.id}"></td>
+                  <td th:text="${user.username}"></td>
+                  <td th:text="${user.role}"></td>
+                  <td>
+                    <a th:href="@{/la_gruta/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-warning">Editar</a>
+                    <a th:href="@{/la_gruta/users/delete/{id}(id=${user.id})}" class="btn btn-sm btn-danger"
+                       onclick="return confirm('¿Estás seguro de eliminar este usuario?');">Eliminar</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
         </main>
       </div>
     </div>
@@ -90,5 +76,7 @@
     <footer id="contacto">
       <div th:replace="fragments :: footer"></div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

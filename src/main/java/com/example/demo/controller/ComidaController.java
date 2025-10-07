@@ -8,74 +8,95 @@ import com.example.demo.model.Comida;
 import com.example.demo.repository.ComidaRepository;
 import com.example.demo.repository.CategoriaRepository;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
-@RequestMapping("/comidas")
+@RequestMapping("/la_gruta/comidas")
 public class ComidaController {
 
     private final ComidaRepository comidaRepo;
     private final CategoriaRepository categoriaRepo;
 
-    // Constructor Injection (recomendado)
     public ComidaController(ComidaRepository comidaRepo, CategoriaRepository categoriaRepo) {
         this.comidaRepo = comidaRepo;
         this.categoriaRepo = categoriaRepo;
     }
 
-    // Listar todas las comidas en comidaadmin.html
-    @GetMapping
-    public String listarComidas(Model model) {
+    // ----- ADMIN -----
+    @GetMapping("/admin")
+    public String listarComidasAdmin(Model model, HttpSession session) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !"ADMIN".equalsIgnoreCase(role)) {
+            return "redirect:/la_gruta/login"; // Seguridad básica
+        }
         model.addAttribute("comidas", comidaRepo.findAll());
-        return "tabla_comidasadmin"; // templates/tabla_comidasadmin.html
+        return "tabla_comidasadmin";
     }
 
-    // Mostrar formulario para nueva comida
     @GetMapping("/nuevo")
-    public String mostrarFormulario(Model model) {
+    public String mostrarFormulario(Model model, HttpSession session) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !"ADMIN".equalsIgnoreCase(role)) {
+            return "redirect:/la_gruta/index";
+        }
         model.addAttribute("comida", new Comida());
         model.addAttribute("categorias", categoriaRepo.findAll());
-        return "form-comida"; // templates/form-comida.html
+        return "form-comida";
     }
 
-    // Guardar comida nueva o editada
     @PostMapping("/guardar")
-    public String guardarComida(@ModelAttribute Comida comida) {
+    public String guardarComida(@ModelAttribute Comida comida, HttpSession session) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !"ADMIN".equalsIgnoreCase(role)) {
+            return "redirect:/la_gruta/index";
+        }
         comidaRepo.save(comida);
-        return "redirect:/comidas";
+        return "redirect:/la_gruta/comidas/admin";
     }
 
-    // Editar comida (cargar formulario con datos existentes)
     @GetMapping("/editar/{id}")
-    public String editarComida(@PathVariable Long id, Model model) {
+    public String editarComida(@PathVariable Long id, Model model, HttpSession session) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !"ADMIN".equalsIgnoreCase(role)) {
+            return "redirect:/la_gruta/index";
+        }
+
         return comidaRepo.findById(id)
                 .map(comidaExistente -> {
                     model.addAttribute("comida", comidaExistente);
                     model.addAttribute("categorias", categoriaRepo.findAll());
                     return "form-comida";
                 })
-                .orElse("redirect:/comidas"); // si no existe redirige
+                .orElse("redirect:/la_gruta/comidas/admin");
     }
 
-    // Eliminar comida
     @GetMapping("/eliminar/{id}")
-    public String eliminarComida(@PathVariable Long id) {
+    public String eliminarComida(@PathVariable Long id, HttpSession session) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !"ADMIN".equalsIgnoreCase(role)) {
+            return "redirect:/la_gruta/index";
+        }
+
         if (comidaRepo.existsById(id)) {
             comidaRepo.deleteById(id);
         }
-        return "redirect:/comidas";
+        return "redirect:/la_gruta/comidas/admin";
     }
 
-    @GetMapping("/index")
-    public String index() {
-        return "index"; // nombre del template index.html en templates/
+    // ----- CLIENT -----
+    @GetMapping
+    public String listarComidasCliente(Model model) {
+        model.addAttribute("comidas", comidaRepo.findAll());
+        return "tabla_comidas"; // Vista cliente
     }
 
     @GetMapping("/menu")
     public String menu() {
-        return "menu"; // nombre del template menu.html en templates/
+        return "menu";
     }
 
     @GetMapping("/restaurantes")
     public String restaurantes() {
-        return "restaurantes"; // nombre del template restaurantes.html en templates/
+        return "restaurantes";
     }
 }
