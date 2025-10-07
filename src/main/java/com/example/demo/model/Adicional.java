@@ -40,31 +40,24 @@ public class Adicional {
     private Double precio;
 
     @Column
-    private String imagen; 
-    
-    @Column
-    private Boolean disponible = true; 
+    private String imagen;
 
     @Column
-    private String tipo; 
+    private Boolean disponible = true;
 
-     // Relación con Categoria
+    @Column
+    private String tipo;
+
+    // Relación con Categoria
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(
-        name = "adicional_categoria",
-        joinColumns = @JoinColumn(name = "adicional_id"),
-        inverseJoinColumns = @JoinColumn(name = "categoria_id")
-    )
-    @JsonIgnore   // 👈 evita loops
+    @JoinTable(name = "adicional_categoria", joinColumns = @JoinColumn(name = "adicional_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+    @JsonIgnore // 👈 evita loops
     private Set<Categoria> categorias = new HashSet<>();
 
     // Relación con Comida
     @ManyToMany(mappedBy = "adicionales")
-    @JsonIgnore   // 👈 evita loops
+    @JsonIgnore // 👈 evita loops
     private Set<Comida> comidas = new HashSet<>();
-
-
-    
 
     // Constructor personalizado
     public Adicional(String nombre, String descripcion, Double precio, String imagen) {

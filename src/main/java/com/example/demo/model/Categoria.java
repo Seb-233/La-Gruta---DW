@@ -46,19 +46,15 @@ public class Categoria {
     @Column
     private Boolean activa = true; // Para activar/desactivar categorías
 
-
     // Relación inversa con Comida
     @OneToMany(mappedBy = "categoria")
-    @JsonIgnore   // 👈 evita loops
+    @JsonIgnore // 👈 evita loops
     private Set<Comida> comidas = new HashSet<>();
 
     // Relación inversa con Adicional
     @ManyToMany(mappedBy = "categorias")
-    @JsonIgnore   // 👈 evita loops
+    @JsonIgnore // 👈 evita loops
     private Set<Adicional> adicionales = new HashSet<>();
-
-    
-
 
     // Constructor personalizado
     public Categoria(String nombre, String slug) {
