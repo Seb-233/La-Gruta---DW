@@ -14,15 +14,11 @@ public interface AdicionalRepository extends JpaRepository<Adicional, Long> {
     @Query("SELECT a FROM Adicional a JOIN a.categorias c WHERE c.id = :categoriaId")
     List<Adicional> findByCategoriaId(Long categoriaId);
 
-
     @Query("SELECT a FROM Adicional a JOIN a.categorias c WHERE c.slug = :slug")
     List<Adicional> findByCategoriaSlug(@Param("slug") String slug);
 
     Optional<Adicional> findByNombre(String nombre);
 
-
-    
-
-    
+    List<Adicional> findByCategorias_Slug(String slug);
 
 }
