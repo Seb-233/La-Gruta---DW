@@ -1,35 +1,33 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Adicional;
+import com.example.demo.model.Categoria;
 import com.example.demo.repository.AdicionalRepository;
+import com.example.demo.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/adicionales")
-@CrossOrigin(origins = "http://localhost:4200") // Permite la conexión con Angular
+@CrossOrigin(origins = "http://localhost:4200")
 public class AdicionalRestController {
 
     @Autowired
     private AdicionalRepository adicionalRepository;
 
-    /**
-     * READ (Leer todos): Obtiene una lista de todos los adicionales.
-     * Corresponde a AC34.
-     * URL: GET /api/adicionales
-     */
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
     @GetMapping
     public List<Adicional> listarAdicionales() {
         return adicionalRepository.findAll();
     }
 
-    /**
-     * READ (Leer por ID): Obtiene un adicional específico por su ID.
-     * URL: GET /api/adicionales/{id}
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Adicional> obtenerAdicionalPorId(@PathVariable Long id) {
         return adicionalRepository.findById(id)
@@ -37,31 +35,39 @@ public class AdicionalRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /**
-     * CREATE (Crear): Registra un nuevo adicional en la base de datos.
-     * Corresponde a AC33 (aunque el AC lo describe como READ, la funcionalidad es
-     * CREATE).
-     * URL: POST /api/adicionales
-     */
     @PostMapping
-    public Adicional crearAdicional(@RequestBody Adicional adicional) {
-        return adicionalRepository.save(adicional);
+    public ResponseEntity<Adicional> crearAdicional(@RequestBody Adicional adicional) {
+        if (adicional.getCategorias() != null && !adicional.getCategorias().isEmpty()) {
+            Set<Categoria> categorias = new HashSet<>();
+            for (Categoria cat : adicional.getCategorias()) {
+                categoriaRepository.findById(cat.getId()).ifPresent(categorias::add);
+            }
+            adicional.setCategorias(categorias);
+        }
+        Adicional guardado = adicionalRepository.save(adicional);
+        return ResponseEntity.ok(guardado);
     }
 
-    /**
-     * UPDATE (Actualizar): Modifica los datos de un adicional existente.
-     * Corresponde a AC35.
-     * URL: PUT /api/adicionales/{id}
-     */
     @PutMapping("/{id}")
-    public ResponseEntity<Adicional> actualizarAdicional(@PathVariable Long id,
+    public ResponseEntity<Adicional> actualizarAdicional(
+            @PathVariable Long id,
             @RequestBody Adicional detallesAdicional) {
+
         return adicionalRepository.findById(id)
                 .map(adicionalExistente -> {
                     adicionalExistente.setNombre(detallesAdicional.getNombre());
                     adicionalExistente.setDescripcion(detallesAdicional.getDescripcion());
                     adicionalExistente.setPrecio(detallesAdicional.getPrecio());
-                    // Aquí puedes añadir más campos para actualizar si es necesario
+                    adicionalExistente.setDisponible(detallesAdicional.getDisponible());
+                    adicionalExistente.setImagen(detallesAdicional.getImagen());
+
+                    if (detallesAdicional.getCategorias() != null) {
+                        Set<Categoria> nuevasCategorias = new HashSet<>();
+                        for (Categoria cat : detallesAdicional.getCategorias()) {
+                            categoriaRepository.findById(cat.getId()).ifPresent(nuevasCategorias::add);
+                        }
+                        adicionalExistente.setCategorias(nuevasCategorias);
+                    }
 
                     Adicional actualizado = adicionalRepository.save(adicionalExistente);
                     return ResponseEntity.ok(actualizado);
@@ -69,22 +75,18 @@ public class AdicionalRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /**
-     * DELETE (Eliminar): Elimina un adicional de la base de datos.
-     * Corresponde a AC36 (aunque el AC dice "desactivar", por simplicidad lo
-     * eliminamos).
-     * URL: DELETE /api/adicionales/{id}
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarAdicional(@PathVariable Long id) {
         if (!adicionalRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        // NOTA: Si tienes relaciones (ej. en PedidoComida) que dependen de Adicional,
-        // puede que necesites borrar esas referencias primero para evitar un error de
-        // clave foránea.
-        // Por ahora, lo mantenemos simple.
         adicionalRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/categoria/{slug}")
+    public ResponseEntity<List<Adicional>> getByCategoriaSlug(@PathVariable String slug) {
+        List<Adicional> adicionales = adicionalRepository.findByCategorias_Slug(slug);
+        return ResponseEntity.ok(adicionales);
     }
 }

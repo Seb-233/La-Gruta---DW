@@ -1,4 +1,3 @@
-
 package com.example.demo.controller;
 
 import java.util.Collection;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 
-@CrossOrigin(origins = "http://localhost:4200") // Permite conexión con Angular
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -18,20 +17,32 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Obtener todos los usuarios
+    // ✅ LOGIN
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User loginRequest) {
+        User user = userService.findByUsername(loginRequest.getUsername());
+        if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
+            user.setPassword(null); // no enviar contraseña al frontend
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(401).body("Credenciales inválidas");
+        }
+    }
+
+    // GET ALL
     @GetMapping
     public Collection<User> getAllUsers() {
         return userService.SearchAll();
     }
 
-    // Obtener usuario por ID
+    // GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.SearchById(id);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
-    // Crear usuario nuevo
+    // CREATE
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         if (user.getRole() == null || user.getRole().isEmpty()) {
@@ -41,7 +52,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    // Actualizar usuario
+    // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
         User existingUser = userService.SearchById(id);
@@ -59,11 +70,10 @@ public class UserController {
         return ResponseEntity.ok(existingUser);
     }
 
-    // Eliminar usuario
+    // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
-
