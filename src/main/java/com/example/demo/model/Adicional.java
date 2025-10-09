@@ -1,72 +1,65 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+@Getter
+@Setter
 @Entity
 @Table(name = "adicionales")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Adicional {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false)
     private String nombre;
 
-    @Column(length = 500)
+    @Column(length = 1000)
     private String descripcion;
 
     @Column(nullable = false)
     private Double precio;
 
-    @Column
-    private String imagen; 
-    
-    @Column
-    private Boolean disponible = true; 
+    @Column(length = 500)
+    private String imagen;
 
-    @Column
-    private String tipo; 
+    @Column(nullable = false)
+    private Boolean disponible = true;
 
-     // Relación con Categoria
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    // 🔹 Relación muchos a muchos con Categoria
+    //   Se usa para listar los adicionales por categoría (función actual de tu API)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "adicional_categoria",
+        name = "categoria_adicional",
         joinColumns = @JoinColumn(name = "adicional_id"),
         inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
-    @JsonIgnore   // 👈 evita loops
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "adicionales"})
     private Set<Categoria> categorias = new HashSet<>();
 
-    // Relación con Comida
+    // 🔹 Relación auxiliar con AdicionalCategoria (tabla puente explícita)
+    //   Esto mantiene la trazabilidad sin interferir con la relación ManyToMany
+    @OneToMany(mappedBy = "adicional", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<AdicionalCategoria> categoriaAsociaciones = new HashSet<>();
+
+    // 🔹 Relación inversa con Comida (cada comida puede tener múltiples adicionales)
     @ManyToMany(mappedBy = "adicionales")
-    @JsonIgnore   // 👈 evita loops
+    @JsonIgnore
     private Set<Comida> comidas = new HashSet<>();
 
-
-    
-
-    // Constructor personalizado
+    // 🔹 Constructor útil para pruebas o creación rápida
     public Adicional(String nombre, String descripcion, Double precio, String imagen) {
         this.nombre = nombre;
         this.descripcion = descripcion;

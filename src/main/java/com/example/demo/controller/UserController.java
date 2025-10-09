@@ -1,5 +1,5 @@
-
 package com.example.demo.controller;
+
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,7 @@ import com.example.demo.dto.LoginResponse;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 
-
-@CrossOrigin(origins = "http://localhost:4200") // Permite conexión con Angular
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -28,42 +27,40 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Obtener todos los usuarios
+    // ✅ LOGIN (único y correcto)
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        // Validar campos
+        if (request.getUsername() == null || request.getPassword() == null) {
+            return ResponseEntity.badRequest().body("Debe enviar username y password");
+        }
+
+        // Buscar usuario por nombre y contraseña
+        User user = userService.findByUsernameAndPassword(request.getUsername(), request.getPassword());
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("Credenciales inválidas");
+        }
+
+        // Retornar respuesta con datos seguros
+        LoginResponse response = new LoginResponse(user.getId(), user.getUsername(), user.getRole());
+        return ResponseEntity.ok(response);
+    }
+
+    // ✅ GET ALL
     @GetMapping
     public Collection<User> getAllUsers() {
         return userService.SearchAll();
     }
-    
-    @PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-    // Validar campos
-    if (request.getUsername() == null || request.getPassword() == null) {
-        return ResponseEntity.badRequest().body("Debe enviar username y password");
-    }
 
-    // Buscar usuario por nombre y contraseña
-    User user = userService.findByUsernameAndPassword(request.getUsername(), request.getPassword());
-
-    if (user == null) {
-        return ResponseEntity.status(401).body("Credenciales inválidas");
-    }
-
-    // Retornar respuesta con datos seguros
-    LoginResponse response = new LoginResponse(user.getId(), user.getUsername(), user.getRole());
-    return ResponseEntity.ok(response);
-}
-
-
-
-
-    // Obtener usuario por ID
+    // ✅ GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.SearchById(id);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
-    // Crear usuario nuevo
+    // ✅ CREATE
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         if (user.getRole() == null || user.getRole().isEmpty()) {
@@ -73,7 +70,7 @@ public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(user);
     }
 
-    // Actualizar usuario
+    // ✅ UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
         User existingUser = userService.SearchById(id);
@@ -91,11 +88,10 @@ public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(existingUser);
     }
 
-    // Eliminar usuario
+    // ✅ DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
-

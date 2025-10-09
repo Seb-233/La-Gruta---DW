@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import com.example.demo.repository.AdicionalCategoriaRepository;
 
 @RestController
 @RequestMapping("/api/adicional-categoria")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AdicionalCategoriaController {
 
     @Autowired
@@ -51,7 +53,7 @@ public class AdicionalCategoriaController {
         return adicionalCategoriaRepository.save(adicionalCategoria);
     }
 
-    // ✅ Eliminar relación
+    // ✅ Eliminar relación por ID
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         adicionalCategoriaRepository.deleteById(id);

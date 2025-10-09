@@ -2,11 +2,15 @@ package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Comida;
-import com.example.demo.repository.ComidaRepository;
 import com.example.demo.repository.CategoriaRepository;
+import com.example.demo.repository.ComidaRepository;
 
 import jakarta.servlet.http.HttpSession;
 

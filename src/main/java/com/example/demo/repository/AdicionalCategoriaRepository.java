@@ -12,11 +12,15 @@ import com.example.demo.model.Categoria;
 @Repository
 public interface AdicionalCategoriaRepository extends JpaRepository<AdicionalCategoria, Long> {
 
-    // ✅ Busca las asociaciones por adicional
+    // 🔹 Busca las asociaciones por entidad Adicional
     List<AdicionalCategoria> findByAdicional(Adicional adicional);
 
-    // ✅ Busca las asociaciones por categoría
+    // 🔹 Busca las asociaciones por entidad Categoria
     List<AdicionalCategoria> findByCategoria(Categoria categoria);
 
+    // 🔹 Busca las asociaciones por ID de Adicional
     List<AdicionalCategoria> findByAdicionalId(Long adicionalId);
+
+    // 🔹 Busca las asociaciones por ID de Categoria
+    List<AdicionalCategoria> findByCategoriaId(Long categoriaId);
 }
