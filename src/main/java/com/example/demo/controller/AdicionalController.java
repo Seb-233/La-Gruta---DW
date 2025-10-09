@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.Adicional;
@@ -19,7 +18,6 @@ import com.example.demo.repository.AdicionalCategoriaRepository;
 import com.example.demo.repository.AdicionalRepository;
 
 @RestController
-@RequestMapping("/api/adicionales")
 @CrossOrigin(origins = "http://localhost:4200")
 public class AdicionalController {
 
