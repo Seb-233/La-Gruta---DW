@@ -1,20 +1,31 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "pedido_comida")
 public class PedidoComida {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id")
-    @JsonBackReference
+    @JsonBackReference // evita recursión con Pedido.items
     private Pedido pedido;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,10 +39,9 @@ public class PedidoComida {
         name = "pedido_comida_adicionales",
         joinColumns = @JoinColumn(name = "pedido_comida_id"),
         inverseJoinColumns = @JoinColumn(name = "adicional_id")
-    )
+    ) // tabla intermedia para adicionales seleccionados
     private List<Adicional> adicionales;
 
-    // --- Constructores ---
     public PedidoComida() {}
 
     public PedidoComida(Pedido pedido, Comida comida, int cantidad) {
@@ -40,7 +50,6 @@ public class PedidoComida {
         this.cantidad = cantidad;
     }
 
-    // --- Getters y Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

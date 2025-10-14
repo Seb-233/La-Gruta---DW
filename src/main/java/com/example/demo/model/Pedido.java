@@ -1,12 +1,25 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
+
 @Entity
 public class Pedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,83 +29,74 @@ public class Pedido {
     private User cliente;
 
     private String estado;
+
+    // Fecha de creación "real" en la DB
     private LocalDateTime fechaCreacion;
+
     private LocalDateTime fechaEntrega;
 
     @ManyToOne
     private Domiciliario domiciliarioAsignado;
 
-    // --- CAMPO 'total' AÑADIDO ---
+    // --- total del pedido ---
     private Double total;
 
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(
+        mappedBy = "pedido",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY // mejor LAZY para evitar cargas pesadas
+    )
     @JsonManagedReference
     private List<PedidoComida> items;
 
-    // --- GETTERS Y SETTERS ---
-
-    public Long getId() {
-        return id;
+    // =========================
+    //     Ciclo de vida
+    // =========================
+    @PrePersist
+    public void prePersist() {
+        if (this.fechaCreacion == null) {
+            this.fechaCreacion = LocalDateTime.now();
+        }
+        if (this.estado == null || this.estado.isBlank()) {
+            this.estado = "pendiente";
+        }
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // =========================
+    //     Getters / Setters
+    // =========================
 
-    public User getCliente() {
-        return cliente;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setCliente(User cliente) {
-        this.cliente = cliente;
-    }
+    public User getCliente() { return cliente; }
+    public void setCliente(User cliente) { this.cliente = cliente; }
 
-    public String getEstado() {
-        return estado;
-    }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
+    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
+    public LocalDateTime getFechaEntrega() { return fechaEntrega; }
+    public void setFechaEntrega(LocalDateTime fechaEntrega) { this.fechaEntrega = fechaEntrega; }
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
+    public Domiciliario getDomiciliarioAsignado() { return domiciliarioAsignado; }
+    public void setDomiciliarioAsignado(Domiciliario domiciliarioAsignado) { this.domiciliarioAsignado = domiciliarioAsignado; }
 
-    public LocalDateTime getFechaEntrega() {
-        return fechaEntrega;
-    }
+    public List<PedidoComida> getItems() { return items; }
+    public void setItems(List<PedidoComida> items) { this.items = items; }
 
-    public void setFechaEntrega(LocalDateTime fechaEntrega) {
-        this.fechaEntrega = fechaEntrega;
-    }
+    public Double getTotal() { return total; }
+    public void setTotal(Double total) { this.total = total; }
 
-    public Domiciliario getDomiciliarioAsignado() {
-        return domiciliarioAsignado;
-    }
+    // =========================
+    //     Alias de compatibilidad
+    //     (para el controlador que usa creadoEn)
+    // =========================
+    @Transient
+    public LocalDateTime getCreadoEn() { return this.fechaCreacion; }
 
-    public void setDomiciliarioAsignado(Domiciliario domiciliarioAsignado) {
-        this.domiciliarioAsignado = domiciliarioAsignado;
-    }
-
-    public List<PedidoComida> getItems() {
-        return items;
-    }
-
-    public void setItems(List<PedidoComida> items) {
-        this.items = items;
-    }
-
-    // --- NUEVOS GETTER Y SETTER PARA 'total' ---
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
-    }
+    public void setCreadoEn(LocalDateTime creadoEn) { this.fechaCreacion = creadoEn; }
 }

@@ -33,9 +33,6 @@ public class AdicionalRestController {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
-    // ✅ READ (Leer todos): Obtiene una lista de todos los adicionales.
-    // Corresponde a AC34.
-    // URL: GET /api/adicionales
     @GetMapping
     public List<Adicional> getAll() {
         return adicionalRepository.findAll();
