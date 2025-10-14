@@ -23,42 +23,49 @@ import com.example.demo.model.Comida;
 import com.example.demo.model.Domiciliario;
 import com.example.demo.model.Pedido;
 import com.example.demo.model.PedidoComida;
+import com.example.demo.model.User; // ⚠️ o Cliente / Usuario según tu entidad real
 import com.example.demo.repository.AdicionalRepository;
 import com.example.demo.repository.ComidaRepository;
 import com.example.demo.repository.DomiciliarioRepository;
 import com.example.demo.repository.PedidoComidaRepository;
 import com.example.demo.repository.PedidoRepository;
+import com.example.demo.repository.UserRepository; // ⚠️ ajusta al nombre real de tu repositorio
 
 /**
  * Controlador REST para flujo de pedidos:
- *  - GET    /api/pedidos           : listar pedidos activos (AC22)
- *  - PUT    /api/pedidos/{id}/estado : actualizar estado (AC23, AC24, AC25)
- *  - POST   /api/pedidos           : crear pedido desde el carro
- *  - GET    /api/pedidos/{id}      : consultar pedido por id
+ * - GET /api/pedidos : listar pedidos activos
+ * - PUT /api/pedidos/{id}/estado : actualizar estado
+ * - POST /api/pedidos : crear pedido desde el carro
+ * - GET /api/pedidos/{id} : consultar pedido por id
  */
 @RestController
 @RequestMapping("/api/pedidos")
 @CrossOrigin(origins = "http://localhost:4200")
 public class PedidoRestController {
 
-    // ===== Repos existentes =====
-    @Autowired private PedidoRepository pedidoRepository;
-    @Autowired private DomiciliarioRepository domiciliarioRepository;
-
-    // ===== Repos para crear el pedido =====
-    @Autowired private PedidoComidaRepository pedidoComidaRepository;
-    @Autowired private ComidaRepository comidaRepository;
-    @Autowired private AdicionalRepository adicionalRepository;
-    // @Autowired private UserRepository userRepository; // Si manejas cliente
+    // ===== Repositorios =====
+    @Autowired
+    private PedidoRepository pedidoRepository;
+    @Autowired
+    private DomiciliarioRepository domiciliarioRepository;
+    @Autowired
+    private PedidoComidaRepository pedidoComidaRepository;
+    @Autowired
+    private ComidaRepository comidaRepository;
+    @Autowired
+    private AdicionalRepository adicionalRepository;
+    @Autowired
+    private UserRepository userRepository; // ✅ agregado para vincular el cliente
 
     // =========================
-    //   DTOs internos mínimos
+    // DTOs internos mínimos
     // =========================
     public static class CreatePedidoRequest {
-        public Long clienteId;         // opcional
-        public String direccion;       // opcional
-        public String notas;           // opcional
+        public Long clienteId; // ✅ se usa ahora para asignar el cliente
+        public String direccion;
+        public String notas;
         public List<Item> items;
+
         public static class Item {
             public Long comidaId;
             public int cantidad;
@@ -81,35 +88,36 @@ public class PedidoRestController {
             public List<AdicionalRes> adicionales;
             public Double subtotal;
         }
+
         public static class AdicionalRes {
             public Long id;
             public String nombre;
-            public Double precio; // déjalo null si Adicional no maneja precio
+            public Double precio;
         }
     }
 
     // =========================
-    // AC22: Pedidos activos
+    // GET: Pedidos activos
     // =========================
     @GetMapping
     public List<Pedido> getPedidosActivos() {
         return pedidoRepository.findAllActive();
     }
 
-    // ==========================================
-    // AC23/AC24/AC25: Actualizar estado pedido
-    // ==========================================
+    // =========================
+    // PUT: Actualizar estado
+    // =========================
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstado(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String nuevoEstado = body.get("estado");
 
         return pedidoRepository.findById(id).map(pedido -> {
             switch (nuevoEstado) {
-                case "cocinando": // AC23
+                case "cocinando":
                     pedido.setEstado("cocinando");
                     break;
 
-                case "enviado": // AC24
+                case "enviado":
                     Domiciliario domiciliario = domiciliarioRepository.findAll().stream()
                             .filter(Domiciliario::isDisponible)
                             .findFirst()
@@ -118,7 +126,6 @@ public class PedidoRestController {
                     if (domiciliario != null) {
                         domiciliario.setDisponible(false);
                         domiciliarioRepository.save(domiciliario);
-
                         pedido.setEstado("enviado");
                         pedido.setDomiciliarioAsignado(domiciliario);
                     } else {
@@ -126,7 +133,7 @@ public class PedidoRestController {
                     }
                     break;
 
-                case "entregado": // AC25
+                case "entregado":
                     pedido.setEstado("entregado");
                     pedido.setFechaEntrega(LocalDateTime.now());
 
@@ -147,9 +154,9 @@ public class PedidoRestController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    // ======================================
-    // Crear pedido desde el carrito (POST)
-    // ======================================
+    // =========================
+    // POST: Crear pedido
+    // =========================
     @PostMapping
     @Transactional
     public ResponseEntity<?> crearPedido(@RequestBody CreatePedidoRequest body) {
@@ -158,9 +165,13 @@ public class PedidoRestController {
         }
 
         Pedido pedido = new Pedido();
-        pedido.setEstado("pendiente");
+        pedido.setEstado("recibido");
         pedido.setCreadoEn(LocalDateTime.now());
 
+        // ✅ Asignar cliente si se envió clienteId
+        if (body.clienteId != null) {
+            userRepository.findById(body.clienteId).ifPresent(pedido::setCliente);
+        }
 
         double total = 0.0;
         List<PedidoComida> items = new ArrayList<>();
@@ -186,8 +197,11 @@ public class PedidoRestController {
 
             double precioComida = comida.getPrecio();
             double precioAdicionales = 0.0;
-            // Si tu entidad Adicional tiene precio, descomenta:
-            // for (Adicional ad : ads) { precioAdicionales += (ad.getPrecio() != null ? ad.getPrecio() : 0.0); }
+
+            // Si tus adicionales tienen precio, puedes habilitar esto:
+            // for (Adicional ad : ads) {
+            // precioAdicionales += ad.getPrecio() != null ? ad.getPrecio() : 0.0;
+            // }
 
             total += (precioComida + precioAdicionales) * it.cantidad;
             items.add(pc);
@@ -196,14 +210,13 @@ public class PedidoRestController {
         pedido.setItems(items);
         pedido.setTotal(total);
 
-        // Con cascade=ALL en Pedido.items, basta con save(pedido)
         Pedido guardado = pedidoRepository.save(pedido);
         return ResponseEntity.ok(mapPedidoToResponse(guardado));
     }
 
-    // ======================================
-    // Obtener pedido por ID (detalle)
-    // ======================================
+    // =========================
+    // GET: Obtener pedido por ID
+    // =========================
     @GetMapping("/{id}")
     public ResponseEntity<?> getPedido(@PathVariable Long id) {
         return pedidoRepository.findById(id)
@@ -211,9 +224,9 @@ public class PedidoRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ======================================
-    // Mapper entidad -> DTO de respuesta
-    // ======================================
+    // =========================
+    // Mapper entidad -> DTO
+    // =========================
     private PedidoResponse mapPedidoToResponse(Pedido p) {
         PedidoResponse r = new PedidoResponse();
         r.id = p.getId();
@@ -236,7 +249,6 @@ public class PedidoRestController {
                         PedidoResponse.AdicionalRes ar = new PedidoResponse.AdicionalRes();
                         ar.id = ad.getId();
                         ar.nombre = ad.getNombre();
-                        // ar.precio = ad.getPrecio(); // si existe en tu entidad
                         adrs.add(ar);
                     }
                 }
@@ -244,10 +256,6 @@ public class PedidoRestController {
 
                 double precioComida = it.getComida().getPrecio();
                 double precioAdicionales = 0.0;
-                // if (it.getAdicionales() != null)
-                //   for (Adicional ad : it.getAdicionales())
-                //     precioAdicionales += (ad.getPrecio() != null ? ad.getPrecio() : 0.0);
-
                 ir.subtotal = (precioComida + precioAdicionales) * it.getCantidad();
                 list.add(ir);
             }

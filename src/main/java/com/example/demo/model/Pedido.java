@@ -41,17 +41,17 @@ public class Pedido {
     // --- total del pedido ---
     private Double total;
 
-    @OneToMany(
-        mappedBy = "pedido",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY // mejor LAZY para evitar cargas pesadas
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY // mejor
+                                                                                                            // LAZY para
+                                                                                                            // evitar
+                                                                                                            // cargas
+                                                                                                            // pesadas
     )
     @JsonManagedReference
     private List<PedidoComida> items;
 
     // =========================
-    //     Ciclo de vida
+    // Ciclo de vida
     // =========================
     @PrePersist
     public void prePersist() {
@@ -59,44 +59,88 @@ public class Pedido {
             this.fechaCreacion = LocalDateTime.now();
         }
         if (this.estado == null || this.estado.isBlank()) {
-            this.estado = "pendiente";
+            this.estado = "recibido"; // <-- Cambio aquí
         }
     }
 
     // =========================
-    //     Getters / Setters
+    // Getters / Setters
     // =========================
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public User getCliente() { return cliente; }
-    public void setCliente(User cliente) { this.cliente = cliente; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public User getCliente() {
+        return cliente;
+    }
 
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public void setCliente(User cliente) {
+        this.cliente = cliente;
+    }
 
-    public LocalDateTime getFechaEntrega() { return fechaEntrega; }
-    public void setFechaEntrega(LocalDateTime fechaEntrega) { this.fechaEntrega = fechaEntrega; }
+    public String getEstado() {
+        return estado;
+    }
 
-    public Domiciliario getDomiciliarioAsignado() { return domiciliarioAsignado; }
-    public void setDomiciliarioAsignado(Domiciliario domiciliarioAsignado) { this.domiciliarioAsignado = domiciliarioAsignado; }
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
-    public List<PedidoComida> getItems() { return items; }
-    public void setItems(List<PedidoComida> items) { this.items = items; }
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
 
-    public Double getTotal() { return total; }
-    public void setTotal(Double total) { this.total = total; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public LocalDateTime getFechaEntrega() {
+        return fechaEntrega;
+    }
+
+    public void setFechaEntrega(LocalDateTime fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
+    }
+
+    public Domiciliario getDomiciliarioAsignado() {
+        return domiciliarioAsignado;
+    }
+
+    public void setDomiciliarioAsignado(Domiciliario domiciliarioAsignado) {
+        this.domiciliarioAsignado = domiciliarioAsignado;
+    }
+
+    public List<PedidoComida> getItems() {
+        return items;
+    }
+
+    public void setItems(List<PedidoComida> items) {
+        this.items = items;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
 
     // =========================
-    //     Alias de compatibilidad
-    //     (para el controlador que usa creadoEn)
+    // Alias de compatibilidad
+    // (para el controlador que usa creadoEn)
     // =========================
     @Transient
-    public LocalDateTime getCreadoEn() { return this.fechaCreacion; }
+    public LocalDateTime getCreadoEn() {
+        return this.fechaCreacion;
+    }
 
-    public void setCreadoEn(LocalDateTime creadoEn) { this.fechaCreacion = creadoEn; }
+    public void setCreadoEn(LocalDateTime creadoEn) {
+        this.fechaCreacion = creadoEn;
+    }
 }
