@@ -2901,3 +2901,42 @@ INSERT INTO users_table (nombre, password, role) VALUES
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
 	at java.base/java.lang.Thread.run(Thread.java:1623)
+2025-10-21 07:24:17.871369-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "PLATOS" no encontrada
+Table "PLATOS" not found; SQL statement:
+INSERT INTO PLATOS (
+    DISPONIBLE, ES_ESPECIALIDAD, PRECIO, TIEMPO_PREPARACION, CATEGORIA_ID, ID, USER_ID, IMAGEN, DESCRIPCION, INGREDIENTES, NOMBRE
+) VALUES
+(TRUE, FALSE, 15900.0, 10, 1, 1, NULL, 'http://localhost:8080/images/bruschetta.jpg', 'Pan tostado con tomate fresco, albahaca, ajo y aceite de oliva extra virgen', 'Pan, tomate, albahaca, ajo, aceite de oliva', 'Bruschetta Italiana'),
+(TRUE, TRUE, 28900.0, 15, 1, 2, NULL, 'http://localhost:8080/images/carpaccio-di-manzo.jpg', 'Finas láminas de carne de res con rúcula, parmesano y aceite de oliva', NULL, 'Carpaccio di Manzo'),
+(TRUE, FALSE, 24900.0, 20, 2, 3, NULL, 'http://localhost:8080/images/Margherita-Pizza-093.webp', 'Salsa de tomate, mozzarella fresca, albahaca y aceite de oliva', NULL, 'Pizza Margherita'),
+(TRUE, TRUE, 35900.0, 25, 2, 4, NULL, 'http://localhost:8080/images/pizzaNera.webp', 'Masa negra con calamares, gamberi y salsa especial', NULL, 'Pizza Nera'),
+(TRUE, FALSE, 27900.0, 20, 2, 5, NULL, 'http://localhost:8080/images/PizzaPepperoni.jpg', 'Salsa de tomate, mozzarella y pepperoni italiano', NULL, 'Pizza Pepperoni'),
+(TRUE, FALSE, 26900.0, 18, 3, 6, NULL, 'http://localhost:8080/images/pasta_carbonara.jpg', 'Espaguetis con panceta, huevo, parmesano y pimienta negra', NULL, 'Pasta Carbonara'),
+(TRUE, FALSE, 24900.0, 22, 3, 7, NULL, 'http://localhost:8080/images/PastaBolognesa.jpg', 'Tagliatelle con salsa bolognesa tradicional de carne', NULL, 'Pasta Bolognesa'),
+(TRUE, FALSE, 23900.0, 16, 3, 8, NULL, 'http://localhost:8080/images/1504715566-delish-fettuccine-alfredo.jpg', 'Fettuccine con salsa cremosa de mantequilla y parmesano', NULL, 'Fettuccine Alfredo'),
+(TRUE, TRUE, 38900.0, 25, 4, 9, NULL, 'http://localhost:8080/images/risotoAlTartufo.avif', 'Risotto cremoso con trufa negra y parmesano', NULL, 'Risotto al Tartufo'),
+(TRUE, FALSE, 29900.0, 22, 4, 10, NULL, 'http://localhost:8080/images/risotofungui.png', 'Risotto con mezcla de hongos porcini y champiñones', NULL, 'Risotto ai Funghi'),
+(TRUE, FALSE, 16900.0, 5, 5, 11, NULL, 'http://localhost:8080/images/tiramisu.jpg', 'Postre tradicional italiano con café, mascarpone y cacao', NULL, 'Tiramisu'),
+(TRUE, FALSE, 14900.0, 8, 5, 12, NULL, 'http://localhost:8080/images/CannoliSiciliani.jpg', 'Tubitos crujientes rellenos de ricotta y pistachos', NULL, 'Cannoli Siciliani'),
+(TRUE, FALSE, 45900.0, 2, 6, 13, NULL, 'http://localhost:8080/images/5435_Vino_Tinto_Reservado0.jpg', 'Vino tinto italiano de la casa', NULL, 'Vino Tinto Reservado'),
+(TRUE, FALSE, 6900.0, 1, 6, 14, NULL, 'http://localhost:8080/images/agua_con_gas.jpg', 'Agua mineral con gas San Pellegrino', NULL, 'Agua con Gas'),
+
+-- 🔹 Nuevos platos agregados
+(TRUE, FALSE, 17900.0, 12, 1, 15, NULL, 'https://www.acouplecooks.com/wp-content/uploads/2021/03/Caprese-Salad-006.jpg', 'Ensalada clásica con mozzarella fresca, tomate y albahaca', 'Tomate, mozzarella, albahaca, aceite de oliva', 'Insalata Caprese'),
+(TRUE, FALSE, 18900.0, 10, 1, 16, NULL, 'https://www.simplyrecipes.com/thmb/gbRiyZqTk3xgT8ee2n7K6-xcbA4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Antipasto-Salad-LEAD-1-7d6f2b174bf742f9996dc8d35e977f59.jpg', 'Selección de embutidos, quesos y vegetales marinados', 'Jamón, salami, aceitunas, queso, alcachofas', 'Antipasto Italiano'),
+(TRUE, TRUE, 25900.0, 18, 1, 17, NULL, 'https://www.cucchiaio.it/content/cucchiaio/it/ricette/2021/05/gnocchi-al-pesto/_jcr_content/header-par/image_single.img.jpg/1621850292850.jpg', 'Gnocchi caseros con pesto genovés', 'Papa, albahaca, piñones, parmesano', 'Gnocchi al Pesto'),
+(TRUE, FALSE, 32900.0, 22, 2, 18, NULL, 'https://www.loveandlemons.com/wp-content/uploads/2023/02/pizza-quattro-formaggi.jpg', 'Pizza con mezcla de cuatro quesos italianos', 'Mozzarella, gorgonzola, fontina, parmesano', 'Pizza Quattro Formaggi'),
+(TRUE, FALSE, 33900.0, 20, 2, 19, NULL, 'https://www.seriouseats.com/thmb/npP3OzzX2Jx0P7Sx2M4U79SaVfU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/20210210-pizza-diavola-vicky-wasik-1-d7bff63cbfc046ed9cfb75f2ec83d5a2.jpg', 'Pizza picante con salami y chile', 'Tomate, mozzarella, salami picante, ají', 'Pizza Diavola'),
+(TRUE, TRUE, 37900.0, 23, 2, 20, NULL, 'https://www.recetin.com/wp-content/uploads/2013/05/pizza_calzone.jpg', 'Pizza doblada rellena de jamón, ricotta y salsa de tomate', 'Jamón, ricotta, tomate, mozzarella', 'Calzone Napoletano'),
+(TRUE, FALSE, 27900.0, 18, 3, 21, NULL, 'https://www.giallozafferano.com/images/0-13/Penne-all-Arrabbiata_780x520_wm.jpg', 'Penne con salsa picante de tomate y ajo', 'Tomate, ajo, guindilla, perejil', 'Penne all’Arrabbiata'),
+(TRUE, TRUE, 32900.0, 22, 3, 22, NULL, 'https://www.giallozafferano.com/images/0-29/Spaghetti-alle-Vongole_780x520_wm.jpg', 'Espaguetis con almejas frescas', 'Almejas, ajo, vino blanco, perejil', 'Spaghetti alle Vongole'),
+(TRUE, FALSE, 26900.0, 19, 3, 23, NULL, 'https://www.cucchiaio.it/content/cucchiaio/it/ricette/2021/01/lasagne-alla-bolognese/_jcr_content/header-par/image_single.img.jpg/1611937184067.jpg', 'Capas de pasta con carne, salsa bechamel y queso', 'Pasta, carne, bechamel, parmesano', 'Lasagna alla Bolognese'),
+(TRUE, TRUE, 29900.0, 24, 4, 24, NULL, 'https://www.cucchiaio.it/content/cucchiaio/it/ricette/2022/09/risotto-allo-zafferano/_jcr_content/header-par/image_single.img.jpg/1663332820535.jpg', 'Risotto milanés con azafrán', 'Arroz, caldo, azafrán, parmesano', 'Risotto alla Milanese'),
+(TRUE, FALSE, 30900.0, 23, 4, 25, NULL, 'https://www.giallozafferano.com/images/0-35/Risotto-ai-frutti-di-mare_780x520_wm.jpg', 'Risotto con mariscos frescos', 'Arroz, calamar, camarón, mejillones', 'Risotto ai Frutti di Mare'),
+(TRUE, FALSE, 17900.0, 6, 5, 26, NULL, 'https://www.giallozafferano.com/images/0-39/Panna-Cotta_780x520_wm.jpg', 'Postre cremoso italiano con salsa de frutos rojos', 'Crema, azúcar, vainilla, gelatina', 'Panna Cotta'),
+(TRUE, TRUE, 19900.0, 8, 5, 27, NULL, 'https://www.giallozafferano.com/images/0-36/Torta-della-Nonna_780x520_wm.jpg', 'Tarta con crema pastelera y piñones tostados', 'Harina, crema, piñones, limón', 'Torta della Nonna'),
+(TRUE, FALSE, 15900.0, 5, 5, 28, NULL, 'https://www.giallozafferano.com/images/0-38/Gelato-Artigianale_780x520_wm.jpg', 'Helado artesanal italiano de vainilla', 'Leche, nata, azúcar, vainilla', 'Gelato Artigianale'),
+(TRUE, FALSE, 45900.0, 2, 6, 29, NULL, 'https://cdn.diffords.com/contrib/stock-images/2021/08/611bbbe8c5a9c.jpg', 'Vino blanco italiano seco', 'Uvas blancas, vino', 'Vino Bianco della Casa'),
+(TRUE, FALSE, 9900.0, 1, 6, 30, NULL, 'https://www.acouplecooks.com/wp-content/uploads/2021/01/Limoncello-008.jpg', 'Licor tradicional de limón del sur de Italia', 'Limón, alcohol, azúcar', 'Limoncello'),
+(TRUE, FALSE, 6900.0, 1, 6, 31, NULL, 'https://cdn.shopify.com/s/files/1/0593/4714/6547/products/Acqua-Panna-Still-Water-750ml.jpg', 'Agua mineral natural italiana', 'Agua pura de la Toscana', 'Agua Natural Panna') [42102-232]
