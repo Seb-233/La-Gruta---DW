@@ -263,4 +263,12 @@ public class PedidoRestController {
         r.items = list;
         return r;
     }
+    // =========================
+// GET: Todos los pedidos (incluye entregados)
+// =========================
+@GetMapping("/todos")
+public List<Pedido> getTodosLosPedidos() {
+    return pedidoRepository.findAll(); // 🔹 Devuelve absolutamente todos los pedidos
+}
+
 }
