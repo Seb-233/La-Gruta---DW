@@ -118,8 +118,15 @@ public class PedidoRestController {
                     break;
 
                 case "enviado":
+                    // Buscar un domiciliario disponible
                     Domiciliario domiciliario = domiciliarioRepository.findAll().stream()
                             .filter(Domiciliario::isDisponible)
+                            .filter(dom -> {
+                                // Verificar que no tenga ya un pedido activo
+                                return !pedidoRepository.existsByDomiciliarioAsignadoAndEstadoIn(
+                                        dom,
+                                        List.of("enviado", "cocinando", "recibido"));
+                            })
                             .findFirst()
                             .orElse(null);
 
@@ -129,7 +136,8 @@ public class PedidoRestController {
                         pedido.setEstado("enviado");
                         pedido.setDomiciliarioAsignado(domiciliario);
                     } else {
-                        return ResponseEntity.badRequest().body("No hay domiciliarios disponibles");
+                        return ResponseEntity.badRequest()
+                                .body("No hay domiciliarios disponibles o todos ya tienen pedidos activos");
                     }
                     break;
 
@@ -263,12 +271,21 @@ public class PedidoRestController {
         r.items = list;
         return r;
     }
+
     // =========================
-// GET: Todos los pedidos (incluye entregados)
-// =========================
-@GetMapping("/todos")
-public List<Pedido> getTodosLosPedidos() {
-    return pedidoRepository.findAll(); // 🔹 Devuelve absolutamente todos los pedidos
-}
+    // GET: Todos los pedidos (incluye entregados)
+    // =========================
+    @GetMapping("/todos")
+    public List<Pedido> getTodosLosPedidos() {
+        return pedidoRepository.findAll(); // 🔹 Devuelve absolutamente todos los pedidos
+    }
+
+    // =========================
+    // GET: Pedidos por cliente
+    // =========================
+    @GetMapping("/cliente/{idCliente}")
+    public List<Pedido> getPedidosPorCliente(@PathVariable Long idCliente) {
+        return pedidoRepository.findByClienteId(idCliente);
+    }
 
 }
