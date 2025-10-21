@@ -17,6 +17,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Transient;
 
+
+
 @Entity
 public class Pedido {
 
@@ -37,6 +39,11 @@ public class Pedido {
 
     @ManyToOne
     private Domiciliario domiciliarioAsignado;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     // --- total del pedido ---
     private Double total;
@@ -130,6 +137,15 @@ public class Pedido {
     public void setTotal(Double total) {
         this.total = total;
     }
+
+    public User getUser() {
+    return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 
     // =========================
     // Alias de compatibilidad

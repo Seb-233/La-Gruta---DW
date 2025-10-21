@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,13 @@ import com.example.demo.model.Comida;
 import com.example.demo.model.Domiciliario;
 import com.example.demo.model.Pedido;
 import com.example.demo.model.PedidoComida;
-import com.example.demo.model.User; // ⚠️ o Cliente / Usuario según tu entidad real
+import com.example.demo.model.User;
 import com.example.demo.repository.AdicionalRepository;
 import com.example.demo.repository.ComidaRepository;
 import com.example.demo.repository.DomiciliarioRepository;
 import com.example.demo.repository.PedidoComidaRepository;
 import com.example.demo.repository.PedidoRepository;
-import com.example.demo.repository.UserRepository; // ⚠️ ajusta al nombre real de tu repositorio
+import com.example.demo.repository.UserRepository;
 
 /**
  * Controlador REST para flujo de pedidos:
@@ -37,6 +38,8 @@ import com.example.demo.repository.UserRepository; // ⚠️ ajusta al nombre re
  * - PUT /api/pedidos/{id}/estado : actualizar estado
  * - POST /api/pedidos : crear pedido desde el carro
  * - GET /api/pedidos/{id} : consultar pedido por id
+ * - GET /api/pedidos/carrito/{userId} : consultar carrito activo de un usuario
+ * - GET /api/pedidos/todos : listar todos
  */
 @RestController
 @RequestMapping("/api/pedidos")
@@ -55,15 +58,15 @@ public class PedidoRestController {
     @Autowired
     private AdicionalRepository adicionalRepository;
     @Autowired
-    private UserRepository userRepository; // ✅ agregado para vincular el cliente
+    private UserRepository userRepository;
 
     // =========================
     // DTOs internos mínimos
     // =========================
     public static class CreatePedidoRequest {
-        public Long clienteId; // ✅ se usa ahora para asignar el cliente
-        public String direccion;
-        public String notas;
+        public Long userId;       // ID del usuario que realiza el pedido
+        public String direccion;  // opcional
+        public String notas;      // opcional
         public List<Item> items;
 
         public static class Item {
@@ -97,7 +100,7 @@ public class PedidoRestController {
     }
 
     // =========================
-    // GET: Pedidos activos
+    // GET: Pedidos activos (no entregados)
     // =========================
     @GetMapping
     public List<Pedido> getPedidosActivos() {
@@ -163,7 +166,7 @@ public class PedidoRestController {
     }
 
     // =========================
-    // POST: Crear pedido
+    // POST: Crear/actualizar pedido (carrito)
     // =========================
     @PostMapping
     @Transactional
@@ -172,15 +175,38 @@ public class PedidoRestController {
             return ResponseEntity.badRequest().body(Map.of("error", "El pedido no tiene items"));
         }
 
-        Pedido pedido = new Pedido();
-        pedido.setEstado("recibido");
-        pedido.setCreadoEn(LocalDateTime.now());
-
-        // ✅ Asignar cliente si se envió clienteId
-        if (body.clienteId != null) {
-            userRepository.findById(body.clienteId).ifPresent(pedido::setCliente);
+        // Validar usuario
+        if (body.userId == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Falta el userId en el pedido"));
         }
 
+        User user = userRepository.findById(body.userId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + body.userId));
+
+        // Verificar si ya tiene un pedido activo (EN_PROCESO)
+        Optional<Pedido> pedidoExistente = pedidoRepository.findByUserAndEstado(user, "EN_PROCESO");
+
+        Pedido pedido;
+        if (pedidoExistente.isPresent()) {
+            // Reutilizar el pedido como carrito activo: eliminar líneas previas correctamente
+            pedido = pedidoExistente.get();
+
+            // Si NO tienes orphanRemoval=true, borra explícitamente desde BD antes de limpiar
+            List<PedidoComida> oldItems = new ArrayList<>(pedido.getItems());
+            pedido.getItems().clear();
+            if (!oldItems.isEmpty()) {
+                pedidoComidaRepository.deleteAll(oldItems);
+            }
+
+        } else {
+            // Crear un nuevo pedido/carrito
+            pedido = new Pedido();
+            pedido.setEstado("EN_PROCESO");
+            pedido.setCreadoEn(LocalDateTime.now());
+            pedido.setUser(user); // asociación directa
+        }
+
+        // Construir los ítems del pedido y calcular total
         double total = 0.0;
         List<PedidoComida> items = new ArrayList<>();
 
@@ -206,10 +232,10 @@ public class PedidoRestController {
             double precioComida = comida.getPrecio();
             double precioAdicionales = 0.0;
 
-            // Si tus adicionales tienen precio, puedes habilitar esto:
-            // for (Adicional ad : ads) {
-            // precioAdicionales += ad.getPrecio() != null ? ad.getPrecio() : 0.0;
-            // }
+            // ✅ Sumar precios de adicionales si existen
+            for (Adicional ad : ads) {
+                precioAdicionales += ad.getPrecio() != null ? ad.getPrecio() : 0.0;
+            }
 
             total += (precioComida + precioAdicionales) * it.cantidad;
             items.add(pc);
@@ -223,13 +249,44 @@ public class PedidoRestController {
     }
 
     // =========================
-    // GET: Obtener pedido por ID
+    // GET: Obtener pedido por ID (DTO)
     // =========================
     @GetMapping("/{id}")
     public ResponseEntity<?> getPedido(@PathVariable Long id) {
         return pedidoRepository.findById(id)
                 .map(p -> ResponseEntity.ok(mapPedidoToResponse(p)))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // =========================
+    // GET: Obtener carrito activo de un usuario (DTO)
+    // =========================
+    @GetMapping("/carrito/{userId}")
+    public ResponseEntity<?> getCarritoUsuario(@PathVariable Long userId) {
+        Optional<User> u = userRepository.findById(userId);
+        if (u.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
+        }
+
+        Optional<Pedido> pedido = pedidoRepository.findByUserAndEstado(u.get(), "EN_PROCESO");
+        if (pedido.isPresent()) {
+            return ResponseEntity.ok(mapPedidoToResponse(pedido.get()));
+        } else {
+            return ResponseEntity.ok(Map.of("mensaje", "El usuario no tiene carrito activo"));
+        }
+    }
+
+    // =========================
+    // GET: Pedidos por usuario (todos los estados)
+    // =========================
+    @GetMapping("/usuario/{userId}")
+    public ResponseEntity<?> getPedidosPorUsuario(@PathVariable Long userId) {
+        Optional<User> u = userRepository.findById(userId);
+        if (u.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
+        }
+        List<Pedido> pedidos = pedidoRepository.findByUser(u.get());
+        return ResponseEntity.ok(pedidos);
     }
 
     // =========================
@@ -251,19 +308,23 @@ public class PedidoRestController {
                 ir.comidaNombre = it.getComida().getNombre();
                 ir.cantidad = it.getCantidad();
 
+                // Adicionales con precio en respuesta
                 List<PedidoResponse.AdicionalRes> adrs = new ArrayList<>();
+                double precioAdicionales = 0.0;
                 if (it.getAdicionales() != null) {
                     for (Adicional ad : it.getAdicionales()) {
                         PedidoResponse.AdicionalRes ar = new PedidoResponse.AdicionalRes();
                         ar.id = ad.getId();
                         ar.nombre = ad.getNombre();
+                        ar.precio = ad.getPrecio();
                         adrs.add(ar);
+
+                        precioAdicionales += ad.getPrecio() != null ? ad.getPrecio() : 0.0;
                     }
                 }
                 ir.adicionales = adrs;
 
                 double precioComida = it.getComida().getPrecio();
-                double precioAdicionales = 0.0;
                 ir.subtotal = (precioComida + precioAdicionales) * it.getCantidad();
                 list.add(ir);
             }
@@ -277,15 +338,6 @@ public class PedidoRestController {
     // =========================
     @GetMapping("/todos")
     public List<Pedido> getTodosLosPedidos() {
-        return pedidoRepository.findAll(); // 🔹 Devuelve absolutamente todos los pedidos
+        return pedidoRepository.findAll();
     }
-
-    // =========================
-    // GET: Pedidos por cliente
-    // =========================
-    @GetMapping("/cliente/{idCliente}")
-    public List<Pedido> getPedidosPorCliente(@PathVariable Long idCliente) {
-        return pedidoRepository.findByClienteId(idCliente);
-    }
-
 }
