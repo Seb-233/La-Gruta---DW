@@ -27,13 +27,13 @@ public class AdicionalController {
     @Autowired
     private AdicionalCategoriaRepository adicionalCategoriaRepository;
 
-    // ✅ Listar todos los adicionales
+    //  Listar todos los adicionales
     @GetMapping
     public List<Adicional> getAll() {
         return adicionalRepository.findAll();
     }
 
-    // ✅ Obtener adicional por ID
+    // Obtener adicional por ID
     @GetMapping("/{id}")
     public ResponseEntity<Adicional> getById(@PathVariable Long id) {
         return adicionalRepository.findById(id)
@@ -41,13 +41,13 @@ public class AdicionalController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ Crear un nuevo adicional
+    //  Crear un nuevo adicional
     @PostMapping
     public Adicional create(@RequestBody Adicional adicional) {
         return adicionalRepository.save(adicional);
     }
 
-    // ✅ Actualizar un adicional existente
+    //  Actualizar un adicional existente
     @PutMapping("/{id}")
     public ResponseEntity<Adicional> update(@PathVariable Long id, @RequestBody Adicional adicionalDetails) {
         return adicionalRepository.findById(id)
@@ -62,7 +62,7 @@ public class AdicionalController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ Eliminar adicional por ID
+    //  Eliminar adicional por ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         return adicionalRepository.findById(id)
