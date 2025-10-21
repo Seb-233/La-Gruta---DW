@@ -1,12 +1,25 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
+
 @Entity
 public class Pedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,20 +29,43 @@ public class Pedido {
     private User cliente;
 
     private String estado;
+
+    // Fecha de creación "real" en la DB
     private LocalDateTime fechaCreacion;
+
     private LocalDateTime fechaEntrega;
 
     @ManyToOne
     private Domiciliario domiciliarioAsignado;
 
-    // --- CAMPO 'total' AÑADIDO ---
+    // --- total del pedido ---
     private Double total;
 
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY // mejor
+                                                                                                            // LAZY para
+                                                                                                            // evitar
+                                                                                                            // cargas
+                                                                                                            // pesadas
+    )
     @JsonManagedReference
     private List<PedidoComida> items;
 
-    // --- GETTERS Y SETTERS ---
+    // =========================
+    // Ciclo de vida
+    // =========================
+    @PrePersist
+    public void prePersist() {
+        if (this.fechaCreacion == null) {
+            this.fechaCreacion = LocalDateTime.now();
+        }
+        if (this.estado == null || this.estado.isBlank()) {
+            this.estado = "recibido"; // <-- Cambio aquí
+        }
+    }
+
+    // =========================
+    // Getters / Setters
+    // =========================
 
     public Long getId() {
         return id;
@@ -87,12 +123,24 @@ public class Pedido {
         this.items = items;
     }
 
-    // --- NUEVOS GETTER Y SETTER PARA 'total' ---
     public Double getTotal() {
         return total;
     }
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    // =========================
+    // Alias de compatibilidad
+    // (para el controlador que usa creadoEn)
+    // =========================
+    @Transient
+    public LocalDateTime getCreadoEn() {
+        return this.fechaCreacion;
+    }
+
+    public void setCreadoEn(LocalDateTime creadoEn) {
+        this.fechaCreacion = creadoEn;
     }
 }

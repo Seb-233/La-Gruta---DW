@@ -37,7 +37,8 @@ public class Adicional {
     @Column(nullable = false)
     private Boolean disponible = true;
 
-    // 🔹 Relación muchos a muchos con Categoria (funcional para tu API actual)
+    // 🔹 Relación muchos a muchos con Categoria
+    //   Se usa para listar los adicionales por categoría (función actual de tu API)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "categoria_adicional",
@@ -47,16 +48,18 @@ public class Adicional {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "adicionales"})
     private Set<Categoria> categorias = new HashSet<>();
 
-    // 🔹 Relación auxiliar con AdicionalCategoria (no interfiere)
+    // 🔹 Relación auxiliar con AdicionalCategoria (tabla puente explícita)
+    //   Esto mantiene la trazabilidad sin interferir con la relación ManyToMany
     @OneToMany(mappedBy = "adicional", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<AdicionalCategoria> categoriaAsociaciones = new HashSet<>();
 
-    // 🔹 Relación inversa con Comida
+    // 🔹 Relación inversa con Comida (cada comida puede tener múltiples adicionales)
     @ManyToMany(mappedBy = "adicionales")
     @JsonIgnore
     private Set<Comida> comidas = new HashSet<>();
 
+    // 🔹 Constructor útil para pruebas o creación rápida
     public Adicional(String nombre, String descripcion, Double precio, String imagen) {
         this.nombre = nombre;
         this.descripcion = descripcion;

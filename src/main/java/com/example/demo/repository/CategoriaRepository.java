@@ -21,4 +21,5 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     
     // Verificar si existe slug
     boolean existsBySlug(String slug);
+
 }
