@@ -181,28 +181,56 @@ public class PedidoRestController {
     }
 
     // =========================
-    // 🔹 PUT: Confirmar pedido (frontend)
-    // =========================
-    @PutMapping("/{id}/confirmar")
-    public ResponseEntity<?> confirmarPedido(@PathVariable Long id) {
-        Optional<Pedido> opt = pedidoRepository.findById(id);
-        if (opt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Pedido no encontrado"));
-        }
-
-        Pedido pedido = opt.get();
-        if (!"EN_PROCESO".equalsIgnoreCase(pedido.getEstado())) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", "El pedido no está en estado EN_PROCESO"));
-        }
-
-        pedido.setEstado("CONFIRMADO");
-        pedido.setFechaEntrega(null);
-        pedidoRepository.save(pedido);
-
-        return ResponseEntity.ok(Map.of("mensaje", "Pedido confirmado correctamente"));
+// 🔹 PUT: Confirmar pedido (frontend)
+// =========================
+@PutMapping("/{id}/confirmar")
+public ResponseEntity<?> confirmarPedido(@PathVariable Long id) {
+    Optional<Pedido> opt = pedidoRepository.findById(id);
+    if (opt.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "Pedido no encontrado"));
     }
+
+    Pedido pedido = opt.get();
+    if (!"EN_PROCESO".equalsIgnoreCase(pedido.getEstado())) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("error", "El pedido no está en estado EN_PROCESO"));
+    }
+
+    // ✅ Calcular total antes de confirmar
+    double total = 0.0;
+    if (pedido.getItems() != null) {
+        for (PedidoComida item : pedido.getItems()) {
+            double precioBase = 0.0;
+            if (item.getComida() != null && item.getComida().getPrecio() != null) {
+                precioBase = item.getComida().getPrecio();
+            }
+
+            double adicionales = 0.0;
+            if (item.getAdicionales() != null && !item.getAdicionales().isEmpty()) {
+                adicionales = item.getAdicionales().stream()
+                        .mapToDouble(a -> a.getPrecio() != null ? a.getPrecio() : 0.0)
+                        .sum();
+            }
+
+            total += (precioBase + adicionales) * item.getCantidad();
+        }
+    }
+
+    // Actualizar estado y total
+    pedido.setTotal(total);
+    pedido.setEstado("CONFIRMADO");
+    pedido.setFechaEntrega(null);
+    pedidoRepository.saveAndFlush(pedido);
+
+    return ResponseEntity.ok(Map.of(
+            "mensaje", "Pedido confirmado correctamente",
+            "total", total
+    ));
+}
+
+
+    
 
     // =========================
     // 🔹 GET: Pedido por ID
