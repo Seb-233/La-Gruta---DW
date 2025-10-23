@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.CreatePedidoRequest;
+import com.example.demo.dto.PedidoResponse;
 import com.example.demo.model.Adicional;
 import com.example.demo.model.Comida;
 import com.example.demo.model.Domiciliario;
@@ -32,75 +36,20 @@ import com.example.demo.repository.PedidoComidaRepository;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.UserRepository;
 
-/**
- * Controlador REST para flujo de pedidos:
- * - GET /api/pedidos : listar pedidos activos
- * - PUT /api/pedidos/{id}/estado : actualizar estado
- * - POST /api/pedidos : crear pedido desde el carro
- * - GET /api/pedidos/{id} : consultar pedido por id
- * - GET /api/pedidos/carrito/{userId} : consultar carrito activo de un usuario
- * - GET /api/pedidos/todos : listar todos
- */
 @RestController
-@RequestMapping("/api/pedidos")
-@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping(value = "/api/pedidos", produces = MediaType.APPLICATION_JSON_VALUE)
+@CrossOrigin(origins = "http://localhost:4200") // ✅ Permite Angular local sin tocar configuración global
 public class PedidoRestController {
 
-    // ===== Repositorios =====
-    @Autowired
-    private PedidoRepository pedidoRepository;
-    @Autowired
-    private DomiciliarioRepository domiciliarioRepository;
-    @Autowired
-    private PedidoComidaRepository pedidoComidaRepository;
-    @Autowired
-    private ComidaRepository comidaRepository;
-    @Autowired
-    private AdicionalRepository adicionalRepository;
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private PedidoRepository pedidoRepository;
+    @Autowired private DomiciliarioRepository domiciliarioRepository;
+    @Autowired private PedidoComidaRepository pedidoComidaRepository;
+    @Autowired private ComidaRepository comidaRepository;
+    @Autowired private AdicionalRepository adicionalRepository;
+    @Autowired private UserRepository userRepository;
 
     // =========================
-    // DTOs internos mínimos
-    // =========================
-    public static class CreatePedidoRequest {
-        public Long userId;       // ID del usuario que realiza el pedido
-        public String direccion;  // opcional
-        public String notas;      // opcional
-        public List<Item> items;
-
-        public static class Item {
-            public Long comidaId;
-            public int cantidad;
-            public List<Long> adicionalIds;
-        }
-    }
-
-    public static class PedidoResponse {
-        public Long id;
-        public String estado;
-        public Double total;
-        public LocalDateTime creadoEn;
-        public List<Item> items;
-
-        public static class Item {
-            public Long pedidoComidaId;
-            public Long comidaId;
-            public String comidaNombre;
-            public int cantidad;
-            public List<AdicionalRes> adicionales;
-            public Double subtotal;
-        }
-
-        public static class AdicionalRes {
-            public Long id;
-            public String nombre;
-            public Double precio;
-        }
-    }
-
-    // =========================
-    // GET: Pedidos activos (no entregados)
+    // 🔹 GET: Pedidos activos (admin)
     // =========================
     @GetMapping
     public List<Pedido> getPedidosActivos() {
@@ -108,7 +57,7 @@ public class PedidoRestController {
     }
 
     // =========================
-    // PUT: Actualizar estado
+    // 🔹 PUT: Actualizar estado (admin)
     // =========================
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstado(@PathVariable Long id, @RequestBody Map<String, String> body) {
@@ -116,150 +65,157 @@ public class PedidoRestController {
 
         return pedidoRepository.findById(id).map(pedido -> {
             switch (nuevoEstado) {
-                case "cocinando":
-                    pedido.setEstado("cocinando");
-                    break;
-
-                case "enviado":
-                    // Buscar un domiciliario disponible
+                case "cocinando" -> pedido.setEstado("cocinando");
+                case "enviado" -> {
                     Domiciliario domiciliario = domiciliarioRepository.findAll().stream()
                             .filter(Domiciliario::isDisponible)
-                            .filter(dom -> {
-                                // Verificar que no tenga ya un pedido activo
-                                return !pedidoRepository.existsByDomiciliarioAsignadoAndEstadoIn(
-                                        dom,
-                                        List.of("enviado", "cocinando", "recibido"));
-                            })
-                            .findFirst()
-                            .orElse(null);
+                            .filter(dom -> !pedidoRepository.existsByDomiciliarioAsignadoAndEstadoIn(
+                                    dom, List.of("enviado", "cocinando", "recibido")))
+                            .findFirst().orElse(null);
 
-                    if (domiciliario != null) {
-                        domiciliario.setDisponible(false);
-                        domiciliarioRepository.save(domiciliario);
-                        pedido.setEstado("enviado");
-                        pedido.setDomiciliarioAsignado(domiciliario);
-                    } else {
+                    if (domiciliario == null) {
                         return ResponseEntity.badRequest()
                                 .body("No hay domiciliarios disponibles o todos ya tienen pedidos activos");
                     }
-                    break;
-
-                case "entregado":
+                    domiciliario.setDisponible(false);
+                    domiciliarioRepository.save(domiciliario);
+                    pedido.setEstado("enviado");
+                    pedido.setDomiciliarioAsignado(domiciliario);
+                }
+                case "entregado" -> {
                     pedido.setEstado("entregado");
                     pedido.setFechaEntrega(LocalDateTime.now());
-
                     if (pedido.getDomiciliarioAsignado() != null) {
                         Domiciliario domAsig = pedido.getDomiciliarioAsignado();
                         domAsig.setDisponible(true);
                         domiciliarioRepository.save(domAsig);
                     }
-                    break;
-
-                default:
+                }
+                default -> {
                     return ResponseEntity.badRequest().body("Estado no soportado: " + nuevoEstado);
+                }
             }
-
             Pedido pedidoActualizado = pedidoRepository.save(pedido);
             return ResponseEntity.ok(pedidoActualizado);
-
         }).orElse(ResponseEntity.notFound().build());
     }
 
     // =========================
-    // POST: Crear/actualizar pedido (carrito)
+    // 🔹 POST: Crear o actualizar pedido (carrito)
     // =========================
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ResponseEntity<?> crearPedido(@RequestBody CreatePedidoRequest body) {
-        if (body == null || body.items == null || body.items.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "El pedido no tiene items"));
-        }
-
-        // Validar usuario
-        if (body.userId == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Falta el userId en el pedido"));
-        }
-
-        User user = userRepository.findById(body.userId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + body.userId));
-
-        // Verificar si ya tiene un pedido activo (EN_PROCESO)
-        Optional<Pedido> pedidoExistente = pedidoRepository.findByUserAndEstado(user, "EN_PROCESO");
-
-        Pedido pedido;
-        if (pedidoExistente.isPresent()) {
-            // Reutilizar el pedido como carrito activo: eliminar líneas previas correctamente
-            pedido = pedidoExistente.get();
-
-            // Si NO tienes orphanRemoval=true, borra explícitamente desde BD antes de limpiar
-            List<PedidoComida> oldItems = new ArrayList<>(pedido.getItems());
-            pedido.getItems().clear();
-            if (!oldItems.isEmpty()) {
-                pedidoComidaRepository.deleteAll(oldItems);
+        try {
+            if (body == null || body.items == null || body.items.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El pedido no tiene items"));
+            }
+            if (body.clienteId == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Falta clienteId"));
             }
 
-        } else {
-            // Crear un nuevo pedido/carrito
-            pedido = new Pedido();
-            pedido.setEstado("EN_PROCESO");
-            pedido.setCreadoEn(LocalDateTime.now());
-            pedido.setUser(user); // asociación directa
+            User user = userRepository.findById(body.clienteId)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + body.clienteId));
+
+            // ✅ Si el usuario tiene carrito EN_PROCESO, reutilízalo
+            Optional<Pedido> opt = pedidoRepository.findByUserAndEstado(user, "EN_PROCESO");
+            Pedido pedido = opt.orElseGet(() -> {
+                Pedido p = new Pedido();
+                p.setUser(user);
+                p.setEstado("EN_PROCESO");
+                p.setCreadoEn(LocalDateTime.now());
+                return pedidoRepository.saveAndFlush(p);
+            });
+
+            // ✅ Limpia ítems anteriores si el pedido está en proceso
+            if (pedido.getItems() != null && !pedido.getItems().isEmpty()) {
+                for (PedidoComida pc : new ArrayList<>(pedido.getItems())) {
+                    if (pc.getAdicionales() != null) {
+                        pc.getAdicionales().clear();
+                        pedidoComidaRepository.save(pc);
+                    }
+                }
+                pedido.getItems().clear();
+                pedidoRepository.saveAndFlush(pedido);
+            }
+
+            // ✅ Crea los nuevos ítems
+            double total = 0.0;
+            for (CreatePedidoRequest.Item it : body.items) {
+                if (it.comidaId == null || it.cantidad <= 0) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "Item inválido en pedido"));
+                }
+
+                Comida comida = comidaRepository.findById(it.comidaId)
+                        .orElseThrow(() -> new IllegalArgumentException("Comida inexistente: " + it.comidaId));
+
+                PedidoComida pc = new PedidoComida();
+                pc.setPedido(pedido);
+                pc.setComida(comida);
+                pc.setCantidad(it.cantidad);
+
+                List<Adicional> ads = (it.adicionalIds == null || it.adicionalIds.isEmpty())
+                        ? Collections.emptyList()
+                        : adicionalRepository.findAllById(it.adicionalIds);
+                pc.setAdicionales(ads);
+
+                double precioAds = ads.stream()
+                        .mapToDouble(a -> a.getPrecio() != null ? a.getPrecio() : 0.0)
+                        .sum();
+
+                total += (comida.getPrecio() + precioAds) * it.cantidad;
+
+                pedido.getItems().add(pedidoComidaRepository.save(pc));
+            }
+
+            pedido.setTotal(total);
+            pedido = pedidoRepository.saveAndFlush(pedido);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(mapPedidoToResponse(pedido));
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "No se pudo crear el pedido", "detalle", ex.getMessage()));
         }
-
-        // Construir los ítems del pedido y calcular total
-        double total = 0.0;
-        List<PedidoComida> items = new ArrayList<>();
-
-        for (CreatePedidoRequest.Item it : body.items) {
-            if (it.comidaId == null || it.cantidad <= 0) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Item inválido en pedido"));
-            }
-
-            Comida comida = comidaRepository.findById(it.comidaId)
-                    .orElseThrow(() -> new IllegalArgumentException("Comida inexistente: " + it.comidaId));
-
-            PedidoComida pc = new PedidoComida();
-            pc.setPedido(pedido);
-            pc.setComida(comida);
-            pc.setCantidad(it.cantidad);
-
-            List<Adicional> ads = Collections.emptyList();
-            if (it.adicionalIds != null && !it.adicionalIds.isEmpty()) {
-                ads = adicionalRepository.findAllById(it.adicionalIds);
-            }
-            pc.setAdicionales(ads);
-
-            double precioComida = comida.getPrecio();
-            double precioAdicionales = 0.0;
-
-            // ✅ Sumar precios de adicionales si existen
-            for (Adicional ad : ads) {
-                precioAdicionales += ad.getPrecio() != null ? ad.getPrecio() : 0.0;
-            }
-
-            total += (precioComida + precioAdicionales) * it.cantidad;
-            items.add(pc);
-        }
-
-        pedido.setItems(items);
-        pedido.setTotal(total);
-
-        Pedido guardado = pedidoRepository.save(pedido);
-        return ResponseEntity.ok(mapPedidoToResponse(guardado));
     }
 
     // =========================
-    // GET: Obtener pedido por ID (DTO)
+    // 🔹 PUT: Confirmar pedido (frontend)
+    // =========================
+    @PutMapping("/{id}/confirmar")
+    public ResponseEntity<?> confirmarPedido(@PathVariable Long id) {
+        Optional<Pedido> opt = pedidoRepository.findById(id);
+        if (opt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Pedido no encontrado"));
+        }
+
+        Pedido pedido = opt.get();
+        if (!"EN_PROCESO".equalsIgnoreCase(pedido.getEstado())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "El pedido no está en estado EN_PROCESO"));
+        }
+
+        pedido.setEstado("CONFIRMADO");
+        pedido.setFechaEntrega(null);
+        pedidoRepository.save(pedido);
+
+        return ResponseEntity.ok(Map.of("mensaje", "Pedido confirmado correctamente"));
+    }
+
+    // =========================
+    // 🔹 GET: Pedido por ID
     // =========================
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPedido(@PathVariable Long id) {
+    public ResponseEntity<PedidoResponse> getPedido(@PathVariable Long id) {
         return pedidoRepository.findById(id)
                 .map(p -> ResponseEntity.ok(mapPedidoToResponse(p)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     // =========================
-    // GET: Obtener carrito activo de un usuario (DTO)
+    // 🔹 GET: Carrito activo por usuario
     // =========================
     @GetMapping("/carrito/{userId}")
     public ResponseEntity<?> getCarritoUsuario(@PathVariable Long userId) {
@@ -269,34 +225,44 @@ public class PedidoRestController {
         }
 
         Optional<Pedido> pedido = pedidoRepository.findByUserAndEstado(u.get(), "EN_PROCESO");
-        if (pedido.isPresent()) {
-            return ResponseEntity.ok(mapPedidoToResponse(pedido.get()));
-        } else {
-            return ResponseEntity.ok(Map.of("mensaje", "El usuario no tiene carrito activo"));
-        }
+        return pedido.<ResponseEntity<?>>map(value -> ResponseEntity.ok(mapPedidoToResponse(value)))
+                .orElseGet(() -> ResponseEntity.ok(Map.of("mensaje", "El usuario no tiene carrito activo")));
     }
 
     // =========================
-    // GET: Pedidos por usuario (todos los estados)
+    // 🔹 GET: Pedidos por usuario
     // =========================
     @GetMapping("/usuario/{userId}")
-    public ResponseEntity<?> getPedidosPorUsuario(@PathVariable Long userId) {
+    public ResponseEntity<List<PedidoResponse>> getPedidosPorUsuario(@PathVariable Long userId) {
         Optional<User> u = userRepository.findById(userId);
-        if (u.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
-        }
-        List<Pedido> pedidos = pedidoRepository.findByUser(u.get());
-        return ResponseEntity.ok(pedidos);
+        if (u.isEmpty()) return ResponseEntity.badRequest().build();
+
+        User user = u.get();
+        List<Pedido> pedidos = pedidoRepository.findByUserOrderByFechaCreacionDesc(user);
+
+        List<PedidoResponse> dtos = pedidos.stream()
+                .map(this::mapPedidoToResponse)
+                .toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     // =========================
-    // Mapper entidad -> DTO
+    // 🔹 GET: Todos (admin)
+    // =========================
+    @GetMapping("/todos")
+    public List<Pedido> getTodosLosPedidos() {
+        return pedidoRepository.findAll();
+    }
+
+    // =========================
+    // 🔹 Mapper entidad -> DTO
     // =========================
     private PedidoResponse mapPedidoToResponse(Pedido p) {
         PedidoResponse r = new PedidoResponse();
-        r.id = p.getId();
-        r.estado = p.getEstado();
-        r.total = p.getTotal();
+        r.id       = p.getId();
+        r.estado   = p.getEstado();
+        r.total    = p.getTotal();
         r.creadoEn = p.getCreadoEn();
 
         List<PedidoResponse.Item> list = new ArrayList<>();
@@ -304,40 +270,30 @@ public class PedidoRestController {
             for (PedidoComida it : p.getItems()) {
                 PedidoResponse.Item ir = new PedidoResponse.Item();
                 ir.pedidoComidaId = it.getId();
-                ir.comidaId = it.getComida().getId();
-                ir.comidaNombre = it.getComida().getNombre();
-                ir.cantidad = it.getCantidad();
+                ir.comidaId       = it.getComida() != null ? it.getComida().getId() : null;
+                ir.comidaNombre   = it.getComida() != null ? it.getComida().getNombre() : null;
+                ir.cantidad       = it.getCantidad();
 
-                // Adicionales con precio en respuesta
                 List<PedidoResponse.AdicionalRes> adrs = new ArrayList<>();
                 double precioAdicionales = 0.0;
                 if (it.getAdicionales() != null) {
                     for (Adicional ad : it.getAdicionales()) {
                         PedidoResponse.AdicionalRes ar = new PedidoResponse.AdicionalRes();
-                        ar.id = ad.getId();
+                        ar.id     = ad.getId();
                         ar.nombre = ad.getNombre();
                         ar.precio = ad.getPrecio();
                         adrs.add(ar);
-
                         precioAdicionales += ad.getPrecio() != null ? ad.getPrecio() : 0.0;
                     }
                 }
                 ir.adicionales = adrs;
 
-                double precioComida = it.getComida().getPrecio();
-                ir.subtotal = (precioComida + precioAdicionales) * it.getCantidad();
+                double precioComida = it.getComida() != null ? it.getComida().getPrecio() : 0.0;
+                ir.subtotal = (precioComida + precioAdicionales) * Math.max(1, it.getCantidad());
                 list.add(ir);
             }
         }
         r.items = list;
         return r;
-    }
-
-    // =========================
-    // GET: Todos los pedidos (incluye entregados)
-    // =========================
-    @GetMapping("/todos")
-    public List<Pedido> getTodosLosPedidos() {
-        return pedidoRepository.findAll();
     }
 }

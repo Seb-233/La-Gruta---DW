@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -17,8 +18,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Transient;
 
-
-
 @Entity
 public class Pedido {
 
@@ -32,7 +31,7 @@ public class Pedido {
 
     private String estado;
 
-    // Fecha de creación "real" en la DB
+    // Fecha de creación real en la base de datos
     private LocalDateTime fechaCreacion;
 
     private LocalDateTime fechaEntrega;
@@ -44,18 +43,12 @@ public class Pedido {
     @JoinColumn(name = "user_id")
     private User user;
 
-
-    // --- total del pedido ---
+    // Total del pedido
     private Double total;
 
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY // mejor
-                                                                                                            // LAZY para
-                                                                                                            // evitar
-                                                                                                            // cargas
-                                                                                                            // pesadas
-    )
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<PedidoComida> items;
+    private List<PedidoComida> items = new ArrayList<>(); // ✅ Inicializada para evitar NullPointerException
 
     // =========================
     // Ciclo de vida
@@ -66,7 +59,7 @@ public class Pedido {
             this.fechaCreacion = LocalDateTime.now();
         }
         if (this.estado == null || this.estado.isBlank()) {
-            this.estado = "recibido"; // <-- Cambio aquí
+            this.estado = "EN_PROCESO"; // ✅ Estado inicial correcto
         }
     }
 
@@ -139,17 +132,15 @@ public class Pedido {
     }
 
     public User getUser() {
-    return user;
+        return user;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-
     // =========================
-    // Alias de compatibilidad
-    // (para el controlador que usa creadoEn)
+    // Alias de compatibilidad (para el DTO que usa creadoEn)
     // =========================
     @Transient
     public LocalDateTime getCreadoEn() {

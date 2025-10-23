@@ -48,7 +48,7 @@ public class DatabaseInit implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        boolean ENABLE_SEED = true; // ⚙️ cambia a false si no quieres datos iniciales
+        boolean ENABLE_SEED = true; 
 
         if (!ENABLE_SEED) {
             System.out.println("⚙️ DatabaseInit ejecutado: Sin carga automática de datos.");

@@ -1,4 +1,3 @@
-// En la carpeta .../repository/
 package com.example.demo.repository;
 
 import java.util.List;
@@ -19,15 +18,13 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Query("SELECT p FROM Pedido p WHERE p.estado != 'entregado'")
     List<Pedido> findAllActive();
 
-    // Pedidos por usuario (campo 'user' en la entidad)
     List<Pedido> findByUser(User user);
 
-    // Carrito activo del usuario
-    Optional<Pedido> findByUserAndEstado(User user, String estado);
+    // ✅ Búsqueda insensible a mayúsculas
+    @Query("SELECT p FROM Pedido p WHERE p.user = :user AND LOWER(p.estado) = LOWER(:estado)")
+    Optional<Pedido> findByUserAndEstado(@Param("user") User user, @Param("estado") String estado);
 
-    @Query("SELECT p FROM Pedido p WHERE p.user.id = :userId AND p.estado = :estado")
-    Optional<Pedido> findByUserIdAndEstado(@Param("userId") Long userId, @Param("estado") String estado);
-
-    // Validación para no asignar domiciliario con pedidos activos
     boolean existsByDomiciliarioAsignadoAndEstadoIn(Domiciliario domiciliario, List<String> estados);
+
+    List<Pedido> findByUserOrderByFechaCreacionDesc(User user);
 }
