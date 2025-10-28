@@ -14,6 +14,10 @@ public class ComidaServiceImpl implements ComidaService {
     @Autowired
     ComidaRepository repo;
 
+    //Constructor opcional para usar en tests
+    public ComidaServiceImpl(ComidaRepository repo) {
+        this.repo = repo;
+    }
     @Override
     public Comida searchById(Long id) {
         return repo.findById(id).get();
