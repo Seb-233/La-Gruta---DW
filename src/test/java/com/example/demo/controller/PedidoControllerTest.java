@@ -30,7 +30,7 @@ public class PedidoControllerTest {
         controller.getClass().getDeclaredFields();
     }
 
-    // ✅ 1. GET /api/pedidos
+    
     @Test
     void getPedidosActivosDebeRetornarLista() {
         // Arrange
@@ -45,7 +45,7 @@ public class PedidoControllerTest {
         assertThat(result).isNotEmpty();
     }
 
-    // ✅ 2. GET /api/pedidos/{id}
+    
     @Test
     void getPedidoPorIdDebeRetornarOk() {
         // Arrange
@@ -59,7 +59,7 @@ public class PedidoControllerTest {
         assertThat(resultado).isPresent();
     }
 
-    // ✅ 3. POST /api/pedidos
+    
     @Test
     void crearPedidoDebeRetornarErrorSiNoHayItems() {
         // Arrange + Act
@@ -69,7 +69,7 @@ public class PedidoControllerTest {
         assertThat(response.getStatusCodeValue()).isEqualTo(400);
     }
 
-    // ✅ 4. PUT /api/pedidos/{id}/estado
+    
     @Test
     void actualizarEstadoDebeRetornarNotFoundSiNoExiste() {
         // Arrange
@@ -82,7 +82,7 @@ public class PedidoControllerTest {
         assertThat(result).isEmpty();
     }
 
-    // ✅ 5. GET /api/pedidos/todos
+    
     @Test
     void getTodosDebeRetornarListaVaciaSiNoHayPedidos() {
         // Arrange

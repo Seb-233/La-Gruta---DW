@@ -21,7 +21,7 @@ public class PedidoRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    // ✅ 1. findAllActive
+    // 1. findAllActive
 @Test
 void debeRetornarPedidosActivos() {
     // Arrange
@@ -44,7 +44,7 @@ void debeRetornarPedidosActivos() {
     assertThat(activos.get(0).getEstado()).isNotEqualTo("entregado");
 }
 
-// ✅ 2. findByUser
+// 2. findByUser
 @Test
 void debeBuscarPedidosPorUsuario() {
     // Arrange
@@ -66,7 +66,7 @@ void debeBuscarPedidosPorUsuario() {
     assertThat(pedidos).hasSize(1);
 }
 
-// ✅ 3. findByUserAndEstado
+// 3. findByUserAndEstado
 @Test
 void debeBuscarPedidoPorUsuarioYEstado() {
     // Arrange
@@ -88,7 +88,7 @@ void debeBuscarPedidoPorUsuarioYEstado() {
     assertThat(encontrado).isPresent();
 }
 
-// ✅ 4. findByUserOrderByFechaCreacionDesc
+// 4. findByUserOrderByFechaCreacionDesc
 @Test
 void debeRetornarPedidosOrdenadosPorFecha() {
     // Arrange
@@ -118,7 +118,7 @@ void debeRetornarPedidosOrdenadosPorFecha() {
 }
 
 
-    // ✅ 5. existsByDomiciliarioAsignadoAndEstadoIn (sin domiciliarios)
+    // 5. existsByDomiciliarioAsignadoAndEstadoIn (sin domiciliarios)
     @Test
     void debeRetornarFalseSiNoHayPedidosConDomiciliario() {
         // Arrange + Act + Assert

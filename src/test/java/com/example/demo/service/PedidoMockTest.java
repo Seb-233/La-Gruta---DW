@@ -22,13 +22,13 @@ public class PedidoMockTest {
     private PedidoRepository pedidoRepository;
 
     @InjectMocks
-    private DummyPedidoService pedidoService; // 🔹 servicio ficticio
+    private DummyPedidoService pedidoService; 
 
     public PedidoMockTest() {
         MockitoAnnotations.openMocks(this);
     }
 
-    // 🔹 Servicio ficticio (simula un "PedidoService" sin crearlo en el proyecto)
+    
     static class DummyPedidoService {
         private final PedidoRepository repo;
 
@@ -48,7 +48,7 @@ public class PedidoMockTest {
         }
     }
 
-    // ✅ 1. Listar pedidos activos
+    // 1. Listar pedidos activos
     @Test
     void listarActivosDebeRetornarPedidos() {
         // Arrange
@@ -63,7 +63,7 @@ public class PedidoMockTest {
         verify(pedidoRepository).findAllActive();
     }
 
-    // ✅ 2. Buscar pedido por ID
+    // 2. Buscar pedido por ID
     @Test
     void buscarPorIdDebeRetornarPedido() {
         // Arrange
@@ -78,7 +78,7 @@ public class PedidoMockTest {
         verify(pedidoRepository).findById(1L);
     }
 
-    // ✅ 3. Guardar pedido
+    //  3. Guardar pedido
     @Test
     void guardarDebeInvocarSave() {
         // Arrange
@@ -93,7 +93,7 @@ public class PedidoMockTest {
         verify(pedidoRepository).save(pedido);
     }
 
-    // ✅ 4. Eliminar pedido existente
+    //  4. Eliminar pedido existente
     @Test
     void eliminarDebeRetornarTrueSiExiste() {
         // Arrange
@@ -107,7 +107,7 @@ public class PedidoMockTest {
         verify(pedidoRepository).deleteById(1L);
     }
 
-    // ✅ 5. Eliminar pedido inexistente
+    //  5. Eliminar pedido inexistente
     @Test
     void eliminarDebeRetornarFalseSiNoExiste() {
         // Arrange
