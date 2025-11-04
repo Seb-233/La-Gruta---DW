@@ -28,13 +28,23 @@ public class RegistrarProductoTest {
 
     @AfterAll
     static void tearDown() {
-        if (driver != null) driver.quit();
+        if (driver != null)
+            driver.quit();
     }
 
-    // 🔹 Utilidad para hacer scroll antes de click
+    // Utilidad para hacer scroll antes de click
     private void scrollAndClick(WebElement element) {
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
-        wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
+
+        // Esperar que el elemento sea clickeable
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+
+        try {
+            element.click();
+        } catch (ElementClickInterceptedException e) {
+            // Si algo tapa el botón, usamos JavaScript para forzar el click
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        }
     }
 
     // 🔹 Esperar visibilidad segura
@@ -48,6 +58,11 @@ public class RegistrarProductoTest {
     void loginFallidoTest() {
         driver.get(BASE_URL + "/login");
 
+        // Esperar hasta que la URL realmente cargue el login y los inputs existan
+        wait.until(ExpectedConditions.urlContains("/login"));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.name("username")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.name("password")));
+
         WebElement userInput = waitVisible(By.name("username"));
         WebElement passInput = driver.findElement(By.name("password"));
         WebElement btnLogin = driver.findElement(By.cssSelector(".btn-login"));
@@ -58,12 +73,13 @@ public class RegistrarProductoTest {
         passInput.sendKeys("clave_incorrecta");
         btnLogin.click();
 
-        // ✅ Validar si aparece mensaje de error
-        WebElement alert = waitVisible(By.cssSelector(".alert-danger, .alert, .text-danger"));
+        // Esperar mensaje de error "Credenciales inválidas"
+        WebElement alert = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//*[contains(text(),'Credenciales inválidas') or contains(@class,'alert')]")));
+
         Assertions.assertTrue(
-                alert.getText().toLowerCase().contains("error")
-                        || alert.getText().toLowerCase().contains("incorrect"),
-                "Debe mostrar mensaje de error al fallar el login");
+                alert.getText().toLowerCase().contains("credenciales inválidas"),
+                "Debe mostrar mensaje de error 'Credenciales inválidas' al fallar el login");
     }
 
     @Test
@@ -73,9 +89,9 @@ public class RegistrarProductoTest {
         driver.get(BASE_URL + "/login");
 
         driver.findElement(By.name("username")).clear();
-        driver.findElement(By.name("username")).sendKeys("Juan");
+        driver.findElement(By.name("username")).sendKeys("Pipe");
         driver.findElement(By.name("password")).clear();
-        driver.findElement(By.name("password")).sendKeys("12345");
+        driver.findElement(By.name("password")).sendKeys("Pipe12345");
         driver.findElement(By.cssSelector(".btn-login")).click();
 
         wait.until(ExpectedConditions.urlContains("/dashboard"));
@@ -86,7 +102,7 @@ public class RegistrarProductoTest {
     @Test
     @Order(3)
     @DisplayName("Registrar nueva comida con 2 adicionales asociados a 'Antipastos'")
-    void registrarComidaTest() {
+    void registrarComidaTest() throws InterruptedException {
         driver.get(BASE_URL + "/dashboard/comidas/agregar");
 
         WebElement nombreInput = waitVisible(By.id("nombre"));
@@ -112,11 +128,15 @@ public class RegistrarProductoTest {
 
         // ✅ Marcar disponible
         WebElement disponible = driver.findElement(By.id("disponible"));
-        if (!disponible.isSelected()) disponible.click();
+        if (!disponible.isSelected())
+            disponible.click();
 
         // ✅ Scroll y guardar
-        WebElement submitBtn = waitVisible(By.cssSelector("button[type='submit']"));
-        scrollAndClick(submitBtn);
+        By botonGuardar = By.xpath("//button[contains(., 'Guardar')]");
+        WebElement submitBtn = wait.until(ExpectedConditions.elementToBeClickable(botonGuardar));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitBtn);
+        Thread.sleep(500);
+        submitBtn.click();
 
         // ✅ Confirmar redirección
         wait.until(ExpectedConditions.urlContains("/dashboard/comidas"));
@@ -128,7 +148,8 @@ public class RegistrarProductoTest {
         crearAdicional("Queso Doble", "Extra de queso cheddar", "2500", "Antipastos");
     }
 
-    private void crearAdicional(String nombre, String descripcion, String precio, String categoriaNombre) {
+    private void crearAdicional(String nombre, String descripcion, String precio, String categoriaNombre)
+            throws InterruptedException {
         driver.get(BASE_URL + "/dashboard/adicionales/nuevo");
 
         WebElement nombreInput = waitVisible(By.id("nombre"));
@@ -138,24 +159,40 @@ public class RegistrarProductoTest {
         driver.findElement(By.id("descripcion")).sendKeys(descripcion);
         driver.findElement(By.id("precio")).sendKeys(precio);
 
-        // ✅ Marcar categoría “Antipastos”
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".checkbox-group input[type='checkbox']")));
+        // ✅ Esperar que los checkboxes carguen y marcar la categoría correcta
+        wait.until(ExpectedConditions
+                .visibilityOfElementLocated(By.cssSelector(".checkbox-group input[type='checkbox']")));
         List<WebElement> checkboxes = driver.findElements(By.cssSelector(".checkbox-group .form-check"));
         boolean marcado = false;
         for (WebElement check : checkboxes) {
             WebElement label = check.findElement(By.cssSelector("label"));
             if (label.getText().equalsIgnoreCase(categoriaNombre)) {
                 WebElement input = check.findElement(By.cssSelector("input[type='checkbox']"));
-                if (!input.isSelected()) scrollAndClick(input);
+                if (!input.isSelected())
+                    scrollAndClick(input);
                 marcado = true;
                 break;
             }
         }
         Assertions.assertTrue(marcado, "No se encontró la categoría " + categoriaNombre + " en los checkboxes");
 
+        // ✅ Guardar adicional
         WebElement guardarBtn = waitVisible(By.cssSelector("button[type='submit']"));
         scrollAndClick(guardarBtn);
 
+        // ✅ Esperar y aceptar el alert (SweetAlert o alert nativo)
+        try {
+            WebDriverWait alertWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            alertWait.until(ExpectedConditions.alertIsPresent());
+            Alert alert = driver.switchTo().alert();
+            System.out.println("⚠️ Alerta detectada: " + alert.getText());
+            alert.accept();
+            Thread.sleep(500); // pequeña espera por estabilidad
+        } catch (TimeoutException e) {
+            System.out.println("No apareció ninguna alerta tras crear el adicional.");
+        }
+
+        // ✅ Confirmar redirección a la lista de adicionales
         wait.until(ExpectedConditions.urlContains("/dashboard/adicionales"));
         Assertions.assertTrue(driver.getCurrentUrl().contains("/dashboard/adicionales"),
                 "Debe redirigir a la lista de adicionales después de guardar");
@@ -169,7 +206,8 @@ public class RegistrarProductoTest {
         List<String> tabs = new ArrayList<>(driver.getWindowHandles());
         driver.switchTo().window(tabs.get(1));
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h5[contains(text(), 'Hamburguesa BBQ')]")));
+        wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//h5[contains(text(), 'Hamburguesa BBQ')]")));
         WebElement producto = driver.findElement(By.xpath("//h5[contains(text(), 'Hamburguesa BBQ')]"));
         Assertions.assertTrue(producto.isDisplayed(), "El producto debe aparecer en el menú");
     }
@@ -177,7 +215,7 @@ public class RegistrarProductoTest {
     @Test
     @Order(5)
     @DisplayName("Agregar un nuevo adicional 'Papas medianas' asociado a 'Antipastos'")
-    void agregarNuevoAdicionalTest() {
+    void agregarNuevoAdicionalTest() throws InterruptedException {
         List<String> tabs = new ArrayList<>(driver.getWindowHandles());
         driver.switchTo().window(tabs.get(0)); // volver al dashboard
 
@@ -191,13 +229,15 @@ public class RegistrarProductoTest {
         driver.findElement(By.id("precio")).sendKeys("4000");
 
         // ✅ Marcar categoría “Antipastos”
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".checkbox-group input[type='checkbox']")));
+        wait.until(ExpectedConditions
+                .visibilityOfElementLocated(By.cssSelector(".checkbox-group input[type='checkbox']")));
         List<WebElement> checkboxes = driver.findElements(By.cssSelector(".checkbox-group .form-check"));
         for (WebElement check : checkboxes) {
             WebElement label = check.findElement(By.cssSelector("label"));
             if (label.getText().equalsIgnoreCase("Antipastos")) {
                 WebElement input = check.findElement(By.cssSelector("input[type='checkbox']"));
-                if (!input.isSelected()) scrollAndClick(input);
+                if (!input.isSelected())
+                    scrollAndClick(input);
                 break;
             }
         }
@@ -205,6 +245,19 @@ public class RegistrarProductoTest {
         WebElement guardarBtn = waitVisible(By.cssSelector("button[type='submit']"));
         scrollAndClick(guardarBtn);
 
+        // ✅ Manejar alerta nativa si aparece (alert() o confirm())
+        try {
+            WebDriverWait alertWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            alertWait.until(ExpectedConditions.alertIsPresent());
+            Alert alert = driver.switchTo().alert();
+            System.out.println("⚠️ Alerta detectada: " + alert.getText());
+            alert.accept();
+            Thread.sleep(500);
+        } catch (TimeoutException e) {
+            System.out.println("No se detectó alerta nativa tras crear el adicional.");
+        }
+
+        // ✅ Confirmar redirección
         wait.until(ExpectedConditions.urlContains("/dashboard/adicionales"));
         Assertions.assertTrue(driver.getCurrentUrl().contains("/dashboard/adicionales"),
                 "Debe redirigir a la lista de adicionales después de guardar");
@@ -215,16 +268,46 @@ public class RegistrarProductoTest {
     @DisplayName("Verificar el producto con los 3 adicionales en el menú")
     void verificarComidaCon3AdicionalesTest() {
         List<String> tabs = new ArrayList<>(driver.getWindowHandles());
-        driver.switchTo().window(tabs.get(1)); // pestaña del menú
+
+        // Si solo hay una pestaña, permanece en ella
+        if (tabs.size() > 1) {
+            driver.switchTo().window(tabs.get(1)); // pestaña del menú
+        } else {
+            driver.switchTo().window(tabs.get(0)); // usa la actual
+        }
 
         driver.navigate().refresh();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h5[contains(text(), 'Hamburguesa BBQ')]")));
 
-        WebElement producto = driver.findElement(By.xpath("//h5[contains(text(), 'Hamburguesa BBQ')]"));
-        scrollAndClick(producto.findElement(By.xpath(".//button[contains(text(),'Ver Adicionales')]")));
+        // Esperar a que aparezca el producto
+        WebElement producto = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath(
+                        "//h5[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'hamburguesa bbq')]")));
 
+        // Buscar botón dentro del mismo contenedor
+        WebElement botonVer = null;
+        try {
+            botonVer = producto.findElement(By.xpath(
+                    ".//button[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'ver adicionales')]"));
+        } catch (NoSuchElementException e) {
+            // Si no está dentro, buscar cerca (en el mismo card)
+            try {
+                botonVer = producto.findElement(By.xpath(
+                        "./ancestor::div[contains(@class,'card')]//button[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'ver adicionales')]"));
+            } catch (NoSuchElementException ignored) {
+            }
+        }
+
+        // Verificar que el botón exista
+        Assertions.assertNotNull(botonVer, "No se encontró el botón 'Ver Adicionales' asociado a la Hamburguesa BBQ");
+
+        scrollAndClick(botonVer);
+
+        // Esperar que se abra el modal
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".modal-custom, .modal-content")));
+
+        // Verificar adicionales
         List<WebElement> adicionales = driver.findElements(By.cssSelector(".list-group-item"));
         Assertions.assertTrue(adicionales.size() >= 3, "Debe tener al menos 3 adicionales visibles");
     }
+
 }
