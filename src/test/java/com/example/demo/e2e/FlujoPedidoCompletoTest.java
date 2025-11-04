@@ -1,4 +1,4 @@
- package com.example.demo.e2e;
+package com.example.demo.e2e;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -12,8 +12,11 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -62,8 +65,12 @@ public class FlujoPedidoCompletoTest {
     private void scrollAndClick(WebDriver driver, WebElement element) {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'});", element);
         new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.elementToBeClickable(element))
-                .click();
+                .until(ExpectedConditions.elementToBeClickable(element));
+        try {
+            element.click();
+        } catch (ElementClickInterceptedException e) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        }
     }
 
     // ===========================================================
@@ -85,66 +92,44 @@ public class FlujoPedidoCompletoTest {
     }
 
     // ===========================================================
-    // 2️⃣ AGREGAR DOS COMIDAS CON ADICIONALES
+    // 2️⃣ NUEVO TEST — AGREGAR COMIDAS Y ENTRAR AL CARRITO
     // ===========================================================
     @Test
     @Order(2)
-    @DisplayName("Agregar 2 comidas con 2 adicionales cada una al carrito")
-    void agregarComidasTest() throws InterruptedException {
+    @DisplayName("Cliente agrega pizzas con adicionales y entra al carrito")
+    void agregarComidasYConfirmar() throws InterruptedException {
         driverCliente.get(BASE_URL + "/menu");
+        agregarComidaConAdicionales("Pizza Margherita", "Queso Parmesano Extra");
+        agregarComidaConAdicionales("Pizza Nera", "Jamón Serrano");
 
-        agregarComidaConAdicionales("Pizza Margherita",
-                Arrays.asList("Queso Parmesano Extra", "Rúcula Fresca"));
-
-        Thread.sleep(1500); // pequeña pausa antes de la segunda pizza
-
-        agregarComidaConAdicionales("Pizza Nera",
-                Arrays.asList("Tomate Cherry", "Jamón Serrano"));
+        // Ir al carrito al final
+        driverCliente.get(BASE_URL + "/carrito");
+        waitCliente.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".pedido-item")));
+        System.out.println("🛒 Cliente entró al carrito con los pedidos");
     }
 
-    private void agregarComidaConAdicionales(String comida, List<String> adicionales) throws InterruptedException {
-        System.out.println("🧩 Agregando " + comida);
-
-        // Esperar que aparezca la tarjeta
+    private void agregarComidaConAdicionales(String comida, String adicional) throws InterruptedException {
         waitCliente.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//h5[contains(text(),'" + comida + "')]")));
-
         WebElement card = driverCliente.findElement(
                 By.xpath("//h5[contains(text(),'" + comida + "')]/ancestor::div[contains(@class,'card')]"));
+        WebElement btnVerAdicionales = card.findElement(By.xpath(".//button[contains(.,'Ver Adicionales')]"));
+        scrollAndClick(driverCliente, btnVerAdicionales);
 
-        // Intentar abrir el modal (Ver adicionales o Agregar)
-        List<WebElement> btnVerAdicionales = card.findElements(By.xpath(".//button[contains(.,'Ver adicionales')]"));
-        if (!btnVerAdicionales.isEmpty()) {
-            scrollAndClick(driverCliente, btnVerAdicionales.get(0));
-        } else {
-            WebElement botonAgregar = card.findElement(By.xpath(".//button[contains(.,'Agregar')]"));
-            scrollAndClick(driverCliente, botonAgregar);
-        }
+        WebElement modal = waitCliente.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".modal-custom")));
+        By radioLocator = By.xpath("//label[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'"
+                + adicional.toLowerCase() + "')]/descendant::input[@type='radio']");
+        waitCliente.until(ExpectedConditions.elementToBeClickable(radioLocator));
+        WebElement radio = driverCliente.findElement(radioLocator);
+        scrollAndClick(driverCliente, radio);
 
-        // Esperar modal visible
-        WebElement modal = waitCliente.until(
-                ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".modal-content")));
-
-        // Marcar los adicionales
-        for (String adicional : adicionales) {
-            System.out.println("   ➕ Seleccionando adicional: " + adicional);
-            By chkLocator = By.xpath("//label[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'"
-                    + adicional.toLowerCase() + "')]/preceding-sibling::input[@type='checkbox']");
-            waitCliente.until(ExpectedConditions.presenceOfElementLocated(chkLocator));
-            WebElement check = driverCliente.findElement(chkLocator);
-            ((JavascriptExecutor) driverCliente).executeScript("arguments[0].scrollIntoView({block:'center'});", check);
-            if (!check.isSelected()) check.click();
-        }
-
-        // Agregar al carrito
-        WebElement btnAgregar = waitCliente.until(
-                ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(.,'Agregar al carrito')]")));
-        scrollAndClick(driverCliente, btnAgregar);
-
-        // Esperar que cierre el modal
+        WebElement btnConfirmar = waitCliente.until(
+                ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(.,'Confirmar selección')]")));
+        scrollAndClick(driverCliente, btnConfirmar);
         waitCliente.until(ExpectedConditions.invisibilityOf(modal));
 
-        Thread.sleep(1000);
+        System.out.println("✅ Añadido: " + comida + " con " + adicional);
+        Thread.sleep(800);
     }
 
     // ===========================================================
