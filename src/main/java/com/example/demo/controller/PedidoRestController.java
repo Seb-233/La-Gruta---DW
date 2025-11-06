@@ -219,7 +219,7 @@ public ResponseEntity<?> confirmarPedido(@PathVariable Long id) {
 
     // Actualizar estado y total
     pedido.setTotal(total);
-    pedido.setEstado("CONFIRMADO");
+    pedido.setEstado("recibido");
     pedido.setFechaEntrega(null);
     pedidoRepository.saveAndFlush(pedido);
 
