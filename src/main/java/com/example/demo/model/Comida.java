@@ -6,25 +6,8 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
@@ -32,9 +15,9 @@ import lombok.Setter;
 @Table(name = "comidas")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder // ✅ Patrón Builder agregado
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-
 public class Comida {
 
     @Id
@@ -61,12 +44,14 @@ public class Comida {
     private Categoria categoria;
 
     @Column(nullable = false)
+    @Builder.Default // ✅ Mantiene el valor por defecto al usar el builder
     private Boolean disponible = true;
 
     @Column
     private Integer tiempoPreparacion;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean esEspecialidad = false;
 
     @Column(length = 1000)
@@ -85,15 +70,16 @@ public class Comida {
         joinColumns = @JoinColumn(name = "comida_id"),
         inverseJoinColumns = @JoinColumn(name = "adicional_id")
     )
-    @JsonIgnore // evita bucles JSON entre comida ↔ adicional
+    @JsonIgnore
+    @Builder.Default
     private Set<Adicional> adicionales = new HashSet<>();
 
-    // 🔹 Relación inversa con PedidoComida (una comida puede aparecer en muchos pedidos)
+    // 🔹 Relación inversa con PedidoComida
     @OneToMany(mappedBy = "comida", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore // evita bucles infinitos en la serialización
+    @JsonIgnore
     private List<PedidoComida> pedidosDondeAparece;
 
-    // 🔹 Constructor personalizado
+    // 🔹 Constructor personalizado (se mantiene para compatibilidad)
     public Comida(String nombre, String descripcion, Double precio, String imagen) {
         this.nombre = nombre;
         this.descripcion = descripcion;

@@ -25,11 +25,19 @@ public class UserRepositoryTest {
     void setUp() {
         userRepository.deleteAll();
 
-        user1 = new User("juan", "1234", "USER");
+        user1 = User.builder()
+            .username("juan")
+            .password("1234")
+            .role("USER")
+            .build();
         user1.setDireccion("Bogotá");
         user1.setTelefono("3001234567");
 
-        user2 = new User("admin", "abcd", "ADMIN");
+        user2 = User.builder()
+            .username("admin")
+            .password("abcd")
+            .role("ADMIN")
+            .build();
         user2.setDireccion("Medellín");
         user2.setTelefono("3109876543");
 
@@ -42,7 +50,12 @@ public class UserRepositoryTest {
     @Test
     void testCreateUser() {
         // Arrange
-        User nuevo = new User("luis", "pass", "USER");
+        User nuevo = User.builder()
+            .username("luis")
+            .password("pass")
+            .role("USER")
+            .build();
+
 
         // Act
         User guardado = userRepository.save(nuevo);
@@ -142,8 +155,17 @@ public class UserRepositoryTest {
     @Test
     void testGuardarVariosUsuarios() {
         // Arrange
-        User u1 = new User("carlos", "x1", "USER");
-        User u2 = new User("ana", "x2", "USER");
+        User u1 = User.builder()
+            .username("carlos")
+            .password("x1")
+            .role("USER")
+            .build();
+
+        User u2 = User.builder()
+            .username("ana")
+            .password("x2")
+            .role("USER")
+            .build();
 
         // Act
         userRepository.save(u1);
@@ -153,4 +175,5 @@ public class UserRepositoryTest {
         // Assert
         assertThat(todos).hasSize(4);
     }
+
 }

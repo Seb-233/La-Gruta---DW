@@ -1,20 +1,14 @@
 package com.example.demo.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "domiciliarios")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder // ✅ Patrón Builder aplicado
 public class Domiciliario {
 
     @Id
@@ -37,6 +31,7 @@ public class Domiciliario {
     private String placa; // opcional, solo aplica para moto/carro
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean disponible = true; // true si está disponible para pedidos
 
     @Column

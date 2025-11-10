@@ -6,21 +6,8 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
@@ -28,6 +15,7 @@ import lombok.Setter;
 @Table(name = "categorias")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder // ✅ Patrón Builder agregado
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Categoria {
@@ -53,24 +41,28 @@ public class Categoria {
     private Integer orden;
 
     @Column
+    @Builder.Default // ✅ Mantiene valor por defecto al usar Builder
     private Boolean activa = true;
 
     // 🔹 Relación con Comidas (una categoría puede tener varias comidas)
     @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
-    @JsonIgnore // evita loops JSON con Comida
+    @JsonIgnore
+    @Builder.Default
     private Set<Comida> comidas = new HashSet<>();
 
     // 🔹 Relación con Adicionales (muchos a muchos inversa)
     @ManyToMany(mappedBy = "categorias", fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"categorias", "hibernateLazyInitializer", "handler"})
+    @Builder.Default
     private Set<Adicional> adicionales = new HashSet<>();
 
     // 🔹 Relación auxiliar con AdicionalCategoria (tabla puente explícita)
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @Builder.Default
     private Set<AdicionalCategoria> adicionalAsociaciones = new HashSet<>();
 
-    // 🔹 Constructor útil para inicialización rápida
+    // 🔹 Constructor útil para inicialización rápida (lo conservamos)
     public Categoria(String nombre, String slug) {
         this.nombre = nombre;
         this.slug = slug;
