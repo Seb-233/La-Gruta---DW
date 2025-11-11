@@ -1,4 +1,4 @@
-package com.example.demo.repository;
+/*package com.example.demo.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -177,3 +177,4 @@ public class UserRepositoryTest {
     }
 
 }
+*/

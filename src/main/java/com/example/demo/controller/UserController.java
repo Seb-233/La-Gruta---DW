@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.LoginResponse;
 import com.example.demo.model.User;
+import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -27,24 +29,35 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // ✅ LOGIN (único y correcto)
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    // ✅ LOGIN
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        // Validar campos
         if (request.getUsername() == null || request.getPassword() == null) {
             return ResponseEntity.badRequest().body("Debe enviar username y password");
         }
 
-        // Buscar usuario por nombre y contraseña
-        User user = userService.findByUsernameAndPassword(request.getUsername(), request.getPassword());
-
+        User user = userService.findByUsername(request.getUsername());
         if (user == null) {
-            return ResponseEntity.status(401).body("Credenciales inválidas");
+            return ResponseEntity.status(401).body("Usuario no encontrado");
         }
 
-        // Retornar respuesta con datos seguros
-        LoginResponse response = new LoginResponse(user.getId(), user.getUsername(), user.getRole());
-        return ResponseEntity.ok(response);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (!encoder.matches(request.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(401).body("Contraseña incorrecta");
+        }
+
+        // Generar token JWT
+        String jwtToken = jwtUtil.generateToken(user.getUsername(), user.getRole());
+
+        // Devolver token + datos
+        return ResponseEntity.ok(Map.of(
+            "token", jwtToken,
+            "username", user.getUsername(),
+            "role", user.getRole()
+        ));
     }
 
     // ✅ GET ALL
