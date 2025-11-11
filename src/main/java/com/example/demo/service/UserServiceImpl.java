@@ -1,10 +1,10 @@
+
 package com.example.demo.service;
 
 import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.User;
@@ -15,8 +15,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository repo;
-
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
     public User SearchById(Long id) {
@@ -41,8 +39,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void add(User user) {
-        // 🔒 Encriptar contraseña antes de guardar
-        user.setPassword(encoder.encode(user.getPassword()));
         repo.save(user);
     }
 
@@ -50,4 +46,11 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
         return repo.findByUsername(username);
     }
+
+    @Override
+    public User findByUsernameAndPassword(String username, String password) {
+    return repo.findByUsernameAndPassword(username, password).orElse(null);
 }
+
+}
+

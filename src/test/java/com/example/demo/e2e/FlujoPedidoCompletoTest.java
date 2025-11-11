@@ -1,4 +1,4 @@
-/*package com.example.demo.e2e;
+package com.example.demo.e2e;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -133,7 +133,7 @@ public class FlujoPedidoCompletoTest {
     /**
      * Permite seleccionar múltiples adicionales dentro del modal de una comida.
      */
- /*    private void agregarComidaConAdicionales(String comida, List<String> adicionales) throws InterruptedException {
+    private void agregarComidaConAdicionales(String comida, List<String> adicionales) throws InterruptedException {
         waitCliente.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//h5[contains(text(),'" + comida + "')]")));
 
@@ -352,5 +352,3 @@ public class FlujoPedidoCompletoTest {
     }
 
 }
-
-*/

@@ -1,4 +1,4 @@
-/*package com.example.demo.e2e;
+package com.example.demo.e2e;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
@@ -311,4 +311,3 @@ public class RegistrarProductoTest {
     }
 
 }
-*/
