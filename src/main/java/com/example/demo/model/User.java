@@ -8,7 +8,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "USERS_TABLE")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder // ✅ Aplica el patrón Builder

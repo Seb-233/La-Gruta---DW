@@ -1,22 +1,23 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
 @Data
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -25,11 +26,16 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    private String nombre;
-    private String email;
-
+    // 🔹 Relación: muchos usuarios pueden tener un mismo rol
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    private String direccion;
+    private String telefono;
+
+    // 🔹 Relación con comidas (se mantiene igual)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Comida> comidas = new ArrayList<>();
 }
