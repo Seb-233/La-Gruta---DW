@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menú Completo - La Gruta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;500;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/css/header-footer.css">
+    <link rel="stylesheet" href="/css/menu.css">
+  </head>
+  <body>
+  <!-- Header -->
+  <header>
+    <div th:replace="fragments :: solid-header"></div>
+  </header>
+
+<main class="container my-5">
+  <h2 class="text-center mb-5">Menú Completo</h2>
+
+  <!-- Antipastos -->
+  <section id="antipastos" class="mb-5">
+    <h2 class="text-center mb-4">Antipastos</h2>
+    <div class="row g-4">
+      <th:block th:each="comida : ${comidas}">
+        <div th:if="${comida.categoria != null and comida.categoria.slug == 'antipastos'}" class="col-md-6 col-lg-4">
+          <div class="card h-100"
+               th:attr="data-id=${comida.id}, 
+                        data-nombre=${comida.nombre}, 
+                        data-precio=${comida.precio}, 
+                        data-categoria-id=${comida.categoria.id}">
+            <img th:src="@{${comida.imagen}}" class="card-img-top" th:alt="${comida.nombre}"/>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title" th:text="${comida.nombre}"></h5>
+              <p class="card-text" th:text="${comida.descripcion}"></p>
+              <div class="mt-auto d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="fw-bold" th:text="${comida.precio}"></span>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+                </div>
+                <div class="quantity-controls mb-2">
+                  <button class="btn btn-sm btn-secondary minus">-</button>
+                  <span class="quantity">1</span>
+                  <button class="btn btn-sm btn-secondary plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-order mt-auto">Agregar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </th:block>
+    </div>
+  </section>
+
+  <!-- Pizzas -->
+  <section id="pizzas" class="mb-5">
+    <h2 class="text-center mb-4">Pizzas</h2>
+    <div class="row g-4">
+      <th:block th:each="comida : ${comidas}">
+        <div th:if="${comida.categoria != null and comida.categoria.slug == 'pizzas'}" class="col-md-6 col-lg-4">
+          <div class="card h-100"
+               th:attr="data-id=${comida.id}, 
+                        data-nombre=${comida.nombre}, 
+                        data-precio=${comida.precio}, 
+                        data-categoria-id=${comida.categoria.id}">
+            <img th:src="@{${comida.imagen}}" class="card-img-top" th:alt="${comida.nombre}"/>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title" th:text="${comida.nombre}"></h5>
+              <p class="card-text" th:text="${comida.descripcion}"></p>
+              <div class="mt-auto d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="fw-bold" th:text="${comida.precio}"></span>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+                </div>
+                <div class="quantity-controls mb-2">
+                  <button class="btn btn-sm btn-secondary minus">-</button>
+                  <span class="quantity">1</span>
+                  <button class="btn btn-sm btn-secondary plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-order mt-auto">Agregar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </th:block>
+    </div>
+  </section>
+
+  <!-- Pastas -->
+  <section id="pastas" class="mb-5">
+    <h2 class="text-center mb-4">Pastas</h2>
+    <div class="row g-4">
+      <th:block th:each="comida : ${comidas}">
+        <div th:if="${comida.categoria != null and comida.categoria.slug == 'pastas'}" class="col-md-6 col-lg-4">
+          <div class="card h-100"
+               th:attr="data-id=${comida.id}, 
+                        data-nombre=${comida.nombre}, 
+                        data-precio=${comida.precio}, 
+                        data-categoria-id=${comida.categoria.id}">
+            <img th:src="@{${comida.imagen}}" class="card-img-top" th:alt="${comida.nombre}"/>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title" th:text="${comida.nombre}"></h5>
+              <p class="card-text" th:text="${comida.descripcion}"></p>
+              <div class="mt-auto d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="fw-bold" th:text="${comida.precio}"></span>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+                </div>
+                <div class="quantity-controls mb-2">
+                  <button class="btn btn-sm btn-secondary minus">-</button>
+                  <span class="quantity">1</span>
+                  <button class="btn btn-sm btn-secondary plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-order mt-auto">Agregar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </th:block>
+    </div>
+  </section>
+
+  <!-- Risottos -->
+  <section id="risottos" class="mb-5">
+    <h2 class="text-center mb-4">Risottos</h2>
+    <div class="row g-4">
+      <th:block th:each="comida : ${comidas}">
+        <div th:if="${comida.categoria != null and comida.categoria.slug == 'risottos'}" class="col-md-6 col-lg-4">
+          <div class="card h-100"
+               th:attr="data-id=${comida.id}, 
+                        data-nombre=${comida.nombre}, 
+                        data-precio=${comida.precio}, 
+                        data-categoria-id=${comida.categoria.id}">
+            <img th:src="@{${comida.imagen}}" class="card-img-top" th:alt="${comida.nombre}"/>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title" th:text="${comida.nombre}"></h5>
+              <p class="card-text" th:text="${comida.descripcion}"></p>
+              <div class="mt-auto d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="fw-bold" th:text="${comida.precio}"></span>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+                </div>
+                <div class="quantity-controls mb-2">
+                  <button class="btn btn-sm btn-secondary minus">-</button>
+                  <span class="quantity">1</span>
+                  <button class="btn btn-sm btn-secondary plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-order mt-auto">Agregar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </th:block>
+    </div>
+  </section>
+
+  <!-- Postres -->
+  <section id="postres" class="mb-5">
+    <h2 class="text-center mb-4">Postres</h2>
+    <div class="row g-4">
+      <th:block th:each="comida : ${comidas}">
+        <div th:if="${comida.categoria != null and comida.categoria.slug == 'postres'}" class="col-md-6 col-lg-4">
+          <div class="card h-100"
+               th:attr="data-id=${comida.id}, 
+                        data-nombre=${comida.nombre}, 
+                        data-precio=${comida.precio}, 
+                        data-categoria-id=${comida.categoria.id}">
+            <img th:src="@{${comida.imagen}}" class="card-img-top" th:alt="${comida.nombre}"/>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title" th:text="${comida.nombre}"></h5>
+              <p class="card-text" th:text="${comida.descripcion}"></p>
+              <div class="mt-auto d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="fw-bold" th:text="${comida.precio}"></span>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+                </div>
+                <div class="quantity-controls mb-2">
+                  <button class="btn btn-sm btn-secondary minus">-</button>
+                  <span class="quantity">1</span>
+                  <button class="btn btn-sm btn-secondary plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-order mt-auto">Agregar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </th:block>
+    </div>
+  </section>
+
+  <!-- Bebidas -->
+  <section id="bebidas" class="mb-5">
+    <h2 class="text-center mb-4">Bebidas</h2>
+    <div class="row g-4">
+      <th:block th:each="comida : ${comidas}">
+        <div th:if="${comida.categoria != null and comida.categoria.slug == 'bebidas'}" class="col-md-6 col-lg-4">
+          <div class="card h-100"
+               th:attr="data-id=${comida.id}, 
+                        data-nombre=${comida.nombre}, 
+                        data-precio=${comida.precio}, 
+                        data-categoria-id=${comida.categoria.id}">
+            <img th:src="@{${comida.imagen}}" class="card-img-top" th:alt="${comida.nombre}"/>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title" th:text="${comida.nombre}"></h5>
+              <p class="card-text" th:text="${comida.descripcion}"></p>
+              <div class="mt-auto d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="fw-bold" th:text="${comida.precio}"></span>
+                  <a class="btn btn-order" href="#" data-id="${comida.id}">Ver Adicionales</a>
+                </div>
+                <div class="quantity-controls mb-2">
+                  <button class="btn btn-sm btn-secondary minus">-</button>
+                  <span class="quantity">1</span>
+                  <button class="btn btn-sm btn-secondary plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-order mt-auto">Agregar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </th:block>
+    </div>
+  </section>
+
+  <!-- Modal único global -->
+  <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderModalLabel">Producto agregado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Desea continuar agregando productos o ir a pagar?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="continueOrderBtn" data-bs-dismiss="modal">Continuar agregando</button>
+          <button type="button" class="btn btn-primary" id="goToPayBtn">Ir a pagar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Modal de Adicionales -->
+<div class="modal fade" id="adicionalesModal" tabindex="-1" aria-labelledby="adicionalesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="adicionalesModalLabel">Adicionales</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="adicionalesContent">
+        Cargando...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+  <!-- Footer -->
+  <footer id="contacto">
+    <div th:replace="fragments :: footer"></div>
+  </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/script.js}"></script>
+  </body>
+</html>
