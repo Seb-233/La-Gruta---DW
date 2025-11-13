@@ -34,8 +34,4 @@ public class UserEntity {
     private String direccion;
     private String telefono;
 
-    // 🔹 Relación con comidas (se mantiene igual)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Comida> comidas = new ArrayList<>();
 }
