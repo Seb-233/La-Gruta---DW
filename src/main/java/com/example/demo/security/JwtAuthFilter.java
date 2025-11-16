@@ -25,9 +25,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain)
+            HttpServletResponse response,
+            FilterChain chain)
             throws ServletException, IOException {
+
+        String path = request.getServletPath();
+
+        // 🔥 IGNORAR las rutas públicas Y LA CONSOLA H2
+        if (path.startsWith("/api/auth") || path.startsWith("/h2")) { // <-- ¡LÍNEA MODIFICADA!
+            chain.doFilter(request, response);
+            return;
+        }
 
         String authHeader = request.getHeader("Authorization");
 
@@ -38,13 +46,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 String username = jwtUtil.extractUsername(jwt);
                 String role = jwtUtil.extractRole(jwt);
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null,
-                                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role)));
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        username,
+                        null,
+                        Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role)));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
         chain.doFilter(request, response);
     }
+
 }

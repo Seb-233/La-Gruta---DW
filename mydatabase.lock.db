@@ -1,6 +1,6 @@
 #FileLock
-#Thu Nov 13 13:29:38 GMT-05:00 2025
-hostName=Ggdestroyer09
-id=19a7e7adf01e34371c3b0ba9e4b30d64e16567cc7af
+#Sun Nov 16 15:35:34 COT 2025
+server=192.168.1.2\:49810
+hostName=DESKTOP-TIOPAAM
 method=file
-server=192.168.56.1\:56291
+id=19a8e615488da78f973b289e8ad5f59b8153bd488ca

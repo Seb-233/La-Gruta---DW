@@ -1,25 +1,20 @@
-package com.example.demo.dto;
+package com.example.demo.dto; // o package com.example.demo.dto;
+
+import java.util.Set;
 
 public class LoginResponse {
-  private Long id;
-  private String username;
-  private String role;
+  public Long id;
+  public String username;
+  public Set<String> roles;
+  public String token;
 
-  public LoginResponse(Long id, String username, String role) {
+  public LoginResponse() {
+  }
+
+  public LoginResponse(Long id, String username, Set<String> roles, String token) {
     this.id = id;
     this.username = username;
-    this.role = role;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public String getRole() {
-    return role;
+    this.roles = roles;
+    this.token = token;
   }
 }

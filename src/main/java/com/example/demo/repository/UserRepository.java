@@ -1,15 +1,17 @@
 package com.example.demo.repository;
 
-import java.util.Optional;
-
+import com.example.demo.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.model.User;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    User findByUsername(String username);
-    Optional<User> findByUsernameAndPassword(String username, String password);
+    // Buscar usuario por username (login)
+    Optional<User> findByUsername(String username);
+
+    // Verificar si existe un usuario con ese username
+    boolean existsByUsername(String username);
 }

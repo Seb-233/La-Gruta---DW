@@ -8,32 +8,23 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder // ✅ Patrón Builder aplicado
+@Builder
 public class Domiciliario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(nullable = false, unique = true)
-    private String correo;
+    @Column(nullable = false, unique = true, length = 20)
+    private String cedula;
 
-    @Column(nullable = false)
-    private String telefono;
-
-    @Column(nullable = false)
-    private String vehiculo; // Ej: Moto, Bicicleta, Carro
-
-    @Column
-    private String placa; // opcional, solo aplica para moto/carro
+    @Column(nullable = false, length = 20)
+    private String celular;
 
     @Column(nullable = false)
     @Builder.Default
-    private boolean disponible = true; // true si está disponible para pedidos
-
-    @Column
-    private String zonaCobertura; // zona o ciudad donde opera
+    private boolean disponible = true;
 }
