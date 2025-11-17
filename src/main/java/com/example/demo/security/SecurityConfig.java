@@ -22,7 +22,7 @@ public class SecurityConfig {
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
-    // 👉 Habilitar CORS globalmente
+    // 👉 CORS global
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -30,7 +30,7 @@ public class SecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:4200")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                        .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
@@ -42,31 +42,40 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> {
-                }) // 🔥 Habilita CORS
+                })
                 .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .headers(headers -> headers.frameOptions(frame -> frame.disable())) // para H2
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 👉 Línea AÑADIDA para permitir acceso a la consola H2
-                        .requestMatchers("/h2/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll() // login y register público
-                        .requestMatchers("/api/users/**").permitAll() // registro de cliente
-                        .anyRequest().authenticated() // todo lo demás requiere JWT
-                );
 
-        // 👉 Registrar filtro JWT
+                        // 🔓 Público sin token
+                        .requestMatchers("/h2/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/comidas/**").permitAll()
+
+                        // 🔒 Solo ADMIN
+                        .requestMatchers("/dashboard/**").hasRole("ADMIN")
+
+                        // 🔒 Solo ADMIN puede manipular operadores (POST, PUT, DELETE)
+                        .requestMatchers("/api/operadores/**").hasRole("ADMIN")
+
+                        // 🔒 OPERADOR o ADMIN pueden ver su panel u operaciones propias
+                        .requestMatchers("/operadores/**").hasAnyRole("OPERADOR", "ADMIN")
+
+                        // 🔒 Cualquier otra petición requiere token
+                        .anyRequest().authenticated());
+
+        // Filtro JWT
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Necesario si luego necesitas AuthenticationManager para login
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {

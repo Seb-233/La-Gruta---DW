@@ -5,14 +5,16 @@ import com.example.demo.model.User;
 import com.example.demo.repository.OperadorRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/operadores", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -23,6 +25,7 @@ public class OperadorRestController {
     private final OperadorRepository operadorRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder; // ✅ necesario para encriptar
 
     // ============================
     // 🔹 GET: Listar operadores
@@ -40,12 +43,19 @@ public class OperadorRestController {
 
         User u = operador.getUser();
         if (u == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Falta información del usuario"));
+            return ResponseEntity
+                    .badRequest()
+                    .body("Falta información del usuario");
         }
 
         if (userRepository.existsByUsername(u.getUsername())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "El nombre de usuario ya existe"));
+            return ResponseEntity
+                    .badRequest()
+                    .body("El nombre de usuario ya existe");
         }
+
+        // 🔐 Encriptar contraseña ANTES de guardar
+        u.setPassword(passwordEncoder.encode(u.getPassword()));
 
         // Guardar usuario
         User newUser = userRepository.save(u);
@@ -56,11 +66,14 @@ public class OperadorRestController {
             userRepository.save(newUser);
         });
 
+        // Asociar el User al operador
         operador.setUser(newUser);
-        operadorRepository.save(operador);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("mensaje", "Operador creado correctamente"));
+        // Guardar operador
+        Operador saved = operadorRepository.save(operador);
+
+        // 🔥 Devolver el operador completo (compatible con Angular)
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     // ============================
@@ -68,14 +81,19 @@ public class OperadorRestController {
     // ============================
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Operador data) {
-        return operadorRepository.findById(id)
-                .map(op -> {
-                    op.setNombre(data.getNombre());
-                    operadorRepository.save(op);
-                    return ResponseEntity.ok(Map.of("mensaje", "Operador actualizado"));
-                })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of("error", "Operador no encontrado")));
+
+        var optional = operadorRepository.findById(id);
+
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Operador no encontrado");
+        }
+
+        Operador op = optional.get();
+        op.setNombre(data.getNombre());
+        operadorRepository.save(op);
+
+        return ResponseEntity.ok(op);
     }
 
     // ============================
@@ -85,12 +103,13 @@ public class OperadorRestController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
 
         if (!operadorRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Operador no encontrado"));
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Operador no encontrado");
         }
 
         operadorRepository.deleteById(id);
 
-        return ResponseEntity.ok(Map.of("mensaje", "Operador eliminado"));
+        return ResponseEntity.ok("Operador eliminado");
     }
 }

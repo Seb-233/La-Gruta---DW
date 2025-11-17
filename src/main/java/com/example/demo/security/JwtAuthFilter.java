@@ -31,8 +31,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // 🔥 IGNORAR las rutas públicas Y LA CONSOLA H2
-        if (path.startsWith("/api/auth") || path.startsWith("/h2")) { // <-- ¡LÍNEA MODIFICADA!
+        // 🔥 IGNORAR rutas públicas
+        if (path.startsWith("/api/auth")
+                || path.startsWith("/h2")
+                || path.startsWith("/api/comidas")) { // 👈 AGREGADO
             chain.doFilter(request, response);
             return;
         }
