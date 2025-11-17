@@ -15,8 +15,10 @@ public class ValidationService {
     private UserRepository userRepository;
 
     public boolean validateUser(String username, String password) {
-        // Nada de casts a org.apache.catalina.User
-        User user = userRepository.findByUsername(username); // o Optional<User>
+
+        // findByUsername devuelve Optional<User>, así que debemos resolverlo
+        User user = userRepository.findByUsername(username).orElse(null);
+
         return user != null && password.equals(user.getPassword());
     }
 
@@ -25,9 +27,7 @@ public class ValidationService {
     }
 
     public void addUser(User user) {
-    userRepository.save(user);
-}
+        userRepository.save(user);
+    }
 
 }
-
-

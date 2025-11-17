@@ -1,22 +1,14 @@
 package com.example.demo.controller;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map; 
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.dto.LoginRequest;
+import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
@@ -29,62 +21,90 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // ✅ LOGIN (único y correcto)
-@Autowired
-private JwtUtil jwtUtil;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-    if (request.getUsername() == null || request.getPassword() == null) {
-        return ResponseEntity.badRequest().body("Debe enviar username y password");
+    // -------------------------
+    //        LOGIN
+    // -------------------------
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+
+        if (request.getUsername() == null || request.getPassword() == null) {
+            return ResponseEntity.badRequest().body("Debe enviar username y password");
+        }
+
+        User user = userService.findByUsernameAndPassword(
+                request.getUsername(),
+                request.getPassword()
+        );
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("Credenciales inválidas");
+        }
+
+        // Convertimos el Set<Role> a una lista de strings
+        List<String> roles = user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+
+        // Tomamos el primer rol para el JWT (si tu JWT soporta varios, me avisas)
+        String mainRole = roles.isEmpty() ? "USER" : roles.get(0);
+
+        String token = jwtUtil.generateToken(user.getUsername(), mainRole);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", user.getId());
+        response.put("username", user.getUsername());
+        response.put("roles", roles);
+        response.put("token", token);
+
+        return ResponseEntity.ok(response);
     }
 
-    User user = userService.findByUsernameAndPassword(request.getUsername(), request.getPassword());
-    if (user == null) {
-        return ResponseEntity.status(401).body("Credenciales inválidas");
-    }
 
-    // ✅ Generar token JWT
-    String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-
-    // ✅ Incluir token junto a los datos públicos
-    Map<String, Object> response = new HashMap<>();
-    response.put("id", user.getId());
-    response.put("username", user.getUsername());
-    response.put("role", user.getRole());
-    response.put("token", token);
-
-    return ResponseEntity.ok(response);
-}
-
-
-
-    // ✅ GET ALL
+    // -------------------------
+    //     GET ALL USERS
+    // -------------------------
     @GetMapping
     public Collection<User> getAllUsers() {
         return userService.SearchAll();
     }
 
-    // ✅ GET BY ID
+
+    // -------------------------
+    //      GET USER BY ID
+    // -------------------------
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.SearchById(id);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
-    // ✅ CREATE
+
+    // -------------------------
+    //        CREATE USER
+    // -------------------------
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        if (user.getRole() == null || user.getRole().isEmpty()) {
+
+        // Validación mínima
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
             return ResponseEntity.badRequest().body(null);
         }
+
         userService.add(user);
         return ResponseEntity.ok(user);
     }
 
-    // ✅ UPDATE
+
+    // -------------------------
+    //        UPDATE USER
+    // -------------------------
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+
         User existingUser = userService.SearchById(id);
         if (existingUser == null) {
             return ResponseEntity.notFound().build();
@@ -92,15 +112,16 @@ public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
         existingUser.setUsername(updatedUser.getUsername());
         existingUser.setPassword(updatedUser.getPassword());
-        existingUser.setRole(updatedUser.getRole());
-        existingUser.setDireccion(updatedUser.getDireccion());
-        existingUser.setTelefono(updatedUser.getTelefono());
+        existingUser.setRoles(updatedUser.getRoles());
 
         userService.update(existingUser);
         return ResponseEntity.ok(existingUser);
     }
 
-    // ✅ DELETE
+
+    // -------------------------
+    //        DELETE USER
+    // -------------------------
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteById(id);

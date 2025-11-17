@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.Adicional;
-import com.example.demo.repository.AdicionalCategoriaRepository;
+//import com.example.demo.repository.AdicionalCategoriaRepository;
 import com.example.demo.repository.AdicionalRepository;
 
 @RestController
@@ -24,8 +24,8 @@ public class AdicionalController {
     @Autowired
     private AdicionalRepository adicionalRepository;
 
-    @Autowired
-    private AdicionalCategoriaRepository adicionalCategoriaRepository;
+    //@Autowired
+    //private AdicionalCategoriaRepository adicionalCategoriaRepository;
 
     //  Listar todos los adicionales
     @GetMapping

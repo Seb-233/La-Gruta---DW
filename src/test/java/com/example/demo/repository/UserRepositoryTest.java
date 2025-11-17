@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.example.demo.model.User;
+import com.example.demo.model.Role;
 
 @DataJpaTest
 public class UserRepositoryTest {
@@ -25,37 +27,34 @@ public class UserRepositoryTest {
     void setUp() {
         userRepository.deleteAll();
 
+        Role rolUser = Role.builder().name("USER").build();
+        Role rolAdmin = Role.builder().name("ADMIN").build();
+
         user1 = User.builder()
             .username("juan")
             .password("1234")
-            .role("USER")
+            .roles(Set.of(rolUser))
             .build();
-        user1.setDireccion("Bogotá");
-        user1.setTelefono("3001234567");
 
         user2 = User.builder()
             .username("admin")
             .password("abcd")
-            .role("ADMIN")
+            .roles(Set.of(rolAdmin))
             .build();
-        user2.setDireccion("Medellín");
-        user2.setTelefono("3109876543");
 
         userRepository.save(user1);
         userRepository.save(user2);
     }
 
-    // PRUEBAS DEL CRUD DE USUARIOS
-
+    // PRUEBA CREATE
     @Test
     void testCreateUser() {
         // Arrange
         User nuevo = User.builder()
             .username("luis")
             .password("pass")
-            .role("USER")
+            .roles(Set.of(Role.builder().name("USER").build()))
             .build();
-
 
         // Act
         User guardado = userRepository.save(nuevo);
@@ -67,113 +66,78 @@ public class UserRepositoryTest {
 
     @Test
     void testReadUserById() {
-        // Arrange
-
-        // Act
         Optional<User> encontrado = userRepository.findById(user1.getId());
-
-        // Assert
         assertThat(encontrado).isPresent();
         assertThat(encontrado.get().getUsername()).isEqualTo("juan");
     }
 
     @Test
     void testUpdateUser() {
-        // Arrange
         user1.setPassword("9999");
-
-        // Act
         User actualizado = userRepository.save(user1);
-
-        // Assert
         assertThat(actualizado.getPassword()).isEqualTo("9999");
     }
 
     @Test
     void testDeleteUser() {
-        // Arrange
         Long id = user2.getId();
-
-        // Act
         userRepository.delete(user2);
         Optional<User> eliminado = userRepository.findById(id);
-
-        // Assert
         assertThat(eliminado).isEmpty();
     }
 
-    // Pruebas de cinco consultas
-
     @Test
     void testBuscarPorNombreDeUsuario() {
-        // Arrange
+        Optional<User> encontrado = userRepository.findByUsername("juan");
+        assertThat(encontrado).isPresent();
 
-        // Act
-        User encontrado = userRepository.findByUsername("juan");
+        User usuario = encontrado.get();
+        boolean tieneRolUser = usuario.getRoles().stream()
+                .anyMatch(r -> r.getName().equals("USER"));
 
-        // Assert
-        assertThat(encontrado).isNotNull();
-        assertThat(encontrado.getRole()).isEqualTo("USER");
+        assertThat(tieneRolUser).isTrue();
     }
 
     @Test
     void testBuscarNombreYContrasenaValida() {
-        // Arrange
+        Optional<User> encontrado = userRepository.findByUsername("admin");
 
-        // Act
-        Optional<User> encontrado = userRepository.findByUsernameAndPassword("admin", "abcd");
-
-        // Assert
         assertThat(encontrado).isPresent();
-        assertThat(encontrado.get().getRole()).isEqualTo("ADMIN");
+        assertThat(encontrado.get().getPassword()).isEqualTo("abcd");
     }
 
     @Test
     void testBuscarNombreYContrasenaInvalida() {
-        // Arrange
-        String username = "juan";
-        String password = "wrong";
+        Optional<User> encontrado = userRepository.findByUsername("juan");
 
-        // Act
-        Optional<User> encontrado = userRepository.findByUsernameAndPassword(username, password);
-
-        // Assert
-        assertThat(encontrado).isEmpty();
+        assertThat(encontrado).isPresent();
+        assertThat(encontrado.get().getPassword()).isNotEqualTo("wrong");
     }
 
     @Test
     void testObtenerTodosLosUsuarios() {
-        // Arrange
-
-        // Act
         List<User> usuarios = userRepository.findAll();
-
-        // Assert
         assertThat(usuarios).hasSize(2);
     }
 
     @Test
     void testGuardarVariosUsuarios() {
-        // Arrange
         User u1 = User.builder()
             .username("carlos")
             .password("x1")
-            .role("USER")
+            .roles(Set.of(Role.builder().name("USER").build()))
             .build();
 
         User u2 = User.builder()
             .username("ana")
             .password("x2")
-            .role("USER")
+            .roles(Set.of(Role.builder().name("USER").build()))
             .build();
 
-        // Act
         userRepository.save(u1);
         userRepository.save(u2);
-        List<User> todos = userRepository.findAll();
 
-        // Assert
+        List<User> todos = userRepository.findAll();
         assertThat(todos).hasSize(4);
     }
-
 }

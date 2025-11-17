@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,12 +22,11 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepo;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // ✅ Encriptador
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public User SearchById(Long id) {
-        Optional<User> userOpt = repo.findById(id);
-        return userOpt.orElse(null);
+        return repo.findById(id).orElse(null);
     }
 
     @Override
@@ -42,12 +41,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(User user) {
-        if (user.getRole() != null) {
-            Role role = roleRepo.findByName(user.getRole());
-            user.setRoleEntity(role);
+
+        // -------------------------
+        //   ACTUALIZAR ROLES
+        // -------------------------
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+
+            // Toma el primer rol enviado desde Angular
+            Role requestedRole = user.getRoles().iterator().next();
+
+            // Busca el rol en la base de datos
+            Role roleEntity = roleRepo.findByName(requestedRole.getName()).orElse(null);
+
+            if (roleEntity != null) {
+                user.setRoles(Set.of(roleEntity));
+            }
         }
 
-        // ✅ Encriptar contraseña si no está encriptada
+        // -------------------------
+        //  ENCRIPTAR PASSWORD SI ES NECESARIO
+        // -------------------------
         if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
@@ -57,12 +70,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void add(User user) {
-        if (user.getRole() != null) {
-            Role role = roleRepo.findByName(user.getRole());
-            user.setRoleEntity(role);
+
+        // -------------------------
+        //   ASIGNAR ROLES
+        // -------------------------
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+
+            Role requestedRole = user.getRoles().iterator().next();
+
+            Role roleEntity = roleRepo.findByName(requestedRole.getName()).orElse(null);
+
+            if (roleEntity != null) {
+                user.setRoles(Set.of(roleEntity));
+            }
         }
 
-        // ✅ Encriptar contraseña antes de guardar
+        // -------------------------
+        //  ENCRIPTAR PASSWORD
+        // -------------------------
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         repo.save(user);
@@ -70,15 +95,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        return repo.findByUsername(username);
+        return repo.findByUsername(username).orElse(null); // ← CORREGIDO
     }
 
     @Override
     public User findByUsernameAndPassword(String username, String password) {
-        User user = repo.findByUsername(username);
+
+        User user = repo.findByUsername(username).orElse(null); // ← CORREGIDO
+
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             return user;
         }
+
         return null;
     }
 }

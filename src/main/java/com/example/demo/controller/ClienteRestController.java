@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Cliente;
 import com.example.demo.repository.ClienteRepository;
-import com.example.demo.repository.UserRepository;
+//import com.example.demo.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +21,8 @@ public class ClienteRestController {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    @Autowired
-    private UserRepository userRepository; // (No se usa pero no afecta)
+    //@Autowired
+    //private UserRepository userRepository; // (No se usa pero no afecta)
 
     // ============================
     // 🔹 GET: Todos los clientes
