@@ -12,6 +12,7 @@ import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
+import com.example.demo.repository.UserRepository;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -23,6 +24,9 @@ public class UserController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // -------------------------
     //        LOGIN
@@ -63,7 +67,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-
     // -------------------------
     //     GET ALL USERS
     // -------------------------
@@ -72,6 +75,14 @@ public class UserController {
         return userService.SearchAll();
     }
 
+    // -------------------------
+    // GET USERS BY ROLE (nuevo)
+    // -------------------------
+    @GetMapping("/role/{name}")
+    public ResponseEntity<?> getUsersByRole(@PathVariable String name) {
+        List<User> users = userRepository.findByRoles_Name(name);
+        return ResponseEntity.ok(users);
+    }
 
     // -------------------------
     //      GET USER BY ID
@@ -81,7 +92,6 @@ public class UserController {
         User user = userService.SearchById(id);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
-
 
     // -------------------------
     //        CREATE USER
@@ -97,7 +107,6 @@ public class UserController {
         userService.add(user);
         return ResponseEntity.ok(user);
     }
-
 
     // -------------------------
     //        UPDATE USER
@@ -117,7 +126,6 @@ public class UserController {
         userService.update(existingUser);
         return ResponseEntity.ok(existingUser);
     }
-
 
     // -------------------------
     //        DELETE USER

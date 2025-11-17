@@ -1,6 +1,6 @@
 #FileLock
-#Mon Nov 17 11:59:18 COT 2025
-server=192.168.1.2\:61936
-hostName=DESKTOP-TIOPAAM
+#Mon Nov 17 15:07:35 COT 2025
+hostName=DESKTOP-4DBT86M
+id=19a936e087b150b424deb45e3c9022ec2720c45e46e
 method=file
-id=19a92c1aff5de829ace2b5cab24d1cc397e837929d9
+server=192.168.1.103\:64396

@@ -52,6 +52,8 @@ public class SecurityConfig {
                         .requestMatchers("/h2/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/comidas/**").permitAll()
+                        .requestMatchers("/api/clientes/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
 
                         // 🔒 Solo ADMIN
                         .requestMatchers("/dashboard/**").hasRole("ADMIN")
