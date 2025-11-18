@@ -1,5 +1,22 @@
 package com.example.demo.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.model.Operador;
 import com.example.demo.model.User;
 import com.example.demo.repository.OperadorRepository;
@@ -7,14 +24,6 @@ import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/operadores", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -25,91 +34,108 @@ public class OperadorRestController {
     private final OperadorRepository operadorRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder; // ✅ necesario para encriptar
+    private final PasswordEncoder passwordEncoder;
 
-    // ============================
-    // 🔹 GET: Listar operadores
-    // ============================
+    // LISTAR TODOS
     @GetMapping
     public List<Operador> getAll() {
         return operadorRepository.findAll();
     }
 
-    // ============================
-    // 🔹 POST: Crear operador
-    // ============================
+    // OBTENER POR ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        var opt = operadorRepository.findById(id);
+        if (opt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Operador no encontrado"));
+        }
+        return ResponseEntity.ok(opt.get());
+    }
+
+    // CREAR OPERADOR
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@RequestBody Operador operador) {
+        if (operador == null || operador.getUser() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Falta información del usuario"));
+        }
 
         User u = operador.getUser();
-        if (u == null) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Falta información del usuario");
+
+        if (u.getUsername() == null || u.getPassword() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Username y password son obligatorios"));
         }
 
         if (userRepository.existsByUsername(u.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("El nombre de usuario ya existe");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "El username ya existe"));
         }
 
-        // 🔐 Encriptar contraseña ANTES de guardar
         u.setPassword(passwordEncoder.encode(u.getPassword()));
 
-        // Guardar usuario
-        User newUser = userRepository.save(u);
-
         // Asignar rol OPERADOR
-        roleRepository.findByName("OPERADOR").ifPresent(rol -> {
-            newUser.getRoles().add(rol);
-            userRepository.save(newUser);
-        });
+        roleRepository.findByName("OPERADOR").ifPresent(r -> u.getRoles().add(r));
 
-        // Asociar el User al operador
-        operador.setUser(newUser);
+        User savedUser = userRepository.save(u);
+        operador.setUser(savedUser);
 
-        // Guardar operador
         Operador saved = operadorRepository.save(operador);
-
-        // 🔥 Devolver el operador completo (compatible con Angular)
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    // ============================
-    // 🔹 PUT: Actualizar operador
-    // ============================
+    // ACTUALIZAR OPERADOR
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Operador data) {
-
-        var optional = operadorRepository.findById(id);
-
-        if (optional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Operador no encontrado");
+        var opt = operadorRepository.findById(id);
+        if (opt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Operador no encontrado"));
         }
 
-        Operador op = optional.get();
-        op.setNombre(data.getNombre());
-        operadorRepository.save(op);
+        Operador existing = opt.get();
+        existing.setNombre(data.getNombre());
+        existing.setApellido(data.getApellido());
+        existing.setCorreo(data.getCorreo());
+        existing.setTelefono(data.getTelefono());
 
-        return ResponseEntity.ok(op);
+        // Actualizar usuario asociado
+        if (data.getUser() != null) {
+            User u = existing.getUser();
+            if (data.getUser().getUsername() != null && !data.getUser().getUsername().equals(u.getUsername())) {
+                if (userRepository.existsByUsername(data.getUser().getUsername())) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "El username ya existe"));
+                }
+                u.setUsername(data.getUser().getUsername());
+            }
+            if (data.getUser().getPassword() != null && !data.getUser().getPassword().isBlank()) {
+                u.setPassword(passwordEncoder.encode(data.getUser().getPassword()));
+            }
+            userRepository.save(u);
+            existing.setUser(u);
+        }
+
+        Operador saved = operadorRepository.save(existing);
+        return ResponseEntity.ok(saved);
     }
 
-    // ============================
-    // 🔹 DELETE: Eliminar operador
-    // ============================
+    // ELIMINAR OPERADOR
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-
-        if (!operadorRepository.existsById(id)) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("Operador no encontrado");
+        var opt = operadorRepository.findById(id);
+        if (opt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Operador no encontrado"));
         }
+
+        Operador op = opt.get();
+        Long userId = op.getUser().getId();
 
         operadorRepository.deleteById(id);
 
-        return ResponseEntity.ok("Operador eliminado");
+        // Quitar rol OPERADOR del user si quieres
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            roleRepository.findByName("OPERADOR").ifPresent(r -> user.getRoles().removeIf(role -> role.getName().equals("OPERADOR")));
+            userRepository.save(user);
+        }
+
+        return ResponseEntity.ok(Map.of("mensaje", "Operador eliminado correctamente"));
     }
 }
