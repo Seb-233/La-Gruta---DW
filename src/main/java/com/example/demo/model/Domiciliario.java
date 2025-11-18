@@ -29,8 +29,20 @@ public class Domiciliario {
     @Column(nullable = false, unique = true, length = 20)
     private String cedula;
 
+    @Column(nullable = false, length = 100)
+    private String correo;
+
+    @Column(name = "CELULAR", nullable = false, length = 20)
+    private String telefono;
+
     @Column(nullable = false, length = 20)
-    private String celular;
+    private String vehiculo;
+
+    @Column(length = 20)
+    private String placa;
+
+    @Column(length = 100)
+    private String zonaCobertura;
 
     @Column(nullable = false)
     @Builder.Default
